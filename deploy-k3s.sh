@@ -184,7 +184,7 @@
 
 #Configure Secondary Disk
 
-  title="Updating User Profile"
+  title="Configuring Secondary Disk for K3s Persistent Volumes"
   print_title 
 
   printf "o\nn\np\n1\n\n\nw\n" | sudo fdisk $k3dsk
@@ -251,56 +251,62 @@
   helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.9.1 --set installCRDs=true 
 
 
-#Create File 'cloudflare-secret.yml'
+#Update File 'cloudflare-secret.yml'
 
   title="Updating file cloudflare-secret.yml with K3s Deployment Variables"
   print_title 
+  
+  sed -i "s/cftoken/$cftoken/g" cert-manager/cloudflare-secret.yml
+  
+  echo "done"
 
 #Create File 'cloudflare-dns-challenge.yml'
 
   title="Updating file cloudflare-dns-challenge.yml with K3s Deployment Variables"
   print_title 
+  
+  sed -i "s/cfemail/$cfemail/g" cert-manager/cloudflare-dns-challenge.yml
+  
+  echo "done"
 
-#Create File 'dashboard.yml'
+#Create File 'kubernetes-dashboard.yml'
 
-  title="Updating file dashboard.yml with K3s Deployment Variables"
+  title="Downloading file kubernetes-dashboard.yml"
   print_title 
 
   GITHUB_URL=https://github.com/kubernetes/dashboard/releases
   VERSION_KUBE_DASHBOARD=$(curl -w '%{url_effective}' -I -L -s -S ${GITHUB_URL}/latest -o /dev/null | sed -e 's|.*/||')
-  curl https://raw.githubusercontent.com/kubernetes/dashboard/${VERSION_KUBE_DASHBOARD}/aio/deploy/recommended.yml > dashboard.yml
+  curl https://raw.githubusercontent.com/kubernetes/dashboard/${VERSION_KUBE_DASHBOARD}/aio/deploy/recommended.yml > kubernetes-dashboard.yml
+  
+  echo "done"
 
-#Create File 'dashboard.admin.user.yml'
+#Create File 'dashboard-ingress.yml'
 
-  title="Updating file dashboard.admin.user.yml with K3s Deployment Variables"
+  title="Updating file dashboard-ingress.yml with K3s Deployment Variables"
   print_title 
-
-#Create File 'dashboard.admin.user.role.yml'
-
-  title="Updating file dashboard.admin.user.role.yml with K3s Deployment Variables"
-  print_title 
-
-#Create File 'k3s-dash-ingress.yml'
-
-  title="Updating file k3s-dash-ingress.yml with K3s Deployment Variables"
-  print_title 
+  
+  sed -i "s/domain/$domain/g" kubernetes-dashboard/dashboard-ingress.yml
+  
+  echo "done"
 
 #Create Dashboard, Dashboard User Admin, Admin Role, and Dashboard Ingress
   
   title="Creating and configuring K3s Dashboard and associated roles, users and ingress"
   print_title 
   
-  kubectl create -f dashboard.yml
-  kubectl create -f dashboard.admin.user.yml -f dashboard.admin.user.role.yml
-  kubectl create -f k3s-dash-ingress.yml
+  kubectl create -f kubernetes-dashboard/kubernetes-dashboard.yml
+  kubectl create -f kubernetes-dashboard/dashboard-admin-user.yml -f kubernetes-dashboard/dashboard-admin-user-role.yml
+  kubectl create -f kubernetes-dashboard/kubernetes-ingress.yml
 
   printf "${Green}Your K3s Dashboard is now available @ https://dashboard.${domain}\n${Color_Off}"
+  
+  echo "done"
 
 #Provision Storage
 
   title="Creating Persistent Volume Provisioner"
   print_title 
   
-  kubectl apply -f pv-provisioner.yml
+  kubectl apply -f sig-storage/persistent-volume-provisioner.yml
   
   echo "done"
