@@ -1,14 +1,14 @@
 #!/bin/sh
 
-# Define variables for K3s deployment
+# Define variables for K3s deployment (uncomment lines, and populate variables - not required if using other methods of variables population).
 
-  k3dsk='' #This is the disk you will be assigning Persistent Volumes to K3s from.
-  diskno='' #This is the amount of persistent volumes to be created, keep in mind that there is no consumption controll (they share the same disk).
-  ingns='' #This is the namespace that the NGINX ingress will be deployed to.
-  ingname='' #This is the name prepended to the nginx-ingress pod name.
-  cftoken='' #This is the cloudflare token to be used by cert-manager.
-  cfemail='' #This is the email address that will be associated with your LetsEncrypt certificates e.g. 'youremailaddress@here.com'.
-  domain='' #This is the domain that your services will be available on e.g. 'yourdomain.com'.
+  #k3dsk='' #This is the disk you will be assigning Persistent Volumes to K3s from.
+  #diskno='' #This is the amount of persistent volumes to be created, keep in mind that there is no consumption controll (they share the same disk).
+  #ingns='' #This is the namespace that the NGINX ingress will be deployed to.
+  #ingname='' #This is the name prepended to the nginx-ingress pod name.
+  #cftoken='' #This is the cloudflare token to be used by cert-manager.
+  #cfemail='' #This is the email address that will be associated with your LetsEncrypt certificates e.g. 'youremailaddress@here.com'.
+  #domain='' #This is the domain that your services will be available on e.g. 'yourdomain.com'.
 
 #Create Functions
 
