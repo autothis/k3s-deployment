@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dashboard-ingress
+  namespace: kubernetes-dashboard
+  annotations:
+    cert-manager.io/cluster-issuer: prod-issuer
+    nginx.org/redirect-to-https: "true"
+    nginx.org/ssl-services: kubernetes-dashboard
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - dashboard.domain
+    secretName: tls-domain-dashboard
+  rules:
+  - host: dashboard.domain
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: kubernetes-dashboard
+            port:
+              number: 443
