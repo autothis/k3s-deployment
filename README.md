@@ -12,6 +12,7 @@ This will deploy K3s with:
 K3s Deployment Variables:
 ------------------------
 
+```yml
   k3dsk='/dev/sdb'                                      #This is the disk you will be assigning Persistent Volumes to K3s from.
   diskno=4                                              #This is the amount of persistent volumes to be created.
   ingns='kubernetes-ingress'                            #This is the namespace that the NGINX ingress will be deployed to.
@@ -19,12 +20,14 @@ K3s Deployment Variables:
   cftoken='ZN0tr3AL9sEHl19yqjHzpy_fAkET0keNn_ddqg_y'    #This is the cloudflare token to be used by cert-manager.
   cfemail='example@example.com'                         #This is the email address that will be associated with your LetsEncrypt certificates.
   domain='example.com'                                  #This is the domain that your services will be available on.
+...
+```
 
   Variables can be provided 3 ways:
     
     1. Exporting the variable by executing a command similar to this: export k3dsk='/dev/sdb'
     2. Running the deploy-k3s.sh script, and providing variables as prompted.
-    3. Editing the deploy-k3s.sh script, and ammending the variable at the very top of the script.
+    3. Editing the deploy-k3s.sh script, and ammending the variables at the very top of the script.
 
 Deployment Instructions:
 ------------------------
