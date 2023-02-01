@@ -26,7 +26,7 @@ K3s Deployment Variables:
     
     1. Exporting the variable by executing a command similar to this: export k3dsk='/dev/sdb'
     2. Running the deploy-k3s.sh script, and providing variables as prompted.
-    3. Editing the deploy-k3s.sh script, and ammending the variables at the very top of the script.
+    3. Editing the deploy-k3s.sh script, uncommenting and populating the variables at the very top of the script.
 
 Deployment Instructions:
 ------------------------
