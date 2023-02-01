@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Define variables for K3s deployment
 
@@ -16,7 +16,7 @@
     
     # Define k3var array containing required variables for K3s deployment
     k3var_1=("k3dsk" "$k3dsk" "This is the disk you will be assigning Persistent Volumes to K3s from e.g. '/dev/sdb'")
-    k3var_2=("diskno" "$diskno" "This is the amount of persistent volumes to be created, keep in mind that there is no consumption controll (they share the same disk) e.g. '4'")
+    k3var_2=("diskno" "$diskno" "This is the amount of persistent volumes to be created, keep in mind that there is no consumption controll [they share the same disk, only isolated by folder structure] e.g. '4'")
     k3var_3=("ingns" "$ingns" "This is the namespace that the NGINX ingress will be deployed to e.g. 'kubernetes-ingress'")
     k3var_4=("ingname" "$ingname" "This is the name prepended to the nginx-ingress pod name e.g. 'primary'")
     k3var_5=("cftoken" "$cftoken" "This is the cloudflare token to be used by cert-manager e.g. 'ZM8z4JS9dEHl19yvjHzpk_kEiEWG7qxUn_dwhg_z'")
