@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Define variables for K3s deployment (uncomment lines, and populate variables - not required if using other methods of variables population).
 
