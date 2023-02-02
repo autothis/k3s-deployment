@@ -211,7 +211,7 @@
 
 #Install K3s
 
-  title="Installing K3s (without Treafik)"
+  title="Installing K3s (without Traefik)"
   print_title
 
   curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--disable traefik" sh -s -
