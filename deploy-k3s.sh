@@ -149,7 +149,7 @@
 
   apt install sudo git curl gpg apt-transport-https --yes
   
-  echo "done"
+  printf "${Green}Done\n${Color_Off}"
 
 #Install Kustomize
 
@@ -160,7 +160,7 @@
   cd /usr/bin
   curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
   
-  echo "done"
+  printf "${Green}Done\n${Color_Off}"
 
 #Update Profiles
 
@@ -173,7 +173,7 @@
   echo "alias admin='kubectl -n kubernetes-dashboard create token admin-user'" >> /etc/profile
   source /etc/profile
   
-  echo "done"
+  printf "${Green}Done\n${Color_Off}"
 
 #Disable SWAP
   
@@ -184,7 +184,7 @@
   sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
   echo "Dont forget to reclaim space if you want to."
   
-  echo "done"
+  printf "${Green}Done\n${Color_Off}"
 
 #Configure Secondary Disk
 
@@ -207,7 +207,7 @@
     echo /mnt/${DISK_UUID}/vol${i} /mnt/disks/${DISK_UUID}_vol${i} none bind 0 0 | sudo tee -a /etc/fstab
   done
   
-  echo "done"
+  printf "${Green}Done\n${Color_Off}"
   
 #Install K3s
 
@@ -218,7 +218,11 @@
   mkdir ~/.kube
   kubectl config view --raw > ~/.kube/config
   
-  echo "done"
+  printf "${Yellow}Give K3s a chance to finish starting\n${Color_Off}"
+  
+  sleep 10s
+  
+  printf "${Green}Done\n${Color_Off}"
 
 #Install Helm
 
@@ -230,7 +234,7 @@
   apt update
   apt install helm --yes
   
-  echo "done"
+  printf "${Green}Done\n${Color_Off}"
 
 #Install NGINX Ingress Controller
 
@@ -242,7 +246,7 @@
   helm repo update
   helm install "$ingname" nginx-stable/nginx-ingress --namespace "$ingns" --create-namespace
   
-  echo "done"
+  printf "${Green}Done\n${Color_Off}"
 	
 #Cert Manager
 
@@ -254,6 +258,7 @@
   helm repo update
   helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.9.1 --set installCRDs=true 
 
+  printf "${Green}Done\n${Color_Off}"
 
 #Update File 'cloudflare-secret.yml'
 
@@ -262,7 +267,7 @@
   
   sed -i "s/cftoken/$cftoken/g" cert-manager/cloudflare-secret.yml
   
-  echo "done"
+  printf "${Green}Done\n${Color_Off}"
 
 #Create File 'cloudflare-dns-challenge.yml'
 
@@ -271,7 +276,7 @@
   
   sed -i "s/cfemail/$cfemail/g" cert-manager/cloudflare-dns-challenge.yml
   
-  echo "done"
+  printf "${Green}Done\n${Color_Off}"
 
 #Create File 'kubernetes-dashboard.yml'
 
@@ -282,7 +287,7 @@
   VERSION_KUBE_DASHBOARD=$(curl -w '%{url_effective}' -I -L -s -S ${GITHUB_URL}/latest -o /dev/null | sed -e 's|.*/||')
   curl https://raw.githubusercontent.com/kubernetes/dashboard/${VERSION_KUBE_DASHBOARD}/aio/deploy/recommended.yaml > kubernetes-dashboard/kubernetes-dashboard.yml
   
-  echo "done"
+  printf "${Green}Done\n${Color_Off}"
 
 #Create File 'dashboard-ingress.yml'
 
@@ -291,7 +296,7 @@
   
   sed -i "s/domain/$domain/g" kubernetes-dashboard/dashboard-ingress.yml
   
-  echo "done"
+  printf "${Green}Done\n${Color_Off}"
 
 #Create Dashboard, Dashboard User Admin, Admin Role, and Dashboard Ingress
   
@@ -304,7 +309,7 @@
 
   printf "${Green}Your K3s Dashboard is now available @ https://dashboard.${domain}\n${Color_Off}"
   
-  echo "done"
+  printf "${Green}Done\n${Color_Off}"
 
 #Provision Storage
 
@@ -313,4 +318,4 @@
   
   kubectl apply -f sig-storage/persistent-volume-provisioner.yml
   
-  echo "done"
+  printf "${Green}Done\n${Color_Off}"
