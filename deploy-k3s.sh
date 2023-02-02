@@ -60,6 +60,10 @@
   Cyan='\033[0;36m'         # Cyan
   White='\033[0;37m'        # White
 
+# Get current working directory
+
+  k3sdeploypath=$(pwd)
+
 # Set K3 Variables
 
   set_k3vars
@@ -163,7 +167,7 @@
   title="Updating User Profile"
   print_title 
   
-  cd ~
+  cd $k3sdeploypath
   echo "alias k=kubectl" >> /etc/profile
   echo "complete -o default -F __start_kubectl k" >> /etc/profile
   echo "alias admin='kubectl -n kubernetes-dashboard create token admin-user'" >> /etc/profile
