@@ -98,7 +98,7 @@
       VALUE=${!k3missingvars[i]:1:1}
       DESC=${!k3missingvars[i]:2:1}
       
-      read -p "Would you like to provide a value for $NAME? " -n 1 -r
+      read -p "Would you like to provide a value for $NAME? " -r
       echo    # (optional) move to a new line
       if [[ $REPLY =~ ^[Yy]$ ]]
       then
