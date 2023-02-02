@@ -305,7 +305,7 @@
   
   kubectl create -f kubernetes-dashboard/kubernetes-dashboard.yml
   kubectl create -f kubernetes-dashboard/dashboard-admin-user.yml -f kubernetes-dashboard/dashboard-admin-user-role.yml
-  kubectl create -f kubernetes-dashboard/kubernetes-ingress.yml
+  kubectl create -f kubernetes-dashboard/dashboard-ingress.yml
 
   printf "${Green}Your K3s Dashboard is now available @ https://dashboard.${domain}\n${Color_Off}"
   
