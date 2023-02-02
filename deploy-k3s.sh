@@ -193,7 +193,7 @@
 
   printf "o\nn\np\n1\n\n\nw\n" | sudo fdisk $k3dsk
   sudo mkfs.ext4 ${k3dsk}1
-  DISK_UUID=$(blkid -s UUID -o value ${k3dsk}1) 
+  DISK_UUID=$(blkid -s UUID -o value ${k3dsk}1)
   sudo mkdir /mnt/$DISK_UUID
   sudo mount -t ext4 ${k3dsk}1 /mnt/$DISK_UUID
   echo UUID=`sudo blkid -s UUID -o value ${k3dsk}1` /mnt/$DISK_UUID ext4 defaults 0 2 | sudo tee -a /etc/fstab
