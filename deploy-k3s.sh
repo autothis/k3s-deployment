@@ -278,6 +278,16 @@
   
   printf "${Green}Done\n${Color_Off}"
 
+#Create Cloudflare Secret and DNS Challenge
+  
+  title="Creating Cloudflare Secret and DNS Challenge"
+  print_title 
+  
+  kubectl create -f cert-manager/cloudflare-secret.yml
+  kubectl create -f cert-manager/cloudflare-dns-challenge.yml
+  
+  printf "${Green}Done\n${Color_Off}"
+
 #Create File 'kubernetes-dashboard.yml'
 
   title="Downloading file kubernetes-dashboard.yml"
