@@ -3,7 +3,7 @@ k3s-deployment
 
 Collection of files to deploy K3s on a single linux node (tested on Debian).
 This will deploy K3s with:
-  - Treafik disabled
+  - Traefik disabled
   - NGINX Ingress installed and configured (the one provided by NGINX not Kubernetes)
   - Kubernetes Dashboard (including user, user role, and ingress)
   - Persistent Volumes
