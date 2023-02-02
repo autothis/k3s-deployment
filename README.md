@@ -23,7 +23,7 @@ K3s Deployment Variables:
 ```
 
   Variables can be provided 3 ways:
-    
+
     1. Exporting the variable by executing a command similar to this: export k3dsk='/dev/sdb'
     2. Running the deploy-k3s.sh script, and providing variables as prompted.
     3. Editing the deploy-k3s.sh script, uncommenting and populating the variables at the very top of the script.
@@ -33,8 +33,9 @@ Deployment Instructions:
 
   To deploy K3s on a single node from this repository:
 
-    1. git clone https://github.com/autothis/k3s-deployment.git
-    2. cd k3s-deployment
-    3. apply your specific K3s deployment variables as per the instructions above.
-    4. chmod +x deploy-k3s.sh
-    5. ./deploy-k3s.sh
+    1. apt install git --yes
+    2. git clone https://github.com/autothis/k3s-deployment.git
+    3. cd k3s-deployment
+    4. apply your specific K3s deployment variables as per the instructions above.
+    5. chmod +x deploy-k3s.sh
+    6. ./deploy-k3s.sh
