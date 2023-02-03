@@ -15,6 +15,7 @@ K3s Deployment Variables:
 ```yml
   k3dsk='/dev/sdb'      #This is the disk you will be assigning Persistent Volumes to K3s from.
   diskno=4      #This is the amount of persistent volumes to be created.
+  dashdns='k3s'      #This is the subdomain that will be used to serve your Kubernetes Dashboard.
   ingns='kubernetes-ingress'      #This is the namespace that the NGINX ingress will be deployed to.
   ingname='primary'     #This is the name prepended to the nginx-ingress pod name.
   cftoken='ZN0tr3AL9sEHl19yqjHzpy_fAkET0keNn_ddqg_y'      #This is the cloudflare token to be used by cert-manager.
