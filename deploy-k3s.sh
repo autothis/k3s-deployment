@@ -4,6 +4,7 @@
 
   #k3dsk='' #This is the disk you will be assigning Persistent Volumes to K3s from.
   #diskno='' #This is the amount of persistent volumes to be created, keep in mind that there is no consumption controll (they share the same disk).
+  #dashdns='' #This is the subdomain that will be used to serve your Kubernetes Dashboard.
   #ingns='' #This is the namespace that the NGINX ingress will be deployed to.
   #ingname='' #This is the name prepended to the nginx-ingress pod name.
   #cftoken='' #This is the cloudflare token to be used by cert-manager.
@@ -17,11 +18,12 @@
     # Define k3var array containing required variables for K3s deployment
     k3var_1=("k3dsk" "$k3dsk" "This is the disk you will be assigning Persistent Volumes to K3s from e.g. '/dev/sdb'")
     k3var_2=("diskno" "$diskno" "This is the amount of persistent volumes to be created, keep in mind that there is no consumption controll [they share the same disk, only isolated by folder structure] e.g. '4'")
-    k3var_3=("ingns" "$ingns" "This is the namespace that the NGINX ingress will be deployed to e.g. 'kubernetes-ingress'")
-    k3var_4=("ingname" "$ingname" "This is the name prepended to the nginx-ingress pod name e.g. 'primary'")
-    k3var_5=("cftoken" "$cftoken" "This is the cloudflare token to be used by cert-manager e.g. 'ZM8z4JS9dEHl19yvjHzpk_kEiEWG7qxUn_dwhg_z'")
-    k3var_6=("cfemail" "$cfemail" "This is the email address that will be associated with your LetsEncrypt certificates e.g. 'youremailaddress@here.com'")
-    k3var_7=("domain" "$domain" "This is the domain that your services will be available on e.g. 'yourdomain.com'")
+    k3var_3=("dashdns" "$dashdns" "This is the subdomain that will be used to serve your Kubernetes Dashboard. e.g. 'k3s' will become k3s.yourdomain.com")
+    k3var_4=("ingns" "$ingns" "This is the namespace that the NGINX ingress will be deployed to e.g. 'kubernetes-ingress'")
+    k3var_5=("ingname" "$ingname" "This is the name prepended to the nginx-ingress pod name e.g. 'primary'")
+    k3var_6=("cftoken" "$cftoken" "This is the cloudflare token to be used by cert-manager e.g. 'ZM8z4JS9dEHl19yvjHzpk_kEiEWG7qxUn_dwhg_z'")
+    k3var_7=("cfemail" "$cfemail" "This is the email address that will be associated with your LetsEncrypt certificates e.g. 'youremailaddress@here.com'")
+    k3var_8=("domain" "$domain" "This is the domain that your services will be available on e.g. 'yourdomain.com'")
 
    # Combine k3var arrays int the k3vars array
    k3vars=(
@@ -32,6 +34,7 @@
      k3var_5[@]
      k3var_6[@]
      k3var_7[@]
+     k3var_8[@]
    )
   }
 
@@ -305,6 +308,7 @@
   print_title
 
   sed -i "s/domain/$domain/g" kubernetes-dashboard/dashboard-ingress.yml
+  sed -i "s/dashdns/$dashdns/g" kubernetes-dashboard/dashboard-ingress.yml
 
   printf "${Green}Done\n${Color_Off}"
 
