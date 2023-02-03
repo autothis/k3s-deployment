@@ -11,10 +11,10 @@ spec:
   ingressClassName: nginx
   tls:
   - hosts:
-    - dashboard.domain
+    - dashdns.domain
     secretName: tls-domain-dashboard
   rules:
-  - host: dashboard.domain
+  - host: dashdns.domain
     http:
       paths:
       - path: /
