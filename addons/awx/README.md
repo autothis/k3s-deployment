@@ -40,4 +40,11 @@ AWX Deployment Instructions:
 AWX Update Instructions:
 ------------------------
 
-  TBD
+  To deploy AWX on K3s from this repository:
+
+    1. Backup your AWX data
+    2. cd k3s-deployment/addons/awx
+    3. chmod +x update-awx.sh
+    4. ./update-awx.sh
+    
+    NOTE: These instructions assume you have deployed K3s using the 'deploy-k3s.sh' script from this repository.
