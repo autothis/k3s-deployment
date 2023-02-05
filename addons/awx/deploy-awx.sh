@@ -146,6 +146,7 @@
 	print_title
 
 	sed -i "s/awxvers/$awxvers/g" kustomization.yaml
+	sed -i "s/awxns/$awxns/g" kustomization.yaml
 
 	printf "${Green}Done\n${Color_Off}"
 
@@ -174,7 +175,7 @@
 	title="Waiting for AWX Operator to be Ready"
 	print_title
 
-	awxpods=$(kubectl get pods -n awx -o 'jsonpath={..metadata.name}')
+	awxpods=$(kubectl get pods -n ${awxns} -o 'jsonpath={..metadata.name}')
 	IFS='/ ' read -r -a awxpods <<< "$awxpods"
 	for i in "${awxpods[@]}"; do
 		kubectl wait --for=condition=Ready pod/${i}
@@ -198,8 +199,17 @@
 	title="Waiting for AWX to be Ready"
 	print_title
 
-	awxpods=$(kubectl get pods -n awx -o 'jsonpath={..metadata.name}')
+	awxpods=$(kubectl get pods -n ${awxns} -o 'jsonpath={..metadata.name}')
 	IFS='/ ' read -r -a awxpods <<< "$awxpods"
+
+	#wait for there to be 3 pods in the AWX namespace
+	while [ ${#awxpods[@]} -ne 3 ]
+	do
+		awxpods=$(kubectl get pods -n ${awxns} -o 'jsonpath={..metadata.name}')
+		IFS='/ ' read -r -a awxpods <<< "$awxpods"
+	done
+	
+	#wait for those 3 pods to be in a ready state
 	for i in "${awxpods[@]}"; do
 		kubectl wait --for=condition=Ready pod/${i}
 	done
@@ -211,7 +221,7 @@
 	title="Waiting for AWX Certificate to be Ready"
 	print_title
 
-	awxcert=$(kubectl get certificate -n awx -o 'jsonpath={..metadata.name}')
+	awxcert=$(kubectl get certificate -n ${awxns} -o 'jsonpath={..metadata.name}')
 	IFS='/ ' read -r -a awxcert <<< "$awxcert"
 	for i in "${awxcert[@]}"; do
 		kubectl wait --for=condition=Ready certificate/${i}
