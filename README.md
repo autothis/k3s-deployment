@@ -40,3 +40,10 @@ Deployment Instructions:
     4. apply your specific K3s deployment variables as per the instructions above.
     5. chmod +x deploy-k3s.sh
     6. ./deploy-k3s.sh
+
+Available Addons:
+-----------------
+
+  See [addons](https://github.com/autothis/k3s-deployment/tree/main/addons) directory for installation instructions.
+  
+    - [Ansible AWX](https://github.com/autothis/k3s-deployment/tree/main/addons/awx)
