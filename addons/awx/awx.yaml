@@ -1,0 +1,33 @@
+---
+apiVersion: awx.ansible.com/v1beta1
+kind: AWX
+metadata:
+  name: awxns
+  namespace: awxns
+spec:
+  # AWX user
+  admin_user: super
+  #admin_password_secret: awx-admin-password
+  #admin_email: youremail@example.com
+
+  # ingress
+  ingress_type: ingress
+  hostname: awxsubd.domain
+  ingress_annotations: |
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: prod-issuer
+  ingress_path: /
+  ingress_tls_secret: tls-domain-awx
+
+  # postgres
+  postgres_storage_class: local-storage
+  #postgres_configuration_secret: awx-prod-postgres-configuration
+
+  # projects
+  projects_persistence: true
+  projects_storage_class: local-storage
+  projects_storage_access_mode: ReadWriteOnce
+
+  # Uncomment to reveal "censored" logs
+  no_log: false
+  auto_upgrade: true
