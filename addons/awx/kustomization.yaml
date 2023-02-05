@@ -10,4 +10,4 @@ images:
   - name: quay.io/ansible/awx-operator
     newTag: awxvers
 # Specify a custom namespace in which to install AWX
-namespace: awx
+namespace: awxns
