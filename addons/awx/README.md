@@ -47,4 +47,4 @@ AWX Update Instructions:
     3. chmod +x update-awx.sh
     4. ./update-awx.sh
     
-    NOTE: These instructions assume you have deployed K3s using the 'deploy-k3s.sh' script from this repository.
+    NOTE: These instructions assume you have deployed K3s and AWX using the 'deploy-k3s.sh' and 'deploy-awx.sh' script from this repository.
