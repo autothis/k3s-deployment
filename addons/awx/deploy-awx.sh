@@ -75,8 +75,7 @@
 	# Loop awxvars looking for missing variables
 
 		COUNT=${#awxvars[@]}
-		for ((i=0; i<$COUNT; i++))
-		do
+		for ((i=0; i<$COUNT; i++)); do
 			NAME=${!awxvars[i]:0:1}
 			VALUE=${!awxvars[i]:1:1}
 			DESC=${!awxvars[i]:2:1}
@@ -94,17 +93,15 @@
 	# Loop awxmissingvars to give user option to define any missing variables
 
 		COUNT=${#awxmissingvars[@]}
-		for ((i=0; i<$COUNT; i++))
-		do
+		for ((i=0; i<$COUNT; i++)); do
 			NAME=${!awxmissingvars[i]:0:1}
 			VALUE=${!awxmissingvars[i]:1:1}
 			DESC=${!awxmissingvars[i]:2:1}
 
 			read -p "Would you like to provide a value for $NAME? " -r
 			echo		# (optional) move to a new line
-			if [[ $REPLY =~ ^[Yy]$ ]]
-			then
-					read -p "Enter value for $NAME: " $NAME
+			if [[ $REPLY =~ ^[Yy]$ ]]; then
+				read -p "Enter value for $NAME: " $NAME
 			fi
 		done
 
@@ -121,24 +118,23 @@
 	print_title
 
 	COUNT=${#awxvars[@]}
-	for ((i=0; i<$COUNT; i++))
-	do
+	for ((i=0; i<$COUNT; i++)); do
 		NAME=${!awxvars[i]:0:1}
 		VALUE=${!awxvars[i]:1:1}
 		DESC=${!awxvars[i]:2:1}
 
 		if [[ -z "${VALUE}" ]]; then
-		echo "Name: ${NAME}"
+			echo "Name: ${NAME}"
 			printf "Value: ${Red}${NAME} is undefined\n${Color_Off}"
-		echo "Description: ${DESC}"
-		printf ${White}"=%.0s"	$(seq 1 100)${Color_Off}
-		printf "\n${Color_Off}"
+			echo "Description: ${DESC}"
+			printf ${White}"=%.0s"	$(seq 1 100)${Color_Off}
+			printf "\n${Color_Off}"
 		else
 			printf "Name: ${Cyan}${NAME}\n${Color_Off}"
 			printf "Value: ${Green}${VALUE}\n${Color_Off}"
-		printf "Description: ${White}${DESC}\n${Color_Off}"
-		printf ${Blue}"=%.0s"	$(seq 1 100) \n
-		printf "\n${Color_Off}"
+			printf "Description: ${White}${DESC}\n${Color_Off}"
+			printf ${Blue}"=%.0s"	$(seq 1 100) \n
+			printf "\n${Color_Off}"
 		fi
 	done
 
@@ -149,8 +145,6 @@
 	title="Creating 'kustomization.yaml' file"
 	print_title
 
-	cp kustomization.yaml.sample kustomization.yaml
-	
 	sed -i "s/awxvers/$awxvers/g" kustomization.yaml
 
 	printf "${Green}Done\n${Color_Off}"
