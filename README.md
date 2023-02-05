@@ -46,4 +46,4 @@ Available Addons:
 
   See [addons](https://github.com/autothis/k3s-deployment/tree/main/addons) directory for installation instructions.
   
-    [- Ansible AWX](https://github.com/autothis/k3s-deployment/tree/main/addons/awx)
+   - [Ansible AWX](https://github.com/autothis/k3s-deployment/tree/main/addons/awx)
