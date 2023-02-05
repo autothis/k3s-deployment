@@ -163,7 +163,7 @@
 
 #Deploy AWX Operator
 
-	title="Creating AWX Operator"
+	title="Deploying AWX Operator"
 	print_title
 
 	kustomize build . | kubectl apply -f -
@@ -185,7 +185,7 @@
 
 #Deploy AWX
 
-	title="Creating AWX Operator"
+	title="Deploying AWX"
 	print_title
 
 	sed -i "s/#-/-/g" kustomization.yaml
