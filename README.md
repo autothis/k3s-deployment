@@ -8,6 +8,8 @@ This will deploy K3s with:
   - Kubernetes Dashboard (including user, user role, and ingress)
   - Persistent Volumes
   - Cert-Manager installed and configured for use with Cloudflare.
+  - Alias 'admin' command to easily create a token to authenticate with the Kubernetes Dashboard.
+  - Alias 'k' command as an alternative to typing 'kubectl' all the time.
 
 K3s Deployment Variables:
 ------------------------
