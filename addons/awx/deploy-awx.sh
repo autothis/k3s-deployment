@@ -230,4 +230,10 @@
 	title="ASX Deployment Complete"
 	print_title
 
+	pass=$(kubectl get secret awx-admin-password -o jsonpath="{.data.password}" | base64 --decode)
+	
 	printf "${Green}You can now access your AWX Dashboard at https://${awxsubd}.${domain}\n${Color_Off}"
+	printf "${Green}Username: super\n${Color_Off}"
+	printf "${Green}Password: ${pass}\n${Color_Off}"
+	
+	pass=
