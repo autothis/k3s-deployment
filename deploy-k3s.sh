@@ -21,7 +21,7 @@
     k3var_3=("dashdns" "$dashdns" "This is the subdomain that will be used to serve your Kubernetes Dashboard. e.g. 'k3s' will become k3s.yourdomain.com")
     k3var_4=("ingns" "$ingns" "This is the namespace that the NGINX ingress will be deployed to e.g. 'kubernetes-ingress'")
     k3var_5=("ingname" "$ingname" "This is the name prepended to the nginx-ingress pod name e.g. 'primary'")
-    k3var_6=("cftoken" "$cftoken" "This is the cloudflare token to be used by cert-manager e.g. 'ZM8z4JS9dEHl19yvjHzpk_kEiEWG7qxUn_dwhg_z'")
+    k3var_6=("cftoken" "$cftoken" "This is the cloudflare token to be used by cert-manager e.g. 'ZN0tr3AL9sEHl19yqjHzpy_fAkET0keNn_ddqg_y'")
     k3var_7=("cfemail" "$cfemail" "This is the email address that will be associated with your LetsEncrypt certificates e.g. 'youremailaddress@here.com'")
     k3var_8=("domain" "$domain" "This is the domain that your services will be available on e.g. 'yourdomain.com'")
 
