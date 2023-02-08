@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Define variables for K3s deployment (uncomment lines, and populate variables - not required if using other methods of variables population).
+#Define variables for K3s deployment (uncomment lines, and populate variables - not required if using other methods of variables population).
 
   #k3dsk='' #This is the disk you will be assigning Persistent Volumes to K3s from.
   #diskno='' #This is the amount of persistent volumes to be created, keep in mind that there is no consumption controll (they share the same disk).
@@ -89,10 +89,10 @@
       if [[ -z "${VALUE}" ]]; then
         echo "Name: ${NAME}"
         printf "Value: ${Red}${NAME} is undefined\n${Color_Off}"
-    	echo "Description: ${DESC}"
-    	printf ${White}"=%.0s"  $(seq 1 100)${Color_Off}
-    	printf "\n${Color_Off}"
-    	k3missingvars+=( "k3var_$(expr $i + 1)[@]" )
+      echo "Description: ${DESC}"
+      printf ${White}"=%.0s"  $(seq 1 100)${Color_Off}
+      printf "\n${Color_Off}"
+      k3missingvars+=( "k3var_$(expr $i + 1)[@]" )
       fi
     done
 
@@ -131,17 +131,17 @@
     DESC=${!k3vars[i]:2:1}
 
     if [[ -z "${VALUE}" ]]; then
-  	echo "Name: ${NAME}"
+      echo "Name: ${NAME}"
       printf "Value: ${Red}${NAME} is undefined\n${Color_Off}"
-  	echo "Description: ${DESC}"
-  	printf ${White}"=%.0s"  $(seq 1 100)${Color_Off}
-  	printf "\n${Color_Off}"
+      echo "Description: ${DESC}"
+      printf ${White}"=%.0s"  $(seq 1 100)${Color_Off}
+      printf "\n${Color_Off}"
     else
       printf "Name: ${Cyan}${NAME}\n${Color_Off}"
       printf "Value: ${Green}${VALUE}\n${Color_Off}"
-  	printf "Description: ${White}${DESC}\n${Color_Off}"
-  	printf ${Blue}"=%.0s"  $(seq 1 100) \n
-  	printf "\n${Color_Off}"
+      printf "Description: ${White}${DESC}\n${Color_Off}"
+      printf ${Blue}"=%.0s"  $(seq 1 100) \n
+      printf "\n${Color_Off}"
     fi
   done
 
@@ -225,25 +225,25 @@
 
 #Wait for K3s to be Ready
 
-	title="Waiting for K3s to be Ready"
-	print_title
+  title="Waiting for K3s to be Ready"
+  print_title
 
-	k3spods=$(kubectl get pods -n kube-system -o 'jsonpath={..metadata.name}')
-	IFS='/ ' read -r -a k3spods <<< "$k3spods"
+  k3spods=$(kubectl get pods -n kube-system -o 'jsonpath={..metadata.name}')
+  IFS='/ ' read -r -a k3spods <<< "$k3spods"
 
   #wait for there to be 4 pods in the kube-system namespace
-	while [ ${#k3spods[@]} -ne 4 ]
-	do
-		k3spods=$(kubectl get pods -n kube-system -o 'jsonpath={..metadata.name}')
-		IFS='/ ' read -r -a k3spods <<< "$k3spods"
-	done
+  while [ ${#k3spods[@]} -ne 4 ]
+  do
+    k3spods=$(kubectl get pods -n kube-system -o 'jsonpath={..metadata.name}')
+    IFS='/ ' read -r -a k3spods <<< "$k3spods"
+  done
 
   #wait for those 4 pods to be in a ready state
-	for i in "${k3spods[@]}"; do
-		kubectl wait --for=condition=Ready pod/${i}
-	done
+  for i in "${k3spods[@]}"; do
+    kubectl wait --for=condition=Ready pod/${i}
+  done
 
-	printf "${Green}Done\n${Color_Off}"
+  printf "${Green}Done\n${Color_Off}"
 
 #Install Helm
 
@@ -271,25 +271,25 @@
 
 #Wait for NGINX Ingresss Controller to be Ready
 
-	title="Waiting for NGINX Ingress Controller to be Ready"
-	print_title
+  title="Waiting for NGINX Ingress Controller to be Ready"
+  print_title
 
-	nginxingpods=$(kubectl get pods -n ${ingns} -o 'jsonpath={..metadata.name}')
-	IFS='/ ' read -r -a nginxingpods <<< "$nginxingpods"
+  nginxingpods=$(kubectl get pods -n ${ingns} -o 'jsonpath={..metadata.name}')
+  IFS='/ ' read -r -a nginxingpods <<< "$nginxingpods"
 
   #wait for there to be 1 pod in the NGINX Ingress Controller namespace
-	while [ ${#nginxingpods[@]} -ne 1 ]
-	do
-		nginxingpods=$(kubectl get pods -n ${ingns} -o 'jsonpath={..metadata.name}')
-	  IFS='/ ' read -r -a nginxingpods <<< "$nginxingpods"
-	done
+  while [ ${#nginxingpods[@]} -ne 1 ]
+  do
+    nginxingpods=$(kubectl get pods -n ${ingns} -o 'jsonpath={..metadata.name}')
+    IFS='/ ' read -r -a nginxingpods <<< "$nginxingpods"
+  done
 
   #wait for that 1 pod to be in a ready state
-	for i in "${nginxingpods[@]}"; do
-		kubectl wait --for=condition=Ready pod/${i}
-	done
+  for i in "${nginxingpods[@]}"; do
+    kubectl wait --for=condition=Ready pod/${i}
+  done
 
-	printf "${Green}Done\n${Color_Off}"
+  printf "${Green}Done\n${Color_Off}"
 
 #Install Cert Manager
 
@@ -305,25 +305,25 @@
 
 #Wait for Cert Manager to be Ready
 
-	title="Waiting for Cert Manager to be Ready"
-	print_title
+  title="Waiting for Cert Manager to be Ready"
+  print_title
 
-	certmgrpods=$(kubectl get pods -n cert-manager -o 'jsonpath={..metadata.name}')
-	IFS='/ ' read -r -a certmgrpods <<< "$certmgrpods"
+  certmgrpods=$(kubectl get pods -n cert-manager -o 'jsonpath={..metadata.name}')
+  IFS='/ ' read -r -a certmgrpods <<< "$certmgrpods"
 
   #wait for there to be 3 pods in the cert-manager namespace
-	while [ ${#certmgrpods[@]} -ne 3 ]
-	do
-		certmgrpods=$(kubectl get pods -n cert-manager -o 'jsonpath={..metadata.name}')
-		IFS='/ ' read -r -a certmgrpods <<< "$certmgrpods"
-	done
+  while [ ${#certmgrpods[@]} -ne 3 ]
+  do
+    certmgrpods=$(kubectl get pods -n cert-manager -o 'jsonpath={..metadata.name}')
+    IFS='/ ' read -r -a certmgrpods <<< "$certmgrpods"
+  done
 
   #wait for those 3 pods to be in a ready state
-	for i in "${certmgrpods[@]}"; do
-		kubectl wait --for=condition=Ready pod/${i}
-	done
+  for i in "${certmgrpods[@]}"; do
+    kubectl wait --for=condition=Ready pod/${i}
+  done
 
-	printf "${Green}Done\n${Color_Off}"
+  printf "${Green}Done\n${Color_Off}"
 
 #Update File 'cloudflare-secret.yml'
 
@@ -387,25 +387,25 @@
 
 #Wait for Kubernetes Dashboard to be Ready
 
-	title="Waiting for Kubernetes Dashboard to be Ready"
-	print_title
+  title="Waiting for Kubernetes Dashboard to be Ready"
+  print_title
 
-	k3sdashpods=$(kubectl get pods -n kubernetes-dashboard -o 'jsonpath={..metadata.name}')
-	IFS='/ ' read -r -a k3sdashpods <<< "$k3sdashpods"
+  k3sdashpods=$(kubectl get pods -n kubernetes-dashboard -o 'jsonpath={..metadata.name}')
+  IFS='/ ' read -r -a k3sdashpods <<< "$k3sdashpods"
 
   #wait for there to be 3 pods in the kubernetes-dashboard namespace
-	while [ ${#k3sdashpods[@]} -ne 2 ]
-	do
-		k3sdashpods=$(kubectl get pods -n kubernetes-dashboard -o 'jsonpath={..metadata.name}')
-	  IFS='/ ' read -r -a k3sdashpods <<< "$k3sdashpods"
-	done
+  while [ ${#k3sdashpods[@]} -ne 2 ]
+  do
+    k3sdashpods=$(kubectl get pods -n kubernetes-dashboard -o 'jsonpath={..metadata.name}')
+    IFS='/ ' read -r -a k3sdashpods <<< "$k3sdashpods"
+  done
 
   #wait for those 2 pods to be in a ready state
-	for i in "${k3sdashpods[@]}"; do
-		kubectl wait --for=condition=Ready pod/${i}
-	done
+  for i in "${k3sdashpods[@]}"; do
+    kubectl wait --for=condition=Ready pod/${i}
+  done
 
-	printf "${Green}Done\n${Color_Off}"
+  printf "${Green}Done\n${Color_Off}"
 
 #Provision Storage
 
@@ -418,38 +418,38 @@
 
 #Wait for Persistent Volumes to be Ready
 
-	title="Waiting for Persistent Volumes to be Ready"
-	print_title
+  title="Waiting for Persistent Volumes to be Ready"
+  print_title
 
-	k3spv=$(kubectl get pv -o 'jsonpath={..metadata.name}')
-	IFS='/ ' read -r -a k3spv <<< "$k3spv"
+  k3spv=$(kubectl get pv -o 'jsonpath={..metadata.name}')
+  IFS='/ ' read -r -a k3spv <<< "$k3spv"
 
   #wait for there to be $diskno Persistent Volumes Provisioned
-	while [ ${#k3spv[@]} -ne ${diskno} ]
-	do
-		k3spv=$(kubectl get pv -o 'jsonpath={..metadata.name}')
-	  IFS='/ ' read -r -a k3spv <<< "$k3spv"
-	done
+  while [ ${#k3spv[@]} -ne ${diskno} ]
+  do
+    k3spv=$(kubectl get pv -o 'jsonpath={..metadata.name}')
+    IFS='/ ' read -r -a k3spv <<< "$k3spv"
+  done
 
   #wait for those $diskno Persistent Volumes to be in a Available state
-	
+  
   pvstat=$(kubectl get pv -o 'jsonpath={..status.phase}')
   IFS='/ ' read -r -a pvstat <<< "$pvstat"
 
   for i in "${pvstat[@]}"; do
-		while [ "$i" != "Available" ]
-	  do
-	  	pvstat=$(kubectl get pv -o 'jsonpath={..status.phase}')
-	    IFS='/ ' read -r -a pvstat <<< "$pvstat"
-	  done
-	done
+    while [ "$i" != "Available" ]
+    do
+      pvstat=$(kubectl get pv -o 'jsonpath={..status.phase}')
+      IFS='/ ' read -r -a pvstat <<< "$pvstat"
+    done
+  done
 
-	printf "${Green}Done\n${Color_Off}"
+  printf "${Green}Done\n${Color_Off}"
 
 #Deployment Complete Message to User
 
   title="Deployment Complete"
-	print_title
+  print_title
 
   printf "${Green}CONGRATULATIONS!!! K3s has been successfully deployed.\n${Color_Off}"
   printf "${Green}Your K3s Dashboard is now available @ ${Cyan} https://${dashdns}.${domain}\n${Color_Off}"
