@@ -1,0 +1,20 @@
+nautobot:
+  replicaCount: 1  # In production this should be >= 2
+  metrics: true
+  #secretKey: ""  # In a production system this value should be recorded and used when restoring the DB if necessary
+  #superUser:
+  #  enabled: false  # In production a superuser should be created manually
+  extraVars:
+    - name: "BANNER_TOP"
+      value: "Production"
+  allowedHosts: "*"
+
+postgresql:
+  enabled: true
+  storageClass: local-storage
+  postgresqlPassword: ""
+
+redis:
+  enabled: true  # Consider utilizing an external HA redis rather than the built-in redis
+  auth:
+    password: ""
