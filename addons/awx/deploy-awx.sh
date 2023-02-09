@@ -231,7 +231,7 @@
 
 #Deployment of AWX complete
 
-	title="ASX Deployment Complete"
+	title="AWX Deployment Complete"
 	print_title
 
 	pass=$(kubectl get secret awx-admin-password -o jsonpath="{.data.password}" | base64 --decode)
