@@ -9,12 +9,21 @@ nautobot:
       value: "Production"
   allowedHosts: "*"
 
+  # ingress
+  ingress_type: ingress
+  hostname: nautosubd.domain
+  ingress_annotations: |
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: prod-issuer
+  ingress_path: /
+  ingress_tls_secret: tls-domain-nauto
+
 postgresql:
   enabled: true
   storageClass: local-storage
-  postgresqlPassword: ""
+  postgresqlPassword: "nautopsqlpw"
 
 redis:
   enabled: true  # Consider utilizing an external HA redis rather than the built-in redis
   auth:
-    password: ""
+    password: "nautoredispw"
