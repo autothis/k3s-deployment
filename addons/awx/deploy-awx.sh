@@ -98,11 +98,10 @@
 			VALUE=${!awxmissingvars[i]:1:1}
 			DESC=${!awxmissingvars[i]:2:1}
 
-			read -p "Would you like to provide a value for $NAME? " -r
-			echo		# (optional) move to a new line
-			if [[ $REPLY =~ ^[Yy]$ ]]; then
-				read -p "Enter value for $NAME: " $NAME
-			fi
+			printf "${Yellow}No value provided for '${NAME}'\n${Color_Off}"
+            printf "$DESC\n"
+            read -p "$(printf "${Cyan}Provide a value for '${NAME}': ${Green}")" $NAME
+            printf "${Color_Off}"
 		done
 
 	printf "${Green}Done\n${Color_Off}"
@@ -139,6 +138,21 @@
 	done
 
 	printf "${Green}Done\n${Color_Off}"
+
+#Confirm Variables before Deployment
+
+  read -p "$(printf "${Yellow}Would you like to proceed with deployment, based on the variables listed above? [y/N] ${Color_Off}")" -r
+  if [[ $REPLY =~ ^([yY][eE][sS]|[yY])$ ]]
+  then
+    printf "${Green}Proceeding with provided variables...\n${Color_Off}"
+  elif [[ $REPLY =~ ^([nN][oO]|[nN])$ ]]
+  then
+    printf "${Red}You have chosen not to proceed, exiting...\n${Color_Off}"
+    exit
+  else
+    printf "${Red}You have provided an invaild answer, exiting...\n${Color_Off}"
+    exit
+  fi
 
 #Create 'kustomization.yaml' file.
 
@@ -231,7 +245,7 @@
 
 #Deployment of AWX complete
 
-	title="ASX Deployment Complete"
+	title="AWX Deployment Complete"
 	print_title
 
 	pass=$(kubectl get secret awx-admin-password -n ${awxns} -o jsonpath="{.data.password}" | base64 --decode)
