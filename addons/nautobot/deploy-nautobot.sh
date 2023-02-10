@@ -169,7 +169,7 @@
 	
 	#wait for those 6 pods to be in a ready state
 	for i in "${nautopods[@]}"; do
-		kubectl wait -n ${nautons} --for=condition=Ready pod/${i}
+		kubectl wait -n ${nautons} --for=condition=Ready pod/${i} --timeout=300s
 	done
 
 	printf "${Green}Done\n${Color_Off}"
@@ -183,7 +183,7 @@
 	awxcert=$(kubectl get certificate -n ${nautons} -o 'jsonpath={..metadata.name}')
 	IFS='/ ' read -r -a nautocert <<< "$nautocert"
 	for i in "${nautocert[@]}"; do
-		kubectl wait -n ${nautons} --for=condition=Ready certificate/${i}
+		kubectl wait -n ${nautons} --for=condition=Ready certificate/${i} --timeout=300s
 	done
 
 	printf "${Green}Done\n${Color_Off}"
