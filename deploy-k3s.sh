@@ -96,10 +96,10 @@
       if [[ -z "${VALUE}" ]]; then
         echo "Name: ${NAME}"
         printf "Value: ${Red}${NAME} is undefined\n${Color_Off}"
-      echo "Description: ${DESC}"
-      printf ${White}"=%.0s"  $(seq 1 100)${Color_Off}
-      printf "\n${Color_Off}"
-      k3missingvars+=( "k3var_$(expr $i + 1)[@]" )
+        echo "Description: ${DESC}"
+        printf ${White}"=%.0s"  $(seq 1 100)${Color_Off}
+        printf "\n${Color_Off}"
+        k3missingvars+=( "k3var_$(expr $i + 1)[@]" )
       fi
     done
 
@@ -112,10 +112,10 @@
       VALUE=${!k3missingvars[i]:1:1}
       DESC=${!k3missingvars[i]:2:1}
 
-      printf "${Yellow}No value provided for '${NAME}':\n${Color_Off}"
+      printf "${Yellow}No value provided for '${NAME}'\n${Color_Off}"
       printf "$DESC\n"
-      read -p "Provide a value for '$NAME'? " -r
-      read -p "Enter value for $NAME: " $NAME
+      read -p "$(printf "${Cyan}Provide a value for '${NAME}': ${Green}")" $NAME
+      printf "${Color_Off}"
     done
 
 # Update K3 Variables
@@ -152,11 +152,16 @@
 
 #Confirm Variables before Deployment
 
-  printf "${Red}Would you like to proceed with deployment, based on the variables listed above?\n${Color_Off}"
-  if [[ $REPLY =~ ^[Yy]$ ]]
+  read -p "$(printf "${Yellow}Would you like to proceed with deployment, based on the variables listed above? [y/N] ${Color_Off}")" -r
+  if [[ $REPLY =~ ^([yY][eE][sS]|[yY])$ ]]
   then
-    #Do nothing and proceed.
-    else
+    printf "${Green}Proceeding with provided variables...\n${Color_Off}"
+  elif [[ $REPLY =~ ^([nN][oO]|[nN])$ ]]
+  then
+    printf "${Red}You have chosen not to proceed, exiting...\n${Color_Off}"
+    exit
+  else
+    printf "${Red}You have provided an invaild answer, exiting...\n${Color_Off}"
     exit
   fi
 
