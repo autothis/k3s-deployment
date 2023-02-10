@@ -169,7 +169,7 @@
 	
 	#wait for those 6 pods to be in a ready state
 	for i in "${nautopods[@]}"; do
-		kubectl wait --for=condition=Ready pod/${i}
+		kubectl wait -n ${nautons} --for=condition=Ready pod/${i}
 	done
 
 	printf "${Green}Done\n${Color_Off}"
@@ -183,7 +183,7 @@
 	awxcert=$(kubectl get certificate -n ${nautons} -o 'jsonpath={..metadata.name}')
 	IFS='/ ' read -r -a nautocert <<< "$nautocert"
 	for i in "${nautocert[@]}"; do
-		kubectl wait --for=condition=Ready certificate/${i}
+		kubectl wait -n ${nautons} --for=condition=Ready certificate/${i}
 	done
 
 	printf "${Green}Done\n${Color_Off}"
@@ -193,10 +193,10 @@
 	title="Nautobot Deployment Complete"
 	print_title
 
-!TODO #1	#pass=$(kubectl get secret nautobot-admin-password -o jsonpath="{.data.password}" | base64 --decode)
+	pass=$(kubectl get secret --namespace nautobot nautobot-env -o jsonpath="{.data.NAUTOBOT_SUPERUSER_PASSWORD}" | base64 --decode)
 	
 	printf "${Green}You can now access your Nautobot Dashboard at https://${nautosubd}.${domain}\n${Color_Off}"
 	printf "${Green}Username: admin\n${Color_Off}"
-!TODO #2	#printf "${Green}Password: ${pass}\n${Color_Off}"
+	printf "${Green}Password: ${pass}\n${Color_Off}"
 	
 	pass=
