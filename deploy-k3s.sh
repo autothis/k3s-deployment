@@ -232,7 +232,7 @@
   IFS='/ ' read -r -a k3spods <<< "$k3spods"
 
   #wait for there to be 4 pods in the kube-system namespace
-  while [ ${#k3spods[@]} -ne 4 ]
+  while [ ${#k3spods[@]} -ne 3 ]
   do
     k3spods=$(kubectl get pods -n kube-system -o 'jsonpath={..metadata.name}')
     IFS='/ ' read -r -a k3spods <<< "$k3spods"
