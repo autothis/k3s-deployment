@@ -79,7 +79,7 @@
 	awxpods=$(kubectl get pods -n awx -o 'jsonpath={..metadata.name}')
 	IFS='/ ' read -r -a awxpods <<< "$awxpods"
 	for i in "${awxpods[@]}"; do
-		kubectl wait --for=condition=Ready pod/${i}
+		kubectl wait -n awx --for=condition=Ready pod/${i}
 	done
 
 	printf "${Green}Done\n${Color_Off}"
