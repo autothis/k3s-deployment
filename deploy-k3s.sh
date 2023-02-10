@@ -240,7 +240,7 @@
 
   #wait for those 4 pods to be in a ready state
   for i in "${k3spods[@]}"; do
-    kubectl wait --for=condition=Ready pod/${i}
+    kubectl wait --for=condition=Ready pod/${i} --timeout=300s
   done
 
   printf "${Green}Done\n${Color_Off}"
@@ -286,7 +286,7 @@
 
   #wait for that 1 pod to be in a ready state
   for i in "${nginxingpods[@]}"; do
-    kubectl wait -n ${ingns} --for=condition=Ready pod/${i}
+    kubectl wait -n ${ingns} --for=condition=Ready pod/${i} --timeout=300s
   done
 
   printf "${Green}Done\n${Color_Off}"
@@ -320,7 +320,7 @@
 
   #wait for those 3 pods to be in a ready state
   for i in "${certmgrpods[@]}"; do
-    kubectl wait -n cert-manager --for=condition=Ready pod/${i}
+    kubectl wait -n cert-manager --for=condition=Ready pod/${i} --timeout=300s
   done
 
   printf "${Green}Done\n${Color_Off}"
@@ -402,7 +402,7 @@
 
   #wait for those 2 pods to be in a ready state
   for i in "${k3sdashpods[@]}"; do
-    kubectl wait -n kubernetes-dashboard --for=condition=Ready pod/${i}
+    kubectl wait -n kubernetes-dashboard --for=condition=Ready pod/${i} --timeout=300s
   done
 
   printf "${Green}Done\n${Color_Off}"
