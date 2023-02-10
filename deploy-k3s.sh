@@ -72,6 +72,13 @@
   set_k3vars
   k3missingvars=()
 
+#Print Local Disk Table
+
+  title="Local Disk Table"
+  print_title
+
+  lsblk -f
+
 #Missing Variables
 
   title="Looking for missing K3s Deployment Variables"
@@ -105,12 +112,10 @@
       VALUE=${!k3missingvars[i]:1:1}
       DESC=${!k3missingvars[i]:2:1}
 
-      read -p "Would you like to provide a value for $NAME? " -r
-      echo    # (optional) move to a new line
-      if [[ $REPLY =~ ^[Yy]$ ]]
-      then
-          read -p "Enter value for $NAME: " $NAME
-      fi
+      printf "${Yellow}No value provided for '${NAME}':\n${Color_Off}"
+      printf "$DESC\n"
+      read -p "Provide a value for '$NAME'? " -r
+      read -p "Enter value for $NAME: " $NAME
     done
 
 # Update K3 Variables
@@ -144,6 +149,16 @@
       printf "\n${Color_Off}"
     fi
   done
+
+#Confirm Variables before Deployment
+
+  printf "${Red}Would you like to proceed with deployment, based on the variables listed above?\n${Color_Off}"
+  if [[ $REPLY =~ ^[Yy]$ ]]
+  then
+    #Do nothing and proceed.
+    else
+    exit
+  fi
 
 #Install Prerequisites
 
