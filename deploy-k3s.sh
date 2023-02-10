@@ -17,7 +17,7 @@
 
     # Define k3var array containing required variables for K3s deployment
     k3var_1=("k3dsk" "$k3dsk" "This is the disk you will be assigning Persistent Volumes to K3s from e.g. '/dev/sdb'")
-    k3var_2=("diskno" "$diskno" "This is the amount of persistent volumes to be created, keep in mind that there is no consumption controll [they share the same disk, only isolated by folder structure] e.g. '4'")
+    k3var_2=("diskno" "$diskno" "This is the amount of persistent volumes to be created e.g. '4'")
     k3var_3=("dashdns" "$dashdns" "This is the subdomain that will be used to serve your Kubernetes Dashboard. e.g. 'k3s' will become k3s.yourdomain.com")
     k3var_4=("ingns" "$ingns" "This is the namespace that the NGINX ingress will be deployed to e.g. 'kubernetes-ingress'")
     k3var_5=("ingname" "$ingname" "This is the name prepended to the nginx-ingress pod name e.g. 'primary'")
@@ -40,10 +40,10 @@
 
   print_title () {
 
-    printf ${Yellow}"#%.0s"  $(seq 1 100)
+    printf ${Yellow}"#%.0s"  $(seq 1 150)
     printf "\n"
     printf "$title \n"
-    printf "#%.0s"  $(seq 1 100)
+    printf "#%.0s"  $(seq 1 150)
     printf "\n"${Color_Off}
 
   }
@@ -97,7 +97,7 @@
         echo "Name: ${NAME}"
         printf "Value: ${Red}${NAME} is undefined\n${Color_Off}"
         echo "Description: ${DESC}"
-        printf ${White}"=%.0s"  $(seq 1 100)${Color_Off}
+        printf ${White}"=%.0s"  $(seq 1 150)${Color_Off}
         printf "\n${Color_Off}"
         k3missingvars+=( "k3var_$(expr $i + 1)[@]" )
       fi
@@ -139,13 +139,13 @@
       echo "Name: ${NAME}"
       printf "Value: ${Red}${NAME} is undefined\n${Color_Off}"
       echo "Description: ${DESC}"
-      printf ${White}"=%.0s"  $(seq 1 100)${Color_Off}
+      printf ${White}"=%.0s"  $(seq 1 150)${Color_Off}
       printf "\n${Color_Off}"
     else
       printf "Name: ${Cyan}${NAME}\n${Color_Off}"
       printf "Value: ${Green}${VALUE}\n${Color_Off}"
       printf "Description: ${White}${DESC}\n${Color_Off}"
-      printf ${Blue}"=%.0s"  $(seq 1 100) \n
+      printf ${Blue}"=%.0s"  $(seq 1 150) \n
       printf "\n${Color_Off}"
     fi
   done
