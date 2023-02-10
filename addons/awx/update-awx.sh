@@ -78,8 +78,17 @@
 
 	awxpods=$(kubectl get pods -n awx -o 'jsonpath={..metadata.name}')
 	IFS='/ ' read -r -a awxpods <<< "$awxpods"
+
+	#wait for there to be 3 pods in the AWX namespace
+	while [ ${#awxpods[@]} -ne 3 ]
+	do
+		awxpods=$(kubectl get pods -n awx -o 'jsonpath={..metadata.name}')
+		IFS='/ ' read -r -a awxpods <<< "$awxpods"
+	done
+	
+	#wait for those 3 pods to be in a ready state
 	for i in "${awxpods[@]}"; do
-		kubectl wait -n awx --for=condition=Ready pod/${i}
+		kubectl wait -n awx --for=condition=Ready pod/${i} --timeout=300s
 	done
 
 	printf "${Green}Done\n${Color_Off}"
