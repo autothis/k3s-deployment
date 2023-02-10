@@ -178,7 +178,7 @@
 	awxpods=$(kubectl get pods -n ${awxns} -o 'jsonpath={..metadata.name}')
 	IFS='/ ' read -r -a awxpods <<< "$awxpods"
 	for i in "${awxpods[@]}"; do
-		kubectl wait --for=condition=Ready pod/${i}
+		kubectl wait -n ${awxns} --for=condition=Ready pod/${i}
 	done
 
 	printf "${Green}Done\n${Color_Off}"
@@ -211,7 +211,7 @@
 	
 	#wait for those 3 pods to be in a ready state
 	for i in "${awxpods[@]}"; do
-		kubectl wait --for=condition=Ready pod/${i}
+		kubectl wait -n ${awxns} --for=condition=Ready pod/${i}
 	done
 
 	printf "${Green}Done\n${Color_Off}"
@@ -224,7 +224,7 @@
 	awxcert=$(kubectl get certificate -n ${awxns} -o 'jsonpath={..metadata.name}')
 	IFS='/ ' read -r -a awxcert <<< "$awxcert"
 	for i in "${awxcert[@]}"; do
-		kubectl wait --for=condition=Ready certificate/${i}
+		kubectl wait -n ${awxns} --for=condition=Ready certificate/${i}
 	done
 
 	printf "${Green}Done\n${Color_Off}"
