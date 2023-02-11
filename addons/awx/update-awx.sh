@@ -45,7 +45,19 @@
 	print_title
 
 	# Get AWX namespace from the 'kustomization.yaml' file
-	awxns=awk '/namespace: /{print $NF}' kustomization.yaml
+	awxns=$(awk '/namespace: /{print $NF}' kustomization.yaml)
+
+	printf "The AWX Namespace: ${Cyan}${awxns}\n${Color_Off}"
+
+	printf "${Green}Done\n${Color_Off}"
+
+# Get AWX URL
+
+	title="Getting latest AWX Version Number"
+	print_title
+
+	# Get AWX namespace from the 'awx.yaml' file
+	awxurl=$(awk '/hostname: /{print $NF}' awx.yaml)
 
 	printf "The AWX Namespace: ${Cyan}${awxns}\n${Color_Off}"
 
@@ -134,7 +146,7 @@
 	pass=$(kubectl get secret awx-admin-password -n ${awxns} -o jsonpath="{.data.password}" | base64 --decode)
 	
 	# Print AWX Details to screen for user
-	printf "${Green}You can now access your AWX Dashboard at https://${awxsubd}.${domain}\n${Color_Off}"
+	printf "${Green}You can now access your AWX Dashboard at https://${awxurl}\n${Color_Off}"
 	printf "${Green}Username: super\n${Color_Off}"
 	printf "${Green}Password: ${pass}\n${Color_Off}"
 	
