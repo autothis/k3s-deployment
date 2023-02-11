@@ -1,17 +1,17 @@
 #!/bin/bash
 
-#Define variables for K3s deployment (uncomment lines, and populate variables - not required if using other methods of variables population).
+# Define variables for K3s deployment (uncomment lines, and populate variables - not required if using other methods of variables population).
 
-  #k3dsk='' #This is the disk you will be assigning Persistent Volumes to K3s from.
-  #diskno='' #This is the amount of persistent volumes to be created, keep in mind that there is no consumption controll (they share the same disk).
-  #dashdns='' #This is the subdomain that will be used to serve your Kubernetes Dashboard.
-  #ingns='' #This is the namespace that the NGINX ingress will be deployed to.
-  #ingname='' #This is the name prepended to the nginx-ingress pod name.
-  #cftoken='' #This is the cloudflare token to be used by cert-manager.
-  #cfemail='' #This is the email address that will be associated with your LetsEncrypt certificates e.g. 'youremailaddress@here.com'.
-  #domain='' #This is the domain that your services will be available on e.g. 'yourdomain.com'.
+#k3dsk='' #This is the disk you will be assigning Persistent Volumes to K3s from.
+#diskno='' #This is the amount of persistent volumes to be created, keep in mind that there is no consumption controll (they share the same disk).
+#dashdns='' #This is the subdomain that will be used to serve your Kubernetes Dashboard.
+#ingns='' #This is the namespace that the NGINX ingress will be deployed to.
+#ingname='' #This is the name prepended to the nginx-ingress pod name.
+#cftoken='' #This is the cloudflare token to be used by cert-manager.
+#cfemail='' #This is the email address that will be associated with your LetsEncrypt certificates e.g. 'youremailaddress@here.com'.
+#domain='' #This is the domain that your services will be available on e.g. 'yourdomain.com'.
 
-#Create Functions
+# Create Functions
 
   set_k3vars () {
 
@@ -40,15 +40,14 @@
 
   print_title () {
 
-    printf ${Yellow}"#%.0s"  $(seq 1 150)
+    printf ${Yellow}"#%.0s"  $(seq 1 ${break})
     printf "\n"
     printf "$title \n"
-    printf "#%.0s"  $(seq 1 150)
+    printf "#%.0s"  $(seq 1 ${break})
     printf "\n"${Color_Off}
-
   }
 
-#Define Output Colours
+# Define Output Colours
 
   # Reset
   Color_Off='\033[0m'       # Text Reset
@@ -67,19 +66,27 @@
 
   k3sdeploypath=$(pwd)
 
+# Timeout in seconds
+
+  timeout=300
+
+# Break width '='
+
+  break=150
+
 # Set K3 Variables
 
   set_k3vars
   k3missingvars=()
 
-#Print Local Disk Table
+# Print Local Disk Table
 
   title="Local Disk Table"
   print_title
 
   lsblk -f
 
-#Missing Variables
+# Missing Variables
 
   title="Looking for missing K3s Deployment Variables"
   print_title
@@ -97,7 +104,7 @@
         echo "Name: ${NAME}"
         printf "Value: ${Red}${NAME} is undefined\n${Color_Off}"
         echo "Description: ${DESC}"
-        printf ${White}"=%.0s"  $(seq 1 150)${Color_Off}
+        printf ${White}"=%.0s"  $(seq 1 ${break})${Color_Off}
         printf "\n${Color_Off}"
         k3missingvars+=( "k3var_$(expr $i + 1)[@]" )
       fi
@@ -139,18 +146,18 @@
       echo "Name: ${NAME}"
       printf "Value: ${Red}${NAME} is undefined\n${Color_Off}"
       echo "Description: ${DESC}"
-      printf ${White}"=%.0s"  $(seq 1 150)${Color_Off}
+      printf ${White}"=%.0s"  $(seq 1 ${break})${Color_Off}
       printf "\n${Color_Off}"
     else
       printf "Name: ${Cyan}${NAME}\n${Color_Off}"
       printf "Value: ${Green}${VALUE}\n${Color_Off}"
       printf "Description: ${White}${DESC}\n${Color_Off}"
-      printf ${Blue}"=%.0s"  $(seq 1 150) \n
+      printf ${Blue}"=%.0s"  $(seq 1 ${break}) \n
       printf "\n${Color_Off}"
     fi
   done
 
-#Confirm Variables before Deployment
+# Confirm Variables before Deployment
 
   read -p "$(printf "${Yellow}Would you like to proceed with deployment, based on the variables listed above? [y/N] ${Color_Off}")" -r
   if [[ $REPLY =~ ^([yY][eE][sS]|[yY])$ ]]
@@ -165,7 +172,7 @@
     exit
   fi
 
-#Install Prerequisites
+# Install Prerequisites
 
   title="Installing Prerequisites"
   print_title
@@ -174,7 +181,7 @@
 
   printf "${Green}Done\n${Color_Off}"
 
-#Install Kustomize
+# Install Kustomize
 
   title="Installing Kustomize"
   print_title
@@ -185,7 +192,7 @@
 
   printf "${Green}Done\n${Color_Off}"
 
-#Update Profiles
+# Update Profiles
 
   title="Updating User Profile"
   print_title
@@ -198,7 +205,7 @@
 
   printf "${Green}Done\n${Color_Off}"
 
-#Disable SWAP
+# Disable SWAP
 
   title="Disabling SWAP"
   print_title
@@ -209,7 +216,7 @@
 
   printf "${Green}Done\n${Color_Off}"
 
-#Configure Secondary Disk
+# Configure Secondary Disk
 
   title="Configuring Secondary Disk for K3s Persistent Volumes"
   print_title
@@ -232,7 +239,7 @@
 
   printf "${Green}Done\n${Color_Off}"
 
-#Install K3s
+# Install K3s
 
   title="Installing K3s (without Traefik)"
   print_title
@@ -243,7 +250,7 @@
 
   printf "${Green}Done\n${Color_Off}"
 
-#Wait for K3s to be Ready
+# Wait for K3s to be Ready
 
   title="Waiting for K3s to be Ready"
   print_title
@@ -251,21 +258,33 @@
   k3spods=$(kubectl get pods -n kube-system -o 'jsonpath={..metadata.name}')
   IFS='/ ' read -r -a k3spods <<< "$k3spods"
 
-  #wait for there to be 4 pods in the kube-system namespace
+  # wait for there to be 4 pods in the kube-system namespace
   while [ ${#k3spods[@]} -ne 3 ]
   do
     k3spods=$(kubectl get pods -n kube-system -o 'jsonpath={..metadata.name}')
     IFS='/ ' read -r -a k3spods <<< "$k3spods"
   done
 
-  #wait for those 4 pods to be in a ready state
+  # wait for those 4 pods to be in a ready state
   for i in "${k3spods[@]}"; do
     kubectl wait --for=condition=Ready pod/${i} --timeout=300s
   done
 
+  # Wait for Kubernetes Health API to return 'ok' result
+  end=$(($SECONDS + $timeout))
+  while [ ${SECONDS} -le ${end} ]
+  do
+    if [[ ${k3status} != "ok" ]]
+    then
+      k3status=$(kubectl get --raw='/readyz?')
+    else
+      end=0
+    fi
+  done
+
   printf "${Green}Done\n${Color_Off}"
 
-#Install Helm
+# Install Helm
 
   title="Installing Helm"
   print_title
@@ -277,19 +296,19 @@
 
   printf "${Green}Done\n${Color_Off}"
 
-#Install NGINX Ingress Controller
+# Install NGINX Ingress Controller
 
   title="Installing NGINX Ingress Controller: ${ingname}-nginx-ingress in Namespace ${ingns}"
   print_title
 
-  #https://docs.nginx.com/nginx-ingress-controller/installation/installation-with-helm/
+  # https://docs.nginx.com/nginx-ingress-controller/installation/installation-with-helm/
   helm repo add nginx-stable https://helm.nginx.com/stable
   helm repo update
   helm install "$ingname" nginx-stable/nginx-ingress --namespace "$ingns" --create-namespace
 
   printf "${Green}Done\n${Color_Off}"
 
-#Wait for NGINX Ingresss Controller to be Ready
+# Wait for NGINX Ingresss Controller to be Ready
 
   title="Waiting for NGINX Ingress Controller to be Ready"
   print_title
@@ -297,33 +316,33 @@
   nginxingpods=$(kubectl get pods -n ${ingns} -o 'jsonpath={..metadata.name}')
   IFS='/ ' read -r -a nginxingpods <<< "$nginxingpods"
 
-  #wait for there to be 1 pod in the NGINX Ingress Controller namespace
+  # wait for there to be 1 pod in the NGINX Ingress Controller namespace
   while [ ${#nginxingpods[@]} -ne 1 ]
   do
     nginxingpods=$(kubectl get pods -n ${ingns} -o 'jsonpath={..metadata.name}')
     IFS='/ ' read -r -a nginxingpods <<< "$nginxingpods"
   done
 
-  #wait for that 1 pod to be in a ready state
+  # wait for that 1 pod to be in a ready state
   for i in "${nginxingpods[@]}"; do
     kubectl wait -n ${ingns} --for=condition=Ready pod/${i} --timeout=300s
   done
 
   printf "${Green}Done\n${Color_Off}"
 
-#Install Cert Manager
+# Install Cert Manager
 
   title="Installing Cert Manager in Namespace cert-manager"
   print_title
 
-  #https://www.nginx.com/blog/automating-certificate-management-in-a-kubernetes-environment/
+  # https://www.nginx.com/blog/automating-certificate-management-in-a-kubernetes-environment/
   helm repo add jetstack https://charts.jetstack.io
   helm repo update
   helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v1.9.1 --set installCRDs=true
 
   printf "${Green}Done\n${Color_Off}"
 
-#Wait for Cert Manager to be Ready
+# Wait for Cert Manager to be Ready
 
   title="Waiting for Cert Manager to be Ready"
   print_title
@@ -331,21 +350,21 @@
   certmgrpods=$(kubectl get pods -n cert-manager -o 'jsonpath={..metadata.name}')
   IFS='/ ' read -r -a certmgrpods <<< "$certmgrpods"
 
-  #wait for there to be 3 pods in the cert-manager namespace
+  # wait for there to be 3 pods in the cert-manager namespace
   while [ ${#certmgrpods[@]} -ne 3 ]
   do
     certmgrpods=$(kubectl get pods -n cert-manager -o 'jsonpath={..metadata.name}')
     IFS='/ ' read -r -a certmgrpods <<< "$certmgrpods"
   done
 
-  #wait for those 3 pods to be in a ready state
+  # wait for those 3 pods to be in a ready state
   for i in "${certmgrpods[@]}"; do
     kubectl wait -n cert-manager --for=condition=Ready pod/${i} --timeout=300s
   done
 
   printf "${Green}Done\n${Color_Off}"
 
-#Update File 'cloudflare-secret.yml'
+# Update File 'cloudflare-secret.yml'
 
   title="Updating file cloudflare-secret.yml with K3s Deployment Variables"
   print_title
@@ -354,7 +373,7 @@
 
   printf "${Green}Done\n${Color_Off}"
 
-#Create File 'cloudflare-dns-challenge.yml'
+# Create File 'cloudflare-dns-challenge.yml'
 
   title="Updating file cloudflare-dns-challenge.yml with K3s Deployment Variables"
   print_title
@@ -363,7 +382,7 @@
 
   printf "${Green}Done\n${Color_Off}"
 
-#Create Cloudflare Secret and DNS Challenge
+# Create Cloudflare Secret and DNS Challenge
 
   title="Creating Cloudflare Secret and DNS Challenge"
   print_title
@@ -373,7 +392,7 @@
 
   printf "${Green}Done\n${Color_Off}"
 
-#Create File 'kubernetes-dashboard.yml'
+# Create File 'kubernetes-dashboard.yml'
 
   title="Downloading file kubernetes-dashboard.yml"
   print_title
@@ -384,7 +403,7 @@
 
   printf "${Green}Done\n${Color_Off}"
 
-#Create File 'dashboard-ingress.yml'
+# Create File 'dashboard-ingress.yml'
 
   title="Updating file dashboard-ingress.yml with K3s Deployment Variables"
   print_title
@@ -394,7 +413,7 @@
 
   printf "${Green}Done\n${Color_Off}"
 
-#Create Dashboard, Dashboard User Admin, Admin Role, and Dashboard Ingress
+# Create Dashboard, Dashboard User Admin, Admin Role, and Dashboard Ingress
 
   title="Creating and configuring K3s Dashboard and associated roles, users and ingress"
   print_title
@@ -405,7 +424,7 @@
 
   printf "${Green}Done\n${Color_Off}"
 
-#Wait for Kubernetes Dashboard to be Ready
+# ait for Kubernetes Dashboard to be Ready
 
   title="Waiting for Kubernetes Dashboard to be Ready"
   print_title
@@ -413,21 +432,21 @@
   k3sdashpods=$(kubectl get pods -n kubernetes-dashboard -o 'jsonpath={..metadata.name}')
   IFS='/ ' read -r -a k3sdashpods <<< "$k3sdashpods"
 
-  #wait for there to be 3 pods in the kubernetes-dashboard namespace
+  # wait for there to be 3 pods in the kubernetes-dashboard namespace
   while [ ${#k3sdashpods[@]} -ne 2 ]
   do
     k3sdashpods=$(kubectl get pods -n kubernetes-dashboard -o 'jsonpath={..metadata.name}')
     IFS='/ ' read -r -a k3sdashpods <<< "$k3sdashpods"
   done
 
-  #wait for those 2 pods to be in a ready state
+  # wait for those 2 pods to be in a ready state
   for i in "${k3sdashpods[@]}"; do
     kubectl wait -n kubernetes-dashboard --for=condition=Ready pod/${i} --timeout=300s
   done
 
   printf "${Green}Done\n${Color_Off}"
 
-#Provision Storage
+# Provision Storage
 
   title="Creating Persistent Volume Provisioner"
   print_title
@@ -436,7 +455,7 @@
 
   printf "${Green}Done\n${Color_Off}"
 
-#Wait for Persistent Volumes to be Ready
+# Wait for Persistent Volumes to be Ready
 
   title="Waiting for Persistent Volumes to be Ready"
   print_title
@@ -444,14 +463,14 @@
   k3spv=$(kubectl get pv -o 'jsonpath={..metadata.name}')
   IFS='/ ' read -r -a k3spv <<< "$k3spv"
 
-  #wait for there to be $diskno Persistent Volumes Provisioned
+  # wait for there to be $diskno Persistent Volumes Provisioned
   while [ ${#k3spv[@]} -ne ${diskno} ]
   do
     k3spv=$(kubectl get pv -o 'jsonpath={..metadata.name}')
     IFS='/ ' read -r -a k3spv <<< "$k3spv"
   done
 
-  #wait for those $diskno Persistent Volumes to be in a Available state
+  # wait for those $diskno Persistent Volumes to be in a Available state
   
   pvstat=$(kubectl get pv -o 'jsonpath={..status.phase}')
   IFS='/ ' read -r -a pvstat <<< "$pvstat"
@@ -466,7 +485,7 @@
 
   printf "${Green}Done\n${Color_Off}"
 
-#Deployment Complete Message to User
+# Deployment Complete Message to User
 
   title="Deployment Complete"
   print_title
@@ -476,7 +495,7 @@
   printf "${Yellow}You will need to generate a token for authentication to the dashboard, you can use the aliased command ${Red}'admin' ${Yellow}to get one\n${Color_Off}"
   printf "${Green}Here is a token you can use right now (they do expire)\n${Color_Off}"
 
-  #Generating Dashboard Token
+  # Generating Dashboard Token
   k3stoken=$(kubectl -n kubernetes-dashboard create token admin-user)
 
   printf "${Purple}${k3stoken}\n${Color_Off}"
