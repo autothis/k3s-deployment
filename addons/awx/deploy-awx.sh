@@ -173,10 +173,11 @@
 	# Update 'kustomization.yaml' file with the latest AWX version number
 	sed -i -E "/ref/s/ref=.*/ref=${awxvers}/" kustomization.yaml
 	sed -i -E "/newTag/s/newTag: .*/newTag: ${awxvers}/" kustomization.yaml
+	sed -i "s/awxns/$awxns/g" kustomization.yaml
 
 	printf "${Green}Done\n${Color_Off}"
 
-#Create 'awx.yaml' file.
+# Create 'awx.yaml' file.
 
 	title="Creating 'awx.yaml' file"
 	print_title
