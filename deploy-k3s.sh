@@ -267,7 +267,7 @@
 
   # wait for those 4 pods to be in a ready state
   for i in "${k3spods[@]}"; do
-    kubectl wait --for=condition=Ready pod/${i} --timeout=300s
+    kubectl wait -n kube-system --for=condition=Ready pod/${i} --timeout=300s
   done
 
   # Wait for Kubernetes Health API to return 'ok' result
