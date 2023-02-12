@@ -274,9 +274,12 @@
 	AWX_PASSWORD=$(kubectl get secret awx-admin-password -n ${AWX_NAMESPACE} -o jsonpath="{.data.password}" | base64 --decode)
 	
 	# Print AWX Details to screen for user
-	printf "${GREEN}You can now access your AWX Dashboard at https://${AWX_SUBDOMAIN}.${DOMAIN}\n${COLOUR_OFF}"
-	printf "${GREEN}Username: super\n${COLOUR_OFF}"
-	printf "${GREEN}Password: ${AWX_PASSWORD}\n${COLOUR_OFF}"
-	
+	printf "${GREEN}You can now access your AWX Dashboard at ${CYAN}https://${AWX_SUBDOMAIN}.${DOMAIN}\n${COLOUR_OFF}"
+	printf "${GREEN}Username: ${CYAN}super\n${COLOUR_OFF}"
+	printf "${GREEN}Password: ${CYAN}${AWX_PASSWORD}\n${COLOUR_OFF}"
+
+	printf "${RED}NOTE: You may see some errors on the POSTGRES pod, or the 'awx-web' and 'awx-task' containers in the AWX pod.${CYAN}${AWX_PASSWORD}\n${COLOUR_OFF}"
+	printf "${RED}Be patient, give the system at least 10mins before you start deleting or restarting pods.\n${COLOUR_OFF}"
+
 	# Empty Password Variable
 	AWX_PASSWORD=
