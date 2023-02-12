@@ -424,7 +424,7 @@
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
 
-# ait for Kubernetes Dashboard to be Ready
+# Wait for Kubernetes Dashboard to be Ready
 
   TITLE="Waiting for Kubernetes Dashboard to be Ready"
   print_title
@@ -484,6 +484,20 @@
   done
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
+
+# Wait for Certificate to be assigned
+
+	TITLE="Waiting for K3s Dashboard Certificate to be Ready"
+	print_title
+
+	# Query Certificates status in the Kubernetes-Dashboard Namespace
+	K3S_DASHBOARD_CERTIFICATE=$(kubectl get certificate -n kubernetes-dashboard -o 'jsonpath={..metadata.name}')
+	IFS='/ ' read -r -a K3S_DASHBOARD_CERTIFICATE <<< "$K3S_DASHBOARD_CERTIFICATE"
+	for i in "${K3S_DASHBOARD_CERTIFICATE[@]}"; do
+		kubectl wait -n kubernetes-dashboard --for=condition=Ready certificate/${i} --timeout=${TIMEOUT}s
+	done
+
+	printf "${GREEN}Done\n${COLOUR_OFF}"
 
 # Deployment Complete Message to User
 

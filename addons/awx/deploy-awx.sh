@@ -251,7 +251,7 @@
 
 	printf "${GREEN}Done\n${COLOUR_OFF}"
 
-#Wait for Certificate to be assigned
+# Wait for Certificate to be assigned
 
 	TITLE="Waiting for AWX Certificate to be Ready"
 	print_title
