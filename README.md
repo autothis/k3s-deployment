@@ -52,4 +52,4 @@ Available Addons:
 
   See [addons](https://github.com/autothis/k3s-deployment/tree/main/addons) directory for installation instructions.
   
-   - [Ansible AWX](https://github.com/autothis/k3s-deployment/tree/main/addons/awx): AWX is an open source modern web UI and API to manage your organization's Ansible Playbook, Inventories, Ansible Vault, and Credentials.
+   - [Ansible AWX](https://github.com/autothis/k3s-deployment/tree/main/addons/awx): Open source web UI and API to manage Ansible Playbooks, Inventories, Ansible Vault, and Credentials.
