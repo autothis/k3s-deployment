@@ -2,222 +2,222 @@
 
 # Define variables for AWX deployment on K3s (uncomment lines, and populate variables - not required if using other methods of variable population).
 
-	#awxns='' #This is the namespace that AWX will be deployed to.
-	#awxvers='' #This is the version of AWX to be deployed, this variable will automatically populated.
-	#awxsubd='' #This is the subdomain that will be used to serve your AWX dashboard.
-	#domain='' #This is the domain that your services will be available on e.g. 'yourdomain.com'.
+	#AWX_NAMESPACE='' #This is the namespace that AWX will be deployed to.
+	#AWX_VERSION='' #This is the version of AWX to be deployed, this variable will automatically populated.
+	#AWX_SUBDOMAIN='' #This is the subdomain that will be used to serve your AWX dashboard.
+	#DOMAIN='' #This is the domain that your services will be available on e.g. 'yourdomain.com'.
 
 #Create Functions
 
-	set_awxvars () {
+	set_awxvariables () {
 
-		# Define awxvar array containing required variables for K3s deployment
-		awxvar_1=("awxns" "$awxns" "This is the namespace that AWX will be deployed to.")
-		awxvar_2=("awxverso" "$awxvers" "This is the version of AWX to be deployed, this variable will automatically populated.")
-		awxvar_3=("awxsubd" "$awxsubd" "This is the subdomain that will be used to serve your AWX Dashboard. e.g. 'awx' will become awx.yourdomain.com")
-		awxvar_4=("domain" "$domain" "This is the domain that your services will be available on e.g. 'yourdomain.com'")
+		# Define AWX_VARIABLE array containing required variables for K3s deployment
+		AWX_VARIABLE_1=("AWX_NAMESPACE" "$AWX_NAMESPACE" "This is the namespace that AWX will be deployed to.")
+		AWX_VARIABLE_2=("AWX_VERSIONo" "$AWX_VERSION" "This is the version of AWX to be deployed, this variable will automatically populated.")
+		AWX_VARIABLE_3=("AWX_SUBDOMAIN" "$AWX_SUBDOMAIN" "This is the subdomain that will be used to serve your AWX Dashboard. e.g. 'awx' will become awx.yourdomain.com")
+		AWX_VARIABLE_4=("DOMAIN" "$DOMAIN" "This is the domain that your services will be available on e.g. 'yourdomain.com'")
 
-	 # Combine awxvar arrays int the awxvars array
-	 awxvars=(
-		 awxvar_1[@]
-		 awxvar_2[@]
-		 awxvar_3[@]
-		 awxvar_4[@]
+	 # Combine AWX_VARIABLE arrays int the AWX_VARIABLES array
+	 AWX_VARIABLES=(
+		 AWX_VARIABLE_1[@]
+		 AWX_VARIABLE_2[@]
+		 AWX_VARIABLE_3[@]
+		 AWX_VARIABLE_4[@]
 	 )
 	}
 
 	print_title () {
 
-		printf ${Yellow}"#%.0s"	$(seq 1 ${break})
+		printf ${YELLOW}"#%.0s"	$(seq 1 ${BREAK})
 		printf "\n"
-		printf "$title \n"
-		printf "#%.0s"	$(seq 1 ${break})
-		printf "\n"${Color_Off}
+		printf "$TITLE \n"
+		printf "#%.0s"	$(seq 1 ${BREAK})
+		printf "\n"${COLOUR_OFF}
 
 	}
 
 #Define Output Colours
 
 	# Reset
-	Color_Off='\033[0m'			 # Text Reset
+	COLOUR_OFF='\033[0m'			 # Text Reset
 
 	# Regular Colors
-	Black='\033[0;30m'				# Black
-	Red='\033[0;31m'					# Red
-	Green='\033[0;32m'				# Green
-	Yellow='\033[0;33m'			 # Yellow
-	Blue='\033[0;34m'				 # Blue
-	Purple='\033[0;35m'			 # Purple
-	Cyan='\033[0;36m'				 # Cyan
-	White='\033[0;37m'				# White
+	BLACK='\033[0;30m'				# BLACK
+	RED='\033[0;31m'					# RED
+	GREEN='\033[0;32m'				# GREEN
+	YELLOW='\033[0;33m'			 # YELLOW
+	BLUE='\033[0;34m'				 # BLUE
+	PURPLE='\033[0;35m'			 # PURPLE
+	CYAN='\033[0;36m'				 # CYAN
+	WHITE='\033[0;37m'				# WHITE
 
 # Get current working directory
 
-  k3sdeploypath=$(pwd)
+  K3S_DEPLOY_PATH=$(pwd)
 
 # Timeout in seconds
 
-  timeout=300
+  TIMEOUT=300
 
 # Break width '='
 
-  break=150
+  BREAK=150
 
 # Get latest AWX Version
 
-	title="Getting latest AWX Version Number"
+	TITLE="Getting latest AWX Version Number"
 	print_title
 
 	# Query AWX Github page for latest AWX version number
-	url=$(curl -Ls -o /dev/null -w %{url_effective} https://github.com/ansible/awx-operator/releases/latest)
-	IFS='/ ' read -r -a awxlatest <<< "$url"
-	awxvers=${awxlatest[-1]}
+	URL=$(curl -Ls -o /dev/null -w %{url_effective} https://github.com/ansible/awx-operator/releases/latest)
+	IFS='/ ' read -r -a AWX_LATEST <<< "$URL"
+	AWX_VERSION=${AWX_LATEST[-1]}
 
-	printf "Latest AWX version is: ${Cyan}${awxvers}\n${Color_Off}"
+	printf "Latest AWX version is: ${CYAN}${AWX_VERSION}\n${COLOUR_OFF}"
 
-	printf "${Green}Done\n${Color_Off}"
+	printf "${GREEN}Done\n${COLOUR_OFF}"
 
 # Set AWX Variables
 
-	set_awxvars
-	awxmissingvars=()
+	set_awxvariables
+	AWX_MISSING_VARIABLES=()
 
 # Missing Variables
 
-	title="Looking for missing AWX Deployment Variables"
+	TITLE="Looking for missing AWX Deployment Variables"
 	print_title
 
-	# Loop awxvars looking for missing variables
-	COUNT=${#awxvars[@]}
+	# Loop AWX_VARIABLES looking for missing variables
+	COUNT=${#AWX_VARIABLES[@]}
 	for ((i=0; i<$COUNT; i++)); do
-		NAME=${!awxvars[i]:0:1}
-		VALUE=${!awxvars[i]:1:1}
-		DESC=${!awxvars[i]:2:1}
+		NAME=${!AWX_VARIABLES[i]:0:1}
+		VALUE=${!AWX_VARIABLES[i]:1:1}
+		DESC=${!AWX_VARIABLES[i]:2:1}
 		if [[ -z "${VALUE}" ]]; then
 			echo "Name: ${NAME}"
-			printf "Value: ${Red}${NAME} is undefined\n${Color_Off}"
+			printf "Value: ${RED}${NAME} is undefined\n${COLOUR_OFF}"
 			echo "Description: ${DESC}"
-			printf ${White}"=%.0s"	$(seq 1 ${break})${Color_Off}
-			printf "\n${Color_Off}"
-			awxmissingvars+=( "awxvar_$(expr $i + 1)[@]" )
+			printf ${WHITE}"=%.0s"	$(seq 1 ${BREAK})${COLOUR_OFF}
+			printf "\n${COLOUR_OFF}"
+			AWX_MISSING_VARIABLES+=( "AWX_VARIABLE_$(expr $i + 1)[@]" )
 		fi
 	done
 
-	# Loop awxmissingvars to give user option to define any missing variables
-	COUNT=${#awxmissingvars[@]}
+	# Loop AWX_MISSING_VARIABLES to give user option to define any missing variables
+	COUNT=${#AWX_MISSING_VARIABLES[@]}
 	for ((i=0; i<$COUNT; i++)); do
-		NAME=${!awxmissingvars[i]:0:1}
-		VALUE=${!awxmissingvars[i]:1:1}
-		DESC=${!awxmissingvars[i]:2:1}
-		printf "${Yellow}No value provided for '${NAME}'\n${Color_Off}"
+		NAME=${!AWX_MISSING_VARIABLES[i]:0:1}
+		VALUE=${!AWX_MISSING_VARIABLES[i]:1:1}
+		DESC=${!AWX_MISSING_VARIABLES[i]:2:1}
+		printf "${YELLOW}No value provided for '${NAME}'\n${COLOUR_OFF}"
            printf "$DESC\n"
-           read -p "$(printf "${Cyan}Provide a value for '${NAME}': ${Green}")" $NAME
-           printf "${Color_Off}"
+           read -p "$(printf "${CYAN}Provide a value for '${NAME}': ${GREEN}")" $NAME
+           printf "${COLOUR_OFF}"
 	done
 
-	printf "${Green}Done\n${Color_Off}"
+	printf "${GREEN}Done\n${COLOUR_OFF}"
 
 # Update AWX Variables
 
-	set_awxvars
+	set_awxvariables
 	clear
 
-# Loop awxvars to display variables to be used for K3s deployment.
+# Loop AWX_VARIABLES to display variables to be used for K3s deployment.
 
-	title="Variables to be using in K3s Deployment"
+	TITLE="Variables to be using in K3s Deployment"
 	print_title
 
-	COUNT=${#awxvars[@]}
+	COUNT=${#AWX_VARIABLES[@]}
 	for ((i=0; i<$COUNT; i++)); do
-		NAME=${!awxvars[i]:0:1}
-		VALUE=${!awxvars[i]:1:1}
-		DESC=${!awxvars[i]:2:1}
+		NAME=${!AWX_VARIABLES[i]:0:1}
+		VALUE=${!AWX_VARIABLES[i]:1:1}
+		DESC=${!AWX_VARIABLES[i]:2:1}
 
 		if [[ -z "${VALUE}" ]]; then
 			echo "Name: ${NAME}"
-			printf "Value: ${Red}${NAME} is undefined\n${Color_Off}"
+			printf "Value: ${RED}${NAME} is undefined\n${COLOUR_OFF}"
 			echo "Description: ${DESC}"
-			printf ${White}"=%.0s"	$(seq 1 ${break})${Color_Off}
-			printf "\n${Color_Off}"
+			printf ${WHITE}"=%.0s"	$(seq 1 ${BREAK})${COLOUR_OFF}
+			printf "\n${COLOUR_OFF}"
 		else
-			printf "Name: ${Cyan}${NAME}\n${Color_Off}"
-			printf "Value: ${Green}${VALUE}\n${Color_Off}"
-			printf "Description: ${White}${DESC}\n${Color_Off}"
-			printf ${Blue}"=%.0s"	$(seq 1 ${break}) \n
-			printf "\n${Color_Off}"
+			printf "Name: ${CYAN}${NAME}\n${COLOUR_OFF}"
+			printf "Value: ${GREEN}${VALUE}\n${COLOUR_OFF}"
+			printf "Description: ${WHITE}${DESC}\n${COLOUR_OFF}"
+			printf ${BLUE}"=%.0s"	$(seq 1 ${BREAK}) \n
+			printf "\n${COLOUR_OFF}"
 		fi
 	done
 
-	printf "${Green}Done\n${Color_Off}"
+	printf "${GREEN}Done\n${COLOUR_OFF}"
 
 # Confirm Variables before Deployment
 
-	read -p "$(printf "${Yellow}Would you like to proceed with deployment, based on the variables listed above? [y/N] ${Color_Off}")" -r
+	read -p "$(printf "${YELLOW}Would you like to proceed with deployment, based on the variables listed above? [y/N] ${COLOUR_OFF}")" -r
 	if [[ $REPLY =~ ^([yY][eE][sS]|[yY])$ ]]
 	then
-		printf "${Green}Proceeding with provided variables...\n${Color_Off}"
+		printf "${GREEN}Proceeding with provided variables...\n${COLOUR_OFF}"
 	elif [[ $REPLY =~ ^([nN][oO]|[nN])$ ]]
 	then
-		printf "${Red}You have chosen not to proceed, exiting...\n${Color_Off}"
+		printf "${RED}You have chosen not to proceed, exiting...\n${COLOUR_OFF}"
 		exit
 	else
-		printf "${Red}You have provided an invaild answer, exiting...\n${Color_Off}"
+		printf "${RED}You have provided an invaild answer, exiting...\n${COLOUR_OFF}"
 		exit
 	fi
 
 # Update Version Number in 'kustomization.yaml' file
 
-	title="Updating Version Number in 'kustomization.yaml' file"
+	TITLE="Updating Version Number in 'kustomization.yaml' file"
 	print_title
 	
 	# Update 'kustomization.yaml' file with the latest AWX version number
-	sed -i -E "/ref/s/ref=.*/ref=${awxvers}/" kustomization.yaml
-	sed -i -E "/newTag/s/newTag: .*/newTag: ${awxvers}/" kustomization.yaml
-	sed -i "s/awxns/$awxns/g" kustomization.yaml
+	sed -i -E "/ref/s/ref=.*/ref=${AWX_VERSION}/" kustomization.yaml
+	sed -i -E "/newTag/s/newTag: .*/newTag: ${AWX_VERSION}/" kustomization.yaml
+	sed -i "s/AWX_NAMESPACE/$AWX_NAMESPACE/g" kustomization.yaml
 
-	printf "${Green}Done\n${Color_Off}"
+	printf "${GREEN}Done\n${COLOUR_OFF}"
 
 # Create 'awx.yaml' file.
 
-	title="Creating 'awx.yaml' file"
+	TITLE="Creating 'awx.yaml' file"
 	print_title
 
 	# Update Variables in 'awx.yaml' file
-	sed -i "s/domain/$domain/g" awx.yaml
-	sed -i "s/awxns/$awxns/g" awx.yaml
-	sed -i "s/awxsubd/$awxsubd/g" awx.yaml
+	sed -i "s/DOMAIN/$DOMAIN/g" awx.yaml
+	sed -i "s/AWX_NAMESPACE/$AWX_NAMESPACE/g" awx.yaml
+	sed -i "s/AWX_SUBDOMAIN/$AWX_SUBDOMAIN/g" awx.yaml
 
-	printf "${Green}Done\n${Color_Off}"
+	printf "${GREEN}Done\n${COLOUR_OFF}"
 
 # Deploy AWX Operator
 
-	title="Deploying AWX Operator"
+	TITLE="Deploying AWX Operator"
 	print_title
 
 	# Build Kustomize file, and apply to Kubernetes to create replacement Operator Pods
 	kustomize build . | kubectl apply -f -
 
-	printf "${Green}Done\n${Color_Off}"
+	printf "${GREEN}Done\n${COLOUR_OFF}"
 
 # Wait for AWX Operator to be Ready
 
-	title="Waiting for AWX Operator to be Ready"
+	TITLE="Waiting for AWX Operator to be Ready"
 	print_title
 
 	# Get Pods in AWX namespace
-	awxpods=$(kubectl get pods -n ${awxns} -o 'jsonpath={..metadata.name}')
-	IFS='/ ' read -r -a awxpods <<< "$awxpods"
+	AWX_PODS=$(kubectl get pods -n ${AWX_NAMESPACE} -o 'jsonpath={..metadata.name}')
+	IFS='/ ' read -r -a AWX_PODS <<< "$AWX_PODS"
 
 	# Wait for those pods to be in a ready state
-	for i in "${awxpods[@]}"; do
-		kubectl wait -n ${awxns} --for=condition=Ready pod/${i} --timeout=300s
+	for i in "${AWX_PODS[@]}"; do
+		kubectl wait -n ${AWX_NAMESPACE} --for=condition=Ready pod/${i} --timeout=${TIMEOUT}
 	done
 
-	printf "${Green}Done\n${Color_Off}"
+	printf "${GREEN}Done\n${COLOUR_OFF}"
 
 # Deploy AWX Operator
 
-	title="Creating AWX Operator"
+	TITLE="Creating AWX Operator"
 	print_title
 
 	# Uncomment 'awx.yaml' resource in 'kustomization.yaml' file
@@ -226,57 +226,57 @@
 	# Build Kustomize file, and apply to Kubernetes to create replacement Operator Pods
 	kustomize build . | kubectl apply -f -
 
-	printf "${Green}Done\n${Color_Off}"
+	printf "${GREEN}Done\n${COLOUR_OFF}"
 
 # Wait for AWX to be Ready
 
-	title="Waiting for AWX to be Ready"
+	TITLE="Waiting for AWX to be Ready"
 	print_title
 
 	# Get Pods in the AWX Namespace
-	awxpods=$(kubectl get pods -n ${awxns} -o 'jsonpath={..metadata.name}')
-	IFS='/ ' read -r -a awxpods <<< "$awxpods"
+	AWX_PODS=$(kubectl get pods -n ${AWX_NAMESPACE} -o 'jsonpath={..metadata.name}')
+	IFS='/ ' read -r -a AWX_PODS <<< "$AWX_PODS"
 
 	# Wait for there to be 3 pods in the AWX namespace
-	while [ ${#awxpods[@]} -ne 3 ]
+	while [ ${#AWX_PODS[@]} -ne 3 ]
 	do
-		awxpods=$(kubectl get pods -n ${awxns} -o 'jsonpath={..metadata.name}')
-		IFS='/ ' read -r -a awxpods <<< "$awxpods"
+		AWX_PODS=$(kubectl get pods -n ${AWX_NAMESPACE} -o 'jsonpath={..metadata.name}')
+		IFS='/ ' read -r -a AWX_PODS <<< "$AWX_PODS"
 	done
 	
 	# Wait for those 3 pods to be in a ready state
-	for i in "${awxpods[@]}"; do
-		kubectl wait -n ${awxns} --for=condition=Ready pod/${i} --timeout=300s
+	for i in "${AWX_PODS[@]}"; do
+		kubectl wait -n ${AWX_NAMESPACE} --for=condition=Ready pod/${i} --timeout=${TIMEOUT}
 	done
 
-	printf "${Green}Done\n${Color_Off}"
+	printf "${GREEN}Done\n${COLOUR_OFF}"
 
 #Wait for Certificate to be assigned
 
-	title="Waiting for AWX Certificate to be Ready"
+	TITLE="Waiting for AWX Certificate to be Ready"
 	print_title
 
 	# Query Certificates status in the AWX Namespace
-	awxcert=$(kubectl get certificate -n ${awxns} -o 'jsonpath={..metadata.name}')
-	IFS='/ ' read -r -a awxcert <<< "$awxcert"
-	for i in "${awxcert[@]}"; do
-		kubectl wait -n ${awxns} --for=condition=Ready certificate/${i} --timeout=300s
+	AWX_CERTIFICATE=$(kubectl get certificate -n ${AWX_NAMESPACE} -o 'jsonpath={..metadata.name}')
+	IFS='/ ' read -r -a AWX_CERTIFICATE <<< "$AWX_CERTIFICATE"
+	for i in "${AWX_CERTIFICATE[@]}"; do
+		kubectl wait -n ${AWX_NAMESPACE} --for=condition=Ready certificate/${i} --timeout=${TIMEOUT}
 	done
 
-	printf "${Green}Done\n${Color_Off}"
+	printf "${GREEN}Done\n${COLOUR_OFF}"
 
 # Deployment of AWX complete
 
-	title="ASX Deployment Complete"
+	TITLE="ASX Deployment Complete"
 	print_title
 
 	# Get AWX password from secrets
-	pass=$(kubectl get secret awx-admin-password -n ${awxns} -o jsonpath="{.data.password}" | base64 --decode)
+	AWX_PASSWORD=$(kubectl get secret awx-admin-password -n ${AWX_NAMESPACE} -o jsonpath="{.data.password}" | base64 --decode)
 	
 	# Print AWX Details to screen for user
-	printf "${Green}You can now access your AWX Dashboard at https://${awxsubd}.${domain}\n${Color_Off}"
-	printf "${Green}Username: super\n${Color_Off}"
-	printf "${Green}Password: ${pass}\n${Color_Off}"
+	printf "${GREEN}You can now access your AWX Dashboard at https://${AWX_SUBDOMAIN}.${DOMAIN}\n${COLOUR_OFF}"
+	printf "${GREEN}Username: super\n${COLOUR_OFF}"
+	printf "${GREEN}Password: ${AWX_PASSWORD}\n${COLOUR_OFF}"
 	
 	# Empty Password Variable
-	pass=
+	AWX_PASSWORD=

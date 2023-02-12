@@ -4,7 +4,7 @@ metadata:
   name: prod-issuer
 spec:
   acme:
-    email: cfemail
+    email: CLOUDFLARE_EMAIL_ADDRESS
     server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: prod-issuer-account-key
