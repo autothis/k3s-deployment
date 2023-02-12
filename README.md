@@ -25,30 +25,29 @@ K3s Deployment Variables:
 
   Variables can be provided 3 ways:
 
-    1. Exporting the variable by executing a command similar to this: export K3S_PERSISTENT_VOLUME_DISK='/dev/sdb'
-    2. Running the deploy-k3s.sh script, and providing variables as prompted.
-    3. Editing the deploy-k3s.sh script, uncommenting and populating the variables at the very top of the script.
+   1. Exporting the variable by executing a command similar to this: export K3S_PERSISTENT_VOLUME_DISK='/dev/sdb'
+   2. Running the deploy-k3s.sh script, and providing variables as prompted.
+   3. Editing the deploy-k3s.sh script, uncommenting and populating the variables at the very top of the script.
 
 Deployment Instructions:
 ------------------------
 
   To deploy K3s on a single node without cloning this repository:
   
-    ```
-    source <(curl -sfL https://raw.githubusercontent.com/autothis/k3s-deployment/main/deploy-k3s-quick.sh) 
-    ```
+```
+source <(curl -sfL https://raw.githubusercontent.com/autothis/k3s-deployment/main/deploy-k3s-quick.sh) 
+```
   
   To deploy K3s on a single node by cloning this repository:
   #Assuming you will provide variables as prompted.
 
-    ```
-    apt install git --yes
-    git clone https://github.com/autothis/k3s-deployment.git
-    cd k3s-deployment
-    chmod +x deploy-k3s.sh
-    ./deploy-k3s.sh
-    source /etc/profile
-    ```
+```
+apt install git --yes
+git clone https://github.com/autothis/k3s-deployment.git
+cd k3s-deployment
+chmod +x deploy-k3s.sh
+./deploy-k3s.sh
+```
 
 Aliased Commands:
 -----------------
@@ -56,6 +55,10 @@ Aliased Commands:
   - Alias 'admin' command to easily create a token to authenticate with the Kubernetes Dashboard.
   - Alias 'k' command as an alternative to typing 'kubectl' all the time.
 
+  *Note: For these to work, your profile needs to be refreshed.  You can do this by either logging out and back in again, or executing the following command:*
+```  
+source /etc/profile
+```
 Available Addons:
 -----------------
 
