@@ -408,8 +408,8 @@
   TITLE="Updating file dashboard-ingress.yml with K3s Deployment Variables"
   print_title
 
-  sed -i "s/DOMAIN/$DOMAIN/g" kubernetes-dashboard/dashboard-ingress.yml
   sed -i "s/DASHBOARD_SUBDOMAIN/$DASHBOARD_SUBDOMAIN/g" kubernetes-dashboard/dashboard-ingress.yml
+  sed -i "s/DOMAIN/$DOMAIN/g" kubernetes-dashboard/dashboard-ingress.yml
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
 
