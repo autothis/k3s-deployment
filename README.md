@@ -39,7 +39,6 @@ source <(curl -sfL https://raw.githubusercontent.com/autothis/k3s-deployment/mai
 ```
   
   To deploy K3s on a single node by cloning this repository:
-  #Assuming you will provide variables as prompted.
 
 ```
 apt install git --yes
