@@ -37,7 +37,7 @@
 
 # Break width '='
 
-	BREAK=150
+	BREAK=140
 
 # Get AWX Namespace
 
