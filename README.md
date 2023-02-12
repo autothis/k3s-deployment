@@ -54,3 +54,4 @@ Available Addons:
   See [addons](https://github.com/autothis/k3s-deployment/tree/main/addons) directory for installation instructions.
   
    - [Ansible AWX](https://github.com/autothis/k3s-deployment/tree/main/addons/awx): Open source web UI and API to manage Ansible Playbooks, Inventories, Ansible Vault, and Credentials.
+  - [Wazuh](https://github.com/autothis/k3s-deployment/tree/main/addons/wazuh): A SIEM platform that provides monitoring, detection, and alerting of security events and incidents.
