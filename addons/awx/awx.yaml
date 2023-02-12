@@ -2,8 +2,8 @@
 apiVersion: awx.ansible.com/v1beta1
 kind: AWX
 metadata:
-  name: awxns
-  namespace: awxns
+  name: awx
+  namespace: AWX_NAMESPACE
 spec:
   # AWX user
   admin_user: super
@@ -12,12 +12,12 @@ spec:
 
   # ingress
   ingress_type: ingress
-  hostname: awxsubd.domain
+  hostname: AWX_SUBDOMAIN.DOMAIN
   ingress_annotations: |
     kubernetes.io/ingress.class: nginx
     cert-manager.io/cluster-issuer: prod-issuer
   ingress_path: /
-  ingress_tls_secret: tls-domain-awx
+  ingress_tls_secret: tls-DOMAIN-awx
 
   # postgres
   postgres_storage_class: local-storage

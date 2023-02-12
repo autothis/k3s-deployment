@@ -70,8 +70,8 @@
 
 	# Query AWX Github page for latest AWX version number
 	URL=$(curl -Ls -o /dev/null -w %{url_effective} https://github.com/ansible/awx-operator/releases/latest)
-	IFS='/ ' read -r -a awxlatest <<< "$URL"
-	AWX_VERSION=${awxlatest[-1]}
+	IFS='/ ' read -r -a AWX_LATEST_VERSION <<< "$URL"
+	AWX_VERSION=${AWX_LATEST_VERSION[-1]}
 
 	printf "Latest AWX version is: ${CYAN}${AWX_VERSION}\n${COLOUR_OFF}"
 

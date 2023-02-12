@@ -13,7 +13,7 @@
 
 		# Define AWX_VARIABLE array containing required variables for K3s deployment
 		AWX_VARIABLE_1=("AWX_NAMESPACE" "$AWX_NAMESPACE" "This is the namespace that AWX will be deployed to.")
-		AWX_VARIABLE_2=("AWX_VERSIONo" "$AWX_VERSION" "This is the version of AWX to be deployed, this variable will automatically populated.")
+		AWX_VARIABLE_2=("AWX_VERSION" "$AWX_VERSION" "This is the version of AWX to be deployed, this variable will automatically populated.")
 		AWX_VARIABLE_3=("AWX_SUBDOMAIN" "$AWX_SUBDOMAIN" "This is the subdomain that will be used to serve your AWX Dashboard. e.g. 'awx' will become awx.yourdomain.com")
 		AWX_VARIABLE_4=("DOMAIN" "$DOMAIN" "This is the domain that your services will be available on e.g. 'yourdomain.com'")
 
@@ -70,8 +70,8 @@
 
 	# Query AWX Github page for latest AWX version number
 	URL=$(curl -Ls -o /dev/null -w %{url_effective} https://github.com/ansible/awx-operator/releases/latest)
-	IFS='/ ' read -r -a AWX_LATEST <<< "$URL"
-	AWX_VERSION=${AWX_LATEST[-1]}
+	IFS='/ ' read -r -a AWX_LATEST_VERSION <<< "$URL"
+	AWX_VERSION=${AWX_LATEST_VERSION[-1]}
 
 	printf "Latest AWX version is: ${CYAN}${AWX_VERSION}\n${COLOUR_OFF}"
 
@@ -183,9 +183,9 @@
 	print_title
 
 	# Update Variables in 'awx.yaml' file
-	sed -i "s/DOMAIN/$DOMAIN/g" awx.yaml
 	sed -i "s/AWX_NAMESPACE/$AWX_NAMESPACE/g" awx.yaml
 	sed -i "s/AWX_SUBDOMAIN/$AWX_SUBDOMAIN/g" awx.yaml
+	sed -i "s/DOMAIN/$DOMAIN/g" awx.yaml
 
 	printf "${GREEN}Done\n${COLOUR_OFF}"
 
