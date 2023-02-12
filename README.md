@@ -32,15 +32,23 @@ K3s Deployment Variables:
 Deployment Instructions:
 ------------------------
 
-  To deploy K3s on a single node from this repository:
+  To deploy K3s on a single node without cloning this repository:
+  
+    ```
+    source <(curl -sfL https://raw.githubusercontent.com/autothis/k3s-deployment/main/deploy-k3s-quick.sh) 
+    ```
+  
+  To deploy K3s on a single node by cloning this repository:
+  #Assuming you will provide variables as prompted.
 
-    1. apt install git --yes
-    2. git clone https://github.com/autothis/k3s-deployment.git
-    3. cd k3s-deployment
-    4. apply your specific K3s deployment variables as per the instructions above.
-    5. chmod +x deploy-k3s.sh
-    6. ./deploy-k3s.sh
-    7. source /etc/profile
+    ```
+    apt install git --yes
+    git clone https://github.com/autothis/k3s-deployment.git
+    cd k3s-deployment
+    chmod +x deploy-k3s.sh
+    ./deploy-k3s.sh
+    source /etc/profile
+    ```
 
 Aliased Commands:
 -----------------
