@@ -4,104 +4,151 @@
 
 	print_title () {
 
-		printf ${Yellow}"#%.0s"	$(seq 1 100)
+		printf ${YELLOW}"#%.0s"	$(seq 1 ${BREAK})
 		printf "\n"
-		printf "$title \n"
-		printf "#%.0s"	$(seq 1 100)
-		printf "\n"${Color_Off}
+		printf "$TITLE \n"
+		printf "#%.0s"	$(seq 1 ${BREAK})
+		printf "\n"${COLOUR_OFF}
 
 	}
 
 #Define Output Colours
 
 	# Reset
-	Color_Off='\033[0m'			 # Text Reset
+	COLOUR_OFF='\033[0m'			 # Text Reset
 
 	# Regular Colors
-	Black='\033[0;30m'				# Black
-	Red='\033[0;31m'					# Red
-	Green='\033[0;32m'				# Green
-	Yellow='\033[0;33m'			 # Yellow
-	Blue='\033[0;34m'				 # Blue
-	Purple='\033[0;35m'			 # Purple
-	Cyan='\033[0;36m'				 # Cyan
-	White='\033[0;37m'				# White
+	BLACK='\033[0;30m'				# BLACK
+	RED='\033[0;31m'					# RED
+	GREEN='\033[0;32m'				# GREEN
+	YELLOW='\033[0;33m'			 # YELLOW
+	BLUE='\033[0;34m'				 # BLUE
+	PURPLE='\033[0;35m'			 # PURPLE
+	CYAN='\033[0;36m'				 # CYAN
+	WHITE='\033[0;37m'				# WHITE
 
-#Get latest AWX Version
+# Get current working directory
 
-	title="Getting latest AWX Version Number"
+	K3S_DEPLOY_PATH=$(pwd)
+
+# Timeout in seconds
+
+	TIMEOUT=300
+
+# Break width '='
+
+	BREAK=150
+
+# Get AWX Namespace
+
+	TITLE="Getting latest AWX Version Number"
 	print_title
 
-	url=$(curl -Ls -o /dev/null -w %{url_effective} https://github.com/ansible/awx-operator/releases/latest)
-	IFS='/ ' read -r -a awxlatest <<< "$url"
-	awxvers=${awxlatest[-1]}
+	# Get AWX namespace from the 'kustomization.yaml' file
+	AWX_NAMESPACE=$(awk '/namespace: /{print $NF}' kustomization.yaml)
 
-	printf "${Green}Done\n${Color_Off}"
+	printf "The AWX Namespace: ${CYAN}${AWX_NAMESPACE}\n${COLOUR_OFF}"
 
-#Update Version Number in 'kustomization.yaml' file
+	printf "${GREEN}Done\n${COLOUR_OFF}"
 
-	title="Updating Version Number in 'kustomization.yaml' file"
+# Get AWX URL
+
+	TITLE="Getting latest AWX Version Number"
+	print_title
+
+	# Get AWX namespace from the 'awx.yaml' file
+	AWX_URL=$(awk '/hostname: /{print $NF}' awx.yaml)
+
+	printf "The AWX Namespace: ${CYAN}${AWX_NAMESPACE}\n${COLOUR_OFF}"
+
+	printf "${GREEN}Done\n${COLOUR_OFF}"
+
+# Get latest AWX Version
+
+	TITLE="Getting latest AWX Version Number"
+	print_title
+
+	# Query AWX Github page for latest AWX version number
+	URL=$(curl -Ls -o /dev/null -w %{url_effective} https://github.com/ansible/awx-operator/releases/latest)
+	IFS='/ ' read -r -a AWX_LATEST_VERSION <<< "$URL"
+	AWX_VERSION=${AWX_LATEST_VERSION[-1]}
+
+	printf "Latest AWX version is: ${CYAN}${AWX_VERSION}\n${COLOUR_OFF}"
+
+	printf "${GREEN}Done\n${COLOUR_OFF}"
+
+# Update Version Number in 'kustomization.yaml' file
+
+	TITLE="Updating Version Number in 'kustomization.yaml' file"
 	print_title
 	
-	sed -i -E "/ref/s/ref=.*/ref=${awxvers}/" kustomization.yaml
-	sed -i -E "/newTag/s/newTag: .*/newTag: ${awxvers}/" kustomization.yaml
+	# Update 'kustomization.yaml' file with the latest AWX version number
+	sed -i -E "/ref/s/ref=.*/ref=${AWX_VERSION}/" kustomization.yaml
+	sed -i -E "/newTag/s/newTag: .*/newTag: ${AWX_VERSION}/" kustomization.yaml
 
-	printf "${Green}Done\n${Color_Off}"
+	printf "${GREEN}Done\n${COLOUR_OFF}"
 
-#Remove Operator
+# Remove Operator
 
-	title="Removing Operator"
+	TITLE="Removing Operator"
 	print_title
 
-	awxns=`sed -n 's/^namespace: \(.*\)/\1/p' < kustomization.yaml`
+	# Get Namespace from 'kustomization.yaml' file
+	AWX_NAMESPACE=`sed -n 's/^namespace: \(.*\)/\1/p' < kustomization.yaml`
 
-	kubectl -n ${awxns} delete deployment awx-operator-controller-manager
-	kubectl -n ${awxns} delete serviceaccount awx-operator-controller-manager
-	kubectl -n ${awxns} delete rolebinding awx-operator-awx-manager-rolebinding
-	kubectl -n ${awxns} delete role awx-operator-awx-manager-role
+	# Delete AWX Operator Pods
+	kubectl -n ${AWX_NAMESPACE} delete deployment awx-operator-controller-manager
+	kubectl -n ${AWX_NAMESPACE} delete serviceaccount awx-operator-controller-manager
+	kubectl -n ${AWX_NAMESPACE} delete rolebinding awx-operator-awx-manager-rolebinding
+	kubectl -n ${AWX_NAMESPACE} delete role awx-operator-awx-manager-role
 
-	printf "${Green}Done\n${Color_Off}"
+	printf "${GREEN}Done\n${COLOUR_OFF}"
 
-#Deploy AWX Operator
+# Deploy AWX Operator
 
-	title="Creating AWX Operator"
+	TITLE="Creating AWX Operator"
 	print_title
 
+	# Build Kustomize file, and apply to Kubernetes to create replacement Operator Pods
 	kustomize build . | kubectl apply -f -
 
-	printf "${Green}Done\n${Color_Off}"
+	printf "${GREEN}Done\n${COLOUR_OFF}"
 
-#Wait for AWX Operator to be Ready
+# Wait for AWX Operator to be Ready
 
-	title="Waiting for AWX Operator to be Ready"
+	TITLE="Waiting for AWX Operator to be Ready"
 	print_title
 
-	awxpods=$(kubectl get pods -n awx -o 'jsonpath={..metadata.name}')
-	IFS='/ ' read -r -a awxpods <<< "$awxpods"
+	# Get Pods in the AWX Namespace
+	AWX_PODS=$(kubectl get pods -n ${AWX_NAMESPACE} -o 'jsonpath={..metadata.name}')
+	IFS='/ ' read -r -a AWX_PODS <<< "$AWX_PODS"
 
-	#wait for there to be 3 pods in the AWX namespace
-	while [ ${#awxpods[@]} -ne 3 ]
+	# Wait for there to be 3 pods in the AWX namespace
+	while [ ${#AWX_PODS[@]} -ne 3 ]
 	do
-		awxpods=$(kubectl get pods -n awx -o 'jsonpath={..metadata.name}')
-		IFS='/ ' read -r -a awxpods <<< "$awxpods"
+		AWX_PODS=$(kubectl get pods -n ${AWX_NAMESPACE} -o 'jsonpath={..metadata.name}')
+		IFS='/ ' read -r -a AWX_PODS <<< "$AWX_PODS"
 	done
 	
-	#wait for those 3 pods to be in a ready state
-	for i in "${awxpods[@]}"; do
-		kubectl wait -n awx --for=condition=Ready pod/${i} --timeout=300s
+	# Wait for those 3 pods to be in a ready state
+	for i in "${AWX_PODS[@]}"; do
+		kubectl wait -n ${AWX_NAMESPACE} --for=condition=Ready pod/${i} --timeout=${TIMEOUT}s
 	done
 
-	printf "${Green}Done\n${Color_Off}"
+	printf "${GREEN}Done\n${COLOUR_OFF}"
 
-#Deployment of AWX complete
+# Deployment of AWX complete
 
-	title="ASX Deployment Complete"
+	TITLE="ASX Deployment Complete"
 	print_title
 
-	pass=$(kubectl get secret awx-admin-password -o jsonpath="{.data.password}" | base64 --decode)
+	# Get AWX password from secrets
+	AWX_PASSWORD=$(kubectl get secret awx-admin-password -n ${AWX_NAMESPACE} -o jsonpath="{.data.password}" | base64 --decode)
 	
-	printf "${Green}You can now access your AWX Dashboard at https://${awxsubd}.${domain}\n${Color_Off}"
-	printf "${Green}Username: super\n${Color_Off}"
-	printf "${Green}Password: ${pass}\n${Color_Off}"
+	# Print AWX Details to screen for user
+	printf "${GREEN}You can now access your AWX Dashboard at https://${AWX_URL}\n${COLOUR_OFF}"
+	printf "${GREEN}Username: super\n${COLOUR_OFF}"
+	printf "${GREEN}Password: ${AWX_PASSWORD}\n${COLOUR_OFF}"
 	
-	pass=
+	# Empty Password Variable
+	AWX_PASSWORD=
