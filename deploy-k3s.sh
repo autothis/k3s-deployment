@@ -267,7 +267,7 @@
 
   # wait for those 4 pods to be in a ready state
   for i in "${K3S_PODS[@]}"; do
-    kubectl wait -n kube-system --for=condition=Ready pod/${i} --timeout=${TIMEOUT}
+    kubectl wait -n kube-system --for=condition=Ready pod/${i} --timeout=${TIMEOUT}s
   done
 
   # Wait for Kubernetes Health API to return 'ok' result
@@ -325,7 +325,7 @@
 
   # wait for that 1 pod to be in a ready state
   for i in "${NGINX_INGRESS_PODS[@]}"; do
-    kubectl wait -n ${INGRESS_CONTROLLER_NAMESPACE} --for=condition=Ready pod/${i} --timeout=${TIMEOUT}
+    kubectl wait -n ${INGRESS_CONTROLLER_NAMESPACE} --for=condition=Ready pod/${i} --timeout=${TIMEOUT}s
   done
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
@@ -359,7 +359,7 @@
 
   # wait for those 3 pods to be in a ready state
   for i in "${CERT_MANAGER_PODS[@]}"; do
-    kubectl wait -n cert-manager --for=condition=Ready pod/${i} --timeout=${TIMEOUT}
+    kubectl wait -n cert-manager --for=condition=Ready pod/${i} --timeout=${TIMEOUT}s
   done
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
@@ -441,7 +441,7 @@
 
   # wait for those 2 pods to be in a ready state
   for i in "${K3S_DASHBOARD_PODS[@]}"; do
-    kubectl wait -n kubernetes-dashboard --for=condition=Ready pod/${i} --timeout=${TIMEOUT}
+    kubectl wait -n kubernetes-dashboard --for=condition=Ready pod/${i} --timeout=${TIMEOUT}s
   done
 
   printf "${GREEN}Done\n${COLOUR_OFF}"

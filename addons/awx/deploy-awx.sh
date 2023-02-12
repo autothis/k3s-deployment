@@ -210,7 +210,7 @@
 
 	# Wait for those pods to be in a ready state
 	for i in "${AWX_PODS[@]}"; do
-		kubectl wait -n ${AWX_NAMESPACE} --for=condition=Ready pod/${i} --timeout=${TIMEOUT}
+		kubectl wait -n ${AWX_NAMESPACE} --for=condition=Ready pod/${i} --timeout=${TIMEOUT}s
 	done
 
 	printf "${GREEN}Done\n${COLOUR_OFF}"
@@ -246,7 +246,7 @@
 	
 	# Wait for those 3 pods to be in a ready state
 	for i in "${AWX_PODS[@]}"; do
-		kubectl wait -n ${AWX_NAMESPACE} --for=condition=Ready pod/${i} --timeout=${TIMEOUT}
+		kubectl wait -n ${AWX_NAMESPACE} --for=condition=Ready pod/${i} --timeout=${TIMEOUT}s
 	done
 
 	printf "${GREEN}Done\n${COLOUR_OFF}"
@@ -260,7 +260,7 @@
 	AWX_CERTIFICATE=$(kubectl get certificate -n ${AWX_NAMESPACE} -o 'jsonpath={..metadata.name}')
 	IFS='/ ' read -r -a AWX_CERTIFICATE <<< "$AWX_CERTIFICATE"
 	for i in "${AWX_CERTIFICATE[@]}"; do
-		kubectl wait -n ${AWX_NAMESPACE} --for=condition=Ready certificate/${i} --timeout=${TIMEOUT}
+		kubectl wait -n ${AWX_NAMESPACE} --for=condition=Ready certificate/${i} --timeout=${TIMEOUT}s
 	done
 
 	printf "${GREEN}Done\n${COLOUR_OFF}"
