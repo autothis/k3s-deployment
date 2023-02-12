@@ -72,7 +72,7 @@
 
 # Break width '='
 
-  BREAK=150
+  BREAK=140
 
 # Set K3 Variables
 
