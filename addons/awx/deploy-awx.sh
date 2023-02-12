@@ -215,9 +215,9 @@
 
 	printf "${GREEN}Done\n${COLOUR_OFF}"
 
-# Deploy AWX Operator
+# Deploy AWX
 
-	TITLE="Creating AWX Operator"
+	TITLE="Deploying AWX"
 	print_title
 
 	# Uncomment 'awx.yaml' resource in 'kustomization.yaml' file
