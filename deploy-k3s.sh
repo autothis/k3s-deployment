@@ -364,21 +364,21 @@
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
 
-# Update File 'cloudflare-secret.yml'
+# Update File 'cloudflare-secret.yaml'
 
-  TITLE="Updating file cloudflare-secret.yml with K3s Deployment Variables"
+  TITLE="Updating file cloudflare-secret.yaml with K3s Deployment Variables"
   print_title
 
-  sed -i "s/CLOUDFLARE_API_TOKEN/$CLOUDFLARE_API_TOKEN/g" cert-manager/cloudflare-secret.yml
+  sed -i "s/CLOUDFLARE_API_TOKEN/$CLOUDFLARE_API_TOKEN/g" cert-manager/cloudflare-secret.yaml
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
 
-# Create File 'cloudflare-dns-challenge.yml'
+# Create File 'cloudflare-dns-challenge.yaml'
 
-  TITLE="Updating file cloudflare-dns-challenge.yml with K3s Deployment Variables"
+  TITLE="Updating file cloudflare-dns-challenge.yaml with K3s Deployment Variables"
   print_title
 
-  sed -i "s/CLOUDFLARE_EMAIL_ADDRESS/$CLOUDFLARE_EMAIL_ADDRESS/g" cert-manager/cloudflare-dns-challenge.yml
+  sed -i "s/CLOUDFLARE_EMAIL_ADDRESS/$CLOUDFLARE_EMAIL_ADDRESS/g" cert-manager/cloudflare-dns-challenge.yaml
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
 
@@ -387,29 +387,29 @@
   TITLE="Creating Cloudflare Secret and DNS Challenge"
   print_title
 
-  kubectl create -f cert-manager/cloudflare-secret.yml
-  kubectl create -f cert-manager/cloudflare-dns-challenge.yml
+  kubectl create -f cert-manager/cloudflare-secret.yaml
+  kubectl create -f cert-manager/cloudflare-dns-challenge.yaml
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
 
-# Create File 'kubernetes-dashboard.yml'
+# Create File 'kubernetes-dashboard.yaml'
 
-  TITLE="Downloading file kubernetes-dashboard.yml"
+  TITLE="Downloading file kubernetes-dashboard.yaml"
   print_title
 
   GITHUB_URL=https://github.com/kubernetes/dashboard/releases
   VERSION_KUBE_DASHBOARD=$(curl -w '%{url_effective}' -I -L -s -S ${GITHUB_URL}/latest -o /dev/null | sed -e 's|.*/||')
-  curl https://raw.githubusercontent.com/kubernetes/dashboard/${VERSION_KUBE_DASHBOARD}/aio/deploy/recommended.yaml > kubernetes-dashboard/kubernetes-dashboard.yml
+  curl https://raw.githubusercontent.com/kubernetes/dashboard/${VERSION_KUBE_DASHBOARD}/aio/deploy/recommended.yaml > kubernetes-dashboard/kubernetes-dashboard.yaml
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
 
-# Create File 'dashboard-ingress.yml'
+# Create File 'dashboard-ingress.yaml'
 
-  TITLE="Updating file dashboard-ingress.yml with K3s Deployment Variables"
+  TITLE="Updating file dashboard-ingress.yaml with K3s Deployment Variables"
   print_title
 
-  sed -i "s/DASHBOARD_SUBDOMAIN/$DASHBOARD_SUBDOMAIN/g" kubernetes-dashboard/dashboard-ingress.yml
-  sed -i "s/DOMAIN/$DOMAIN/g" kubernetes-dashboard/dashboard-ingress.yml
+  sed -i "s/DASHBOARD_SUBDOMAIN/$DASHBOARD_SUBDOMAIN/g" kubernetes-dashboard/dashboard-ingress.yaml
+  sed -i "s/DOMAIN/$DOMAIN/g" kubernetes-dashboard/dashboard-ingress.yaml
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
 
@@ -418,9 +418,9 @@
   TITLE="Creating and configuring K3s Dashboard and associated roles, users and ingress"
   print_title
 
-  kubectl create -f kubernetes-dashboard/kubernetes-dashboard.yml
-  kubectl create -f kubernetes-dashboard/dashboard-admin-user.yml -f kubernetes-dashboard/dashboard-admin-user-role.yml
-  kubectl create -f kubernetes-dashboard/dashboard-ingress.yml
+  kubectl create -f kubernetes-dashboard/kubernetes-dashboard.yaml
+  kubectl create -f kubernetes-dashboard/dashboard-admin-user.yaml -f kubernetes-dashboard/dashboard-admin-user-role.yaml
+  kubectl create -f kubernetes-dashboard/dashboard-ingress.yaml
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
 
@@ -451,7 +451,7 @@
   TITLE="Creating Persistent Volume Provisioner"
   print_title
 
-  kubectl apply -f sig-storage/persistent-volume-provisioner.yml
+  kubectl apply -f sig-storage/persistent-volume-provisioner.yaml
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
 
