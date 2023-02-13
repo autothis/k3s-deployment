@@ -35,7 +35,7 @@ Deployment Instructions:
   To deploy K3s on a single node without cloning this repository:
   
 ```
-source <(curl -sfL https://raw.githubusercontent.com/autothis/k3s-deployment/main/deploy-k3s-quick.sh) 
+source <(curl -sfL https://raw.githubusercontent.com/autothis/k3s-deployment/main/deploy-k3s.sh) 
 ```
   
   To deploy K3s on a single node by cloning this repository:
