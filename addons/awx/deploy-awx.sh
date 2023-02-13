@@ -278,7 +278,7 @@
 	printf "${GREEN}Username: ${CYAN}super\n${COLOUR_OFF}"
 	printf "${GREEN}Password: ${CYAN}${AWX_PASSWORD}\n${COLOUR_OFF}"
 
-	printf "${RED}NOTE: You may see some errors on the POSTGRES pod, or the 'awx-web' and 'awx-task' containers in the AWX pod.${CYAN}${AWX_PASSWORD}\n${COLOUR_OFF}"
+	printf "${RED}NOTE: You may see some errors on the POSTGRES pod, or the 'awx-web' and 'awx-task' containers in the AWX pod.${CYAN}\n${COLOUR_OFF}"
 	printf "${RED}Be patient, give the system at least 10mins before you start deleting or restarting pods.\n${COLOUR_OFF}"
 
 	# Empty Password Variable
