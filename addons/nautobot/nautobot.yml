@@ -21,7 +21,7 @@ nautobot:
 postgresql:
   enabled: true
   storageClass: local-storage
-  postgresqlPassword: "nautopsqlpw"
+  postgresqlPassword: "nautosqlpw"
 
 redis:
   enabled: true  # Consider utilizing an external HA redis rather than the built-in redis
