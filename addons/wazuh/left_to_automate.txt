@@ -1,0 +1,93 @@
+
+
+/wazuh-kubernetes/wazuh/secrets/dashboard-cred-secret.yaml
+	#this is a logon password to the wazuh web ui, with less access than the indexer creds....
+	echo "thiswillbetheusername" | base64
+	echo "thiswillbethepassword" | base64
+	username: a2liYW5hc2VydmVy  # string "kibanaserver" base64 encoded
+	password: a2liYW5hc2VydmVy  # string "kibanaserver" base64 encoded
+
+/wazuh-kubernetes/wazuh/secrets/indexer-cred-secret.yaml
+	#this is the logon password to the wazuh web ui
+	echo "thiswillbetheusername" | base64
+	echo "thiswillbethepassword" | base64
+	update 'username:'
+	update 'password:'
+	username: YWRtaW4=              # string "admin" base64 encoded
+	password: U2VjcmV0UGFzc3dvcmQ=  # string "SecretPassword" base64 encoded
+
+/wazuh-kubernetes/wazuh/secrets/wazuh-api-cred-secret.yaml
+	echo "thiswillbetheusername" | base64
+	echo "thiswillbethepassword" | base64
+	update 'username:'
+	update 'password:'
+	username: d2F6dWgtd3Vp          # string "wazuh-wui" base64 encoded
+	password: TXlTM2NyMzdQNDUwci4qLQ==  # string "MyS3cr37P450r.*-" base64 encoded
+
+/wazuh-kubernetes/wazuh/secrets/wazuh-authd-pass-secret.yaml
+	#this is the password to enroll new agents
+	echo "thiswillbetheauthdpassword" | base64
+	update "authd.pass:"
+	authd.pass: cGFzc3dvcmQ= # string "password" base64 encoded
+
+/wazuh-kubernetes/wazuh/secrets/wazuh-cluster-key-secret.yaml
+	echo "thiswillbethepassword" | base64
+	update 'key:'
+	key: MTIzYTQ1YmM2N2RlZjg5MWdoMjNpNDVqazY3bDhtbjk= # string "123a45bc67def891gh23i45jk67l8mn9" base64 encoded
+	
+	
+Namespace: 'name: wazuh'
+	/wazuh-kubernetes/envs/local-envwazuh-resources.yaml
+	/wazuh-kubernetes/envs/local-envindexer-resources.yaml
+	/wazuh-kubernetes/wazuh/secrets/wazuh-api-cred-secret.yaml
+	/wazuh-kubernetes/wazuh/secrets/wazuh-authd-pass-secret.yaml
+	/wazuh-kubernetes/wazuh/secrets/wazuh-cluster-key-secret.yaml
+	/wazuh-kubernetes/wazuh/wazuh_managers/wazuh-cluster-svc.yaml
+	/wazuh-kubernetes/wazuh/wazuh_managers/wazuh-master-sts.yaml
+	/wazuh-kubernetes/wazuh/wazuh_managers/wazuh-master-svc.yaml
+	/wazuh-kubernetes/wazuh/wazuh_managers/wazuh-workers-svc.yaml
+	/wazuh-kubernetes/wazuh/wazuh_managers/wazuh-worker-sts.yaml
+	/wazuh-kubernetes/wazuh/indexer_stack/wazuh-dashboard/dashboard-deploy.yaml
+	/wazuh-kubernetes/wazuh/indexer_stack/wazuh-dashboard/dashboard-svc.yaml
+	/wazuh-kubernetes/wazuh/indexer_stack/wazuh-indexer/indexer-svc.yaml
+	/wazuh-kubernetes/wazuh/indexer_stack/wazuh-indexer/cluster/indexer-api-svc.yaml
+	/wazuh-kubernetes/wazuh/indexer_stack/wazuh-indexer/cluster/indexer-sts.yaml
+	/wazuh-kubernetes/wazuh/base/wazuh-ns.yaml
+	
+Generate Certs:
+	/wazuh-kubernetes/wazuh/certs/dashboard_http/generate_certs.sh
+	/wazuh-kubernetes/wazuh/certs/indexer_cluster/generate_certs.sh
+
+
+# Wait for Certificate to be assigned
+
+	TITLE="Waiting for AWX Certificate to be Ready"
+	print_title
+
+	# Query Certificates status in the AWX Namespace
+	AWX_CERTIFICATE=$(kubectl get certificate -n ${AWX_NAMESPACE} -o 'jsonpath={..metadata.name}')
+	IFS='/ ' read -r -a AWX_CERTIFICATE <<< "$AWX_CERTIFICATE"
+	for i in "${AWX_CERTIFICATE[@]}"; do
+		kubectl wait -n ${AWX_NAMESPACE} --for=condition=Ready certificate/${i} --timeout=${TIMEOUT}s
+	done
+
+	printf "${GREEN}Done\n${COLOUR_OFF}"
+
+# Deployment of AWX complete
+
+	TITLE="ASX Deployment Complete"
+	print_title
+
+	# Get AWX password from secrets
+	AWX_PASSWORD=$(kubectl get secret awx-admin-password -n ${AWX_NAMESPACE} -o jsonpath="{.data.password}" | base64 --decode)
+	
+	# Print AWX Details to screen for user
+	printf "${GREEN}You can now access your AWX Dashboard at ${CYAN}https://${AWX_SUBDOMAIN}.${DOMAIN}\n${COLOUR_OFF}"
+	printf "${GREEN}Username: ${CYAN}super\n${COLOUR_OFF}"
+	printf "${GREEN}Password: ${CYAN}${AWX_PASSWORD}\n${COLOUR_OFF}"
+
+	printf "${RED}NOTE: You may see some errors on the POSTGRES pod, or the 'awx-web' and 'awx-task' containers in the AWX pod.${CYAN}${AWX_PASSWORD}\n${COLOUR_OFF}"
+	printf "${RED}Be patient, give the system at least 10mins before you start deleting or restarting pods.\n${COLOUR_OFF}"
+
+	# Empty Password Variable
+	AWX_PASSWORD=
