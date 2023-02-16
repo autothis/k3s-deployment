@@ -1,4 +1,4 @@
-#!/bin/bashNAUTO_NAMESPACE
+#!/bin/bash
 
 # Define variables for Nautobot deployment on K3s (uncomment lines, and populate variables - not required if using other methods of variable population).
 
@@ -35,7 +35,7 @@
 
 	print_title () {
 
-		printf ${Yellow}"#%.0s"	$(seq 1 100)
+		printf ${YELLOW}"#%.0s"	$(seq 1 100)
 		printf "\n"
 		printf "$title \n"
 		printf "#%.0s"	$(seq 1 100)
@@ -49,14 +49,14 @@
 	Color_Off='\033[0m'			 # Text Reset
 
 	# Regular Colors
-	Black='\033[0;30m'				# Black
-	Red='\033[0;31m'					# Red
-	Green='\033[0;32m'				# Green
-	Yellow='\033[0;33m'			 # Yellow
-	Blue='\033[0;34m'				 # Blue
-	Purple='\033[0;35m'			 # Purple
-	Cyan='\033[0;36m'				 # Cyan
-	White='\033[0;37m'				# White
+	BLACK='\033[0;30m'				# Black
+	RED='\033[0;31m'					# Red
+	GREEN='\033[0;32m'				# Green
+	YELLOW='\033[0;33m'			 # Yellow
+	BLUE='\033[0;34m'				 # Blue
+	PURPLE='\033[0;35m'			 # Purple
+	CYAN='\033[0;36m'				 # Cyan
+	WHITE='\033[0;37m'				# White
 
 # Get current working directory
 
@@ -90,9 +90,9 @@
 
 			    if [[ -z "${VALUE}" ]]; then
 			    	echo "Name: ${NAME}"
-			    	printf "Value: ${Red}${NAME} is undefined\n${Color_Off}"
+			    	printf "Value: ${RED}${NAME} is undefined\n${Color_Off}"
 			        echo "Description: ${DESC}"
-			        printf ${White}"=%.0s"	$(seq 1 ${BREAK})${Color_Off}
+			        printf ${WHITE}"=%.0s"	$(seq 1 ${BREAK})${Color_Off}
 			        printf "\n${Color_Off}"
 			        NAUTO_MISSING_VARIABLES+=( "NAUTO_VARIABLE_$(expr $i + 1)[@]" )
 			    fi
@@ -102,16 +102,17 @@
 
 		COUNT=${#NAUTO_MISSING_VARIABLES[@]}
 		for ((i=0; i<$COUNT; i++)); do
-			    NAME=${!NAUTO_MISSING_VARIABLES[i]:0:1}
-			    VALUE=${!NAUTO_MISSING_VARIABLES[i]:1:1}
-			    DESC=${!NAUTO_MISSING_VARIABLES[i]:2:1}
-                printf "${YELLOW}No value provided for '${NAME}'\n${COLOUR_OFF}"
-			printf "${DESC}\n"
-			read -p "$(printf "${CYAN}Provide a value for '${NAME}': ${GREEN}")" $NAME
-			printf "${COLOUR_OFF}"
+			NAME=${!NAUTO_MISSING_VARIABLES[i]:0:1}
+			VALUE=${!NAUTO_MISSING_VARIABLES[i]:1:1}
+			DESC=${!NAUTO_MISSING_VARIABLES[i]:2:1}
+            printf "${YELLOW}No value provided for '${NAME}'\n${COLOUR_OFF}"
+		    printf "${DESC}\n"
+		    read -p "$(printf "${CYAN}Provide a value for '${NAME}': ${GREEN}")" $NAME
+		    printf ${WHITE}"=%.0s"	$(seq 1 ${BREAK})${Color_Off}
+			printf "\n${COLOUR_OFF}"
 		done
 
-	printf "${Green}Done\n${Color_Off}"
+	printf "${GREEN}Done\n${Color_Off}"
 
 # Update nauto Variables
 
@@ -131,20 +132,20 @@
 
 		if [[ -z "${VALUE}" ]]; then
 			echo "Name: ${NAME}"
-			printf "Value: ${Red}${NAME} is undefined\n${Color_Off}"
+			printf "Value: ${RED}${NAME} is undefined\n${Color_Off}"
 			echo "Description: ${DESC}"
-			printf ${White}"=%.0s"	$(seq 1 ${BREAK})${Color_Off}
+			printf ${WHITE}"=%.0s"	$(seq 1 ${BREAK})${Color_Off}
 			printf "\n${Color_Off}"
 		else
-			printf "Name: ${Cyan}${NAME}\n${Color_Off}"
-			printf "Value: ${Green}${VALUE}\n${Color_Off}"
-			printf "Description: ${White}${DESC}\n${Color_Off}"
-			printf ${Blue}"=%.0s"	$(seq 1 ${BREAK}) \n
+			printf "Name: ${CYAN}${NAME}\n${Color_Off}"
+			printf "Value: ${GREEN}${VALUE}\n${Color_Off}"
+			printf "Description: ${WHITE}${DESC}\n${Color_Off}"
+			printf ${BLUE}"=%.0s"	$(seq 1 ${BREAK}) \n
 			printf "\n${Color_Off}"
 		fi
 	done
 
-	printf "${Green}Done\n${Color_Off}"
+	printf "${GREEN}Done\n${Color_Off}"
 
 # Confirm Variables before Deployment
 
@@ -161,19 +162,19 @@
 		exit
 	fi
 
-#Create 'nautobot.yml' file
+#Create 'nautobot.yaml' file
 
-#	title="Creating 'nautobot.yml' file"
-#	print_title
-#
-#	sed -i "s/nautosubd/$NAUTO_SUBDOMAIN/g" nautobot.yml
-#	sed -i "s/domain/$DOMAIN/g" nautobot.yml
-#    sed -i "s/nautosqlpw/$NAUTO_SQL_PW/g" nautobot.yml
-#	sed -i "s/nautoredispw/$NAUTO_REDIS_PW/g" nautobot.yml
-#
-#	printf "${Green}Done\n${Color_Off}"
+	title="Creating 'nautobot.yaml' file"
+	print_title
 
-## Add the below after './nautobot.yml' in hte deployment command to customise
+	sed -i "s/nautosubd/$NAUTO_SUBDOMAIN/g" nautobot.yaml
+	sed -i "s/domain/$DOMAIN/g" nautobot.yaml
+    sed -i "s/nautosqlpw/$NAUTO_SQL_PW/g" nautobot.yaml
+	sed -i "s/nautoredispw/$NAUTO_REDIS_PW/g" nautobot.yaml
+
+	printf "${GREEN}Done\n${Color_Off}"
+
+## Add the below after './nautobot.yaml' in hte deployment command to customise
    # --set-file nautobot.config=./nautobot_config.py
 
 #Deploy nautobot with helm
@@ -181,7 +182,7 @@
   #https://github.com/nautobot/helm-charts
   helm repo add nautobot https://nautobot.github.io/helm-charts/
   helm repo update
-  helm install "$NAUTO_RELEASE_NAME" nautobot/nautobot -f ./nautobot.yml  --namespace "$NAUTO_NAMESPACE" --create-namespace
+  helm install "$NAUTO_RELEASE_NAME" nautobot/nautobot -f ./nautobot.yaml --namespace "$NAUTO_NAMESPACE" --create-namespace
 
 #Wait for Nautobot to be Ready
 
@@ -203,7 +204,7 @@
 		kubectl wait -n ${NAUTO_NAMESPACE} --for=condition=Ready pod/${i} --timeout=300s
 	done
 
-	printf "${Green}Done\n${Color_Off}"
+	printf "${GREEN}Done\n${Color_Off}"
 
 
 #Wait for Certificate to be assigned
@@ -217,7 +218,7 @@
 		kubectl wait -n ${NAUTO_NAMESPACE} --for=condition=Ready certificate/${i} --timeout=300s
 	done
 
-	printf "${Green}Done\n${Color_Off}"
+	printf "${GREEN}Done\n${Color_Off}"
 
 #Deployment of Nautobot complete
 
@@ -226,8 +227,8 @@
 
 	pass=$(kubectl get secret --namespace ${NAUTO_NAMESPACE} nautobot-env -o jsonpath="{.data.NAUTOBOT_SUPERUSER_PASSWORD}" | base64 --decode)
 	
-	printf "${Green}You can now access your Nautobot Dashboard at https://${NAUTO_SUBDOMAIN}.${DOMAIN}\n${Color_Off}"
-	printf "${Green}Username: admin\n${Color_Off}"
-	printf "${Green}Password: ${pass}\n${Color_Off}"
+	printf "${GREEN}You can now access your Nautobot Dashboard at https://${NAUTO_SUBDOMAIN}.${DOMAIN}\n${Color_Off}"
+	printf "${GREEN}Username: admin\n${Color_Off}"
+	printf "${GREEN}Password: ${pass}\n${Color_Off}"
 	
 	pass=
