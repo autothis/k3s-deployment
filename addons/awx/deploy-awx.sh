@@ -267,7 +267,8 @@
 
 # Deployment of AWX complete
 
-	TITLE="ASX Deployment Complete"
+
+	title="AWX Deployment Complete"
 	print_title
 
 	# Get AWX password from secrets

@@ -1,0 +1,29 @@
+nautobot:
+  replicaCount: 1  # In production this should be >= 2
+  metrics: true
+  #secretKey: ""  # In a production system this value should be recorded and used when restoring the DB if necessary
+  #superUser:
+  #  enabled: false  # In production a superuser should be created manually
+  extraVars:
+    - name: "BANNER_TOP"
+      value: "Production"
+  allowedHosts: "*"
+
+  # ingress
+  ingress_type: ingress
+  hostname: nauto.autothis.org
+  ingress_annotations: |
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: prod-issuer
+  ingress_path: /
+  ingress_tls_secret: tls-autothis.org-nauto
+
+postgresql:
+  enabled: true
+  storageClass: local-storage
+  postgresqlPassword: "thistime"
+
+redis:
+  enabled: true  # Consider utilizing an external HA redis rather than the built-in redis
+  auth:
+    password: "thistime"
