@@ -320,7 +320,8 @@
 	TITLE="Updating file wazuh-ingress.yaml with Wazuh Deployment Variables"
 	print_title
 
-	sed -i "s/DASHBOARD_SUBDOMAIN/$DASHBOARD_SUBDOMAIN/g" ${WAZUH_DEPLOY_PATH}/wazuh-ingress.yaml
+	sed -i "s/WAZUH_NAMESPACE/$WAZUH_NAMESPACE/g" ${WAZUH_DEPLOY_PATH}/wazuh-ingress.yaml
+	sed -i "s/WAZUH_SUBDOMAIN/$WAZUH_SUBDOMAIN/g" ${WAZUH_DEPLOY_PATH}/wazuh-ingress.yaml
 	sed -i "s/DOMAIN/$DOMAIN/g" ${WAZUH_DEPLOY_PATH}/wazuh-ingress.yaml
 
 	printf "${GREEN}Done\n${COLOUR_OFF}"
