@@ -1,4 +1,4 @@
-
+git clone --single-branch --branch stable https://github.com/wazuh/wazuh-kubernetes.git
 
 /wazuh-kubernetes/wazuh/secrets/dashboard-cred-secret.yaml
 	#this is a logon password to the wazuh web ui, with less access than the indexer creds....

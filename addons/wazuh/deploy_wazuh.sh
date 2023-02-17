@@ -13,9 +13,9 @@
 
 		# Define WAZUH_VARIABLE array containing required variables for K3s deployment
         WAZUH_VARIABLE_1=("WAZUH_NAMESPACE" "$WAZUH_NAMESPACE" "This is the namespace that AWX will be deployed to.")
+		WAZUH_VARIABLE_4=("WAZUH_STORAGE_CLASS" "$WAZUH_STORAGE_CLASS" "This is the Storage Class that will be used to assign a persistent volumes claim.")
 		WAZUH_VARIABLE_2=("WAZUH_SUBDOMAIN" "$WAZUH_SUBDOMAIN" "This is the subdomain that will be used to serve your AWX Dashboard. e.g. 'awx' will become awx.yourdomain.com")
 		WAZUH_VARIABLE_3=("DOMAIN" "$DOMAIN" "This is the domain that your services will be available on e.g. 'yourdomain.com'")
-        WAZUH_VARIABLE_4=("WAZUH_STORAGE_CLASS" "$WAZUH_STORAGE_CLASS" "This is the Storage Class that will be used to assign a persistent volumes claim.")
 
 	 # Combine WAZUH_VARIABLE arrays int the WAZUH_VARIABLES array
 	 WAZUH_VARIABLES=(
