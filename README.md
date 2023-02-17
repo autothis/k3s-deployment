@@ -1,5 +1,7 @@
-k3s-deployment
+[k3s-deployment](https://github.com/autothis/k3s-deployment)
 ===========================
+
+
 
 Collection of files to deploy K3s on a single linux node (tested on Debian).
 This will deploy K3s with:
@@ -53,4 +55,5 @@ Available Addons:
 
   See [addons](https://github.com/autothis/k3s-deployment/tree/main/addons) directory for installation instructions.
   
-   - [Ansible AWX](https://github.com/autothis/k3s-deployment/tree/main/addons/awx): Open source web UI and API to manage Ansible Playbooks, Inventories, Ansible Vault, and Credentials.
+   - [Ansible AWX](https://k3s.autothis.org/addons/awx/): Open source web UI and API to manage Ansible Playbooks, Inventories, Ansible Vault, and Credentials.
+   - [Nautobot](https://k3s.autothis.org/addons/nautobot): Nautobot is an extensible and flexible Network Source of Truth and Network Automation Platform that is the cornerstone of any network automation architecture.
