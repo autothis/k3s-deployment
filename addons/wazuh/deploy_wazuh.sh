@@ -41,7 +41,7 @@
 
 	replace_variable () {
 
-		sed -i -E "/${FIELD}/s/${FIELD}: .*/${FIELD}: ${NEW_VALUE}/" $FILE
+		sed -i -E "/${FIELD}/s/${FIELD}: .*/${FIELD}: ${NEW_VALUE}/" ${WAZUH_DEPLOY_PATH}/$FILE
 
 	}
 
@@ -208,11 +208,11 @@
 	gpg --gen-random --armor 1 10
 
 	# Passwords to be generate (Field to Update, Character Count, File)
-	WAZUH_CRED_VARIABLE_1=("password" "12" "/wazuh-kubernetes/wazuh/secrets/dashboard-cred-secret.yaml")
-	WAZUH_CRED_VARIABLE_2=("password" "12" "/wazuh-kubernetes/wazuh/secrets/indexer-cred-secret.yaml")
-	WAZUH_CRED_VARIABLE_3=("password" "16" "/wazuh-kubernetes/wazuh/secrets/wazuh-api-cred-secret.yaml")
-	WAZUH_CRED_VARIABLE_4=("authd.pass" "12" "/wazuh-kubernetes/wazuh/secrets/wazuh-authd-pass-secret.yaml")
-	WAZUH_CRED_VARIABLE_5=("key" "32" "/wazuh-kubernetes/wazuh/secrets/wazuh-cluster-key-secret.yaml")
+	WAZUH_CRED_VARIABLE_1=("password" "12" "wazuh-kubernetes/wazuh/secrets/dashboard-cred-secret.yaml")
+	WAZUH_CRED_VARIABLE_2=("password" "12" "wazuh-kubernetes/wazuh/secrets/indexer-cred-secret.yaml")
+	WAZUH_CRED_VARIABLE_3=("password" "16" "wazuh-kubernetes/wazuh/secrets/wazuh-api-cred-secret.yaml")
+	WAZUH_CRED_VARIABLE_4=("authd.pass" "12" "wazuh-kubernetes/wazuh/secrets/wazuh-authd-pass-secret.yaml")
+	WAZUH_CRED_VARIABLE_5=("key" "32" "wazuh-kubernetes/wazuh/secrets/wazuh-cluster-key-secret.yaml")
 
 	# Combine WAZUH_VARIABLE arrays int the WAZUH_CREDENTIAL_CONFIG_FILES array
 	WAZUH_CREDENTIAL_CONFIG_FILES=(
@@ -248,22 +248,22 @@
 	print_title
 	
 	WAZUH_NAMESPACE_CONFIG_FILES=(
-		"/wazuh-kubernetes/envs/local-envwazuh-resources.yaml"
-		"/wazuh-kubernetes/envs/local-envindexer-resources.yaml"
-		"/wazuh-kubernetes/wazuh/secrets/wazuh-api-cred-secret.yaml"
-		"/wazuh-kubernetes/wazuh/secrets/wazuh-authd-pass-secret.yaml"
-		"/wazuh-kubernetes/wazuh/secrets/wazuh-cluster-key-secret.yaml"
-		"/wazuh-kubernetes/wazuh/wazuh_managers/wazuh-cluster-svc.yaml"
-		"/wazuh-kubernetes/wazuh/wazuh_managers/wazuh-master-sts.yaml"
-		"/wazuh-kubernetes/wazuh/wazuh_managers/wazuh-master-svc.yaml"
-		"/wazuh-kubernetes/wazuh/wazuh_managers/wazuh-workers-svc.yaml"
-		"/wazuh-kubernetes/wazuh/wazuh_managers/wazuh-worker-sts.yaml"
-		"/wazuh-kubernetes/wazuh/indexer_stack/wazuh-dashboard/dashboard-deploy.yaml"
-		"/wazuh-kubernetes/wazuh/indexer_stack/wazuh-dashboard/dashboard-svc.yaml"
-		"/wazuh-kubernetes/wazuh/indexer_stack/wazuh-indexer/indexer-svc.yaml"
-		"/wazuh-kubernetes/wazuh/indexer_stack/wazuh-indexer/cluster/indexer-api-svc.yaml"
-		"/wazuh-kubernetes/wazuh/indexer_stack/wazuh-indexer/cluster/indexer-sts.yaml"
-		"/wazuh-kubernetes/wazuh/base/wazuh-ns.yaml"
+		"wazuh-kubernetes/envs/local-envwazuh-resources.yaml"
+		"wazuh-kubernetes/envs/local-envindexer-resources.yaml"
+		"wazuh-kubernetes/wazuh/secrets/wazuh-api-cred-secret.yaml"
+		"wazuh-kubernetes/wazuh/secrets/wazuh-authd-pass-secret.yaml"
+		"wazuh-kubernetes/wazuh/secrets/wazuh-cluster-key-secret.yaml"
+		"wazuh-kubernetes/wazuh/wazuh_managers/wazuh-cluster-svc.yaml"
+		"wazuh-kubernetes/wazuh/wazuh_managers/wazuh-master-sts.yaml"
+		"wazuh-kubernetes/wazuh/wazuh_managers/wazuh-master-svc.yaml"
+		"wazuh-kubernetes/wazuh/wazuh_managers/wazuh-workers-svc.yaml"
+		"wazuh-kubernetes/wazuh/wazuh_managers/wazuh-worker-sts.yaml"
+		"wazuh-kubernetes/wazuh/indexer_stack/wazuh-dashboard/dashboard-deploy.yaml"
+		"wazuh-kubernetes/wazuh/indexer_stack/wazuh-dashboard/dashboard-svc.yaml"
+		"wazuh-kubernetes/wazuh/indexer_stack/wazuh-indexer/indexer-svc.yaml"
+		"wazuh-kubernetes/wazuh/indexer_stack/wazuh-indexer/cluster/indexer-api-svc.yaml"
+		"wazuh-kubernetes/wazuh/indexer_stack/wazuh-indexer/cluster/indexer-sts.yaml"
+		"wazuh-kubernetes/wazuh/base/wazuh-ns.yaml"
 	)
 
 	# Loop through WAZUH_CREDENTIAL_CONFIG_FILES array and update password
@@ -279,13 +279,64 @@
 
 	printf "${GREEN}Done\n${COLOUR_OFF}"
 
-# Generate Certs
+# Generate Internal Wazuh Certificates
 
-# Build Wazuh
+	TITLE="Generating Wazuh Internal Certificates with Cert-Manager"
+	print_title
+	
+	# Execute certificate generation scripts provided by Wazuh
+	${WAZUH_DEPLOY_PATH}/wazuh-kubernetes/wazuh/certs/dashboard_http/generate_certs.sh
+	${WAZUH_DEPLOY_PATH}/wazuh-kubernetes/wazuh/certs/indexer_cluster/generate_certs.sh
 
-# Generate Ingress
+	# Future Improvement - Use Cert-Manager to generate and manage internal certificates
+	# Create Internal Cert Issuer
+		# https://phoenixnap.com/kb/kubernetes-ssl-certificates
+	# Create Dashboard Certificate normally created by generate_certs.sh
+		# wazuh-kubernetes/wazuh/certs/dashboard_http/generate_certs.sh
+	# Create Indexer Certificate normally created by generate_certs.sh
+		# wazuh-kubernetes/wazuh/certs/indexer_cluster/generate_certs.sh
+	# Update in Wazuh files:
+		# wazuh/indexer_stack/wazuh-indexer/cluster/indexer-sts.yaml
+		# wazuh/indexer_stack/wazuh-dashboard/dashboard-deploy.yaml
+		# wazuh/indexer_stack/wazuh-indexer/indexer_conf/opensearch.yml
+		# wazuh/wazuh_managers/wazuh-worker-sts.yaml
+		# wazuh/wazuh_managers/wazuh-master-sts.yaml
+		# wazuh/indexer_stack/wazuh-dashboard/dashboard_conf/opensearch_dashboards.yml
 
-# Wait for Certs
+	printf "${GREEN}Done\n${COLOUR_OFF}"
+
+# Deploy Wazuh
+
+	TITLE="Deploying Wazuh with Kustomize"
+	print_title
+	
+	kubectl apply -k envs/local-env/
+
+	printf "${GREEN}Done\n${COLOUR_OFF}"
+
+# Configure Wazuh Ingress
+
+	TITLE="Updating file wazuh-ingress.yaml with Wazuh Deployment Variables"
+	print_title
+
+	sed -i "s/DASHBOARD_SUBDOMAIN/$DASHBOARD_SUBDOMAIN/g" ${WAZUH_DEPLOY_PATH}/wazuh-ingress.yaml
+	sed -i "s/DOMAIN/$DOMAIN/g" ${WAZUH_DEPLOY_PATH}/wazuh-ingress.yaml
+
+	printf "${GREEN}Done\n${COLOUR_OFF}"
+
+# Wait for Certificates to be assigned
+
+	TITLE="Waiting for Wazuh Dashboard Certificates to be Ready"
+	print_title
+
+	# Query Certificates status in the Wazuh Namespace
+	WAZUH_CERTIFICATES=$(kubectl get certificate -n ${WAZUH_NAMESPACE} -o 'jsonpath={..metadata.name}')
+	IFS='/ ' read -r -a WAZUH_CERTIFICATES <<< "$WAZUH_CERTIFICATES"
+	for i in "${WAZUH_CERTIFICATES[@]}"; do
+		kubectl wait -n ${WAZUH_NAMESPACE} --for=condition=Ready certificate/${i} --timeout=${TIMEOUT}s
+	done
+
+	printf "${GREEN}Done\n${COLOUR_OFF}"
 
 # Deployment of Wazuh complete
 

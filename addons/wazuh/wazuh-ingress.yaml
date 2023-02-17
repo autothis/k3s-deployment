@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wazuh-ingress
+  namespace: WAZUH_NAMESPACE
+  annotations:
+    cert-manager.io/cluster-issuer: prod-issuer
+    nginx.org/redirect-to-https: "true"
+    nginx.org/ssl-services: dashboard
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - WAZUH_SUBDOMAIN.DOMAIN
+    secretName: tls-DOMAIN-wazuh
+  rules:
+  - host: WAZUH_SUBDOMAIN.DOMAIN
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: dashboard
+            port:
+              number: 443
