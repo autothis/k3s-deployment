@@ -231,6 +231,9 @@
 		FILE=${!WAZUH_CREDENTIAL_CONFIG_FILES[i]:2:1}
 		NEW_VALUE=$(gpg --gen-random --armor 1 ${NUMBER})
 
+		echo $FILE
+		echo $NEW_VALUE
+
 		# This generates a new password if the current base64 encoded on contains a '/'
 		while [[ $NEW_VALUE == *"/"* ]]
 		do
