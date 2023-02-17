@@ -11,10 +11,10 @@ AWX Deployment Variables:
 ------------------------
 
 ```yml
-  #AWX_NAMESPACE='awx'  #This is the namespace that AWX will be deployed to.
-  #AWX_VERSION='1.1.4'  #This is the version of AWX to be deployed, this variable will automatically populated.
-  #AWX_SUBDOMAIN='awx'  #This is the subdomain that will be used to serve your AWX dashboard.
-  #DOMAIN='example.com' #This is the domain that your services will be available on e.g. 'yourdomain.com'.
+  #awxns='awx'  #This is the namespace that AWX will be deployed to.
+  #awxvers='1.1.4'  #This is the version of AWX to be deployed, this variable will automatically populated.
+  #awxsubd='awx'  #This is the subdomain that will be used to serve your AWX dashboard.
+  #domain='example.com' #This is the domain that your services will be available on e.g. 'yourdomain.com'.
 ```
 
   Variables can be provided 3 ways:

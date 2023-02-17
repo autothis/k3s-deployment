@@ -6,6 +6,7 @@
 	#WAZUH_SUBDOMAIN='' #This is the subdomain that will be used to serve your AWX dashboard.
 	#DOMAIN='' #This is the domain that your services will be available on e.g. 'yourdomain.com'.
     #WAZUH_STORAGE_CLASS='' #This is the Storage Class that will be used to assign a persistent volumes claim.
+	#KUBE_CONFIG_DIR='' #This is the directory that your configuration files will be put in for future reference. e.g. '/kubeconfigs'
 
 #Create Functions
 
@@ -13,17 +14,19 @@
 
 		# Define WAZUH_VARIABLE array containing required variables for K3s deployment
         WAZUH_VARIABLE_1=("WAZUH_NAMESPACE" "$WAZUH_NAMESPACE" "This is the namespace that AWX will be deployed to.")
-		WAZUH_VARIABLE_4=("WAZUH_STORAGE_CLASS" "$WAZUH_STORAGE_CLASS" "This is the Storage Class that will be used to assign a persistent volumes claim.")
-		WAZUH_VARIABLE_2=("WAZUH_SUBDOMAIN" "$WAZUH_SUBDOMAIN" "This is the subdomain that will be used to serve your AWX Dashboard. e.g. 'awx' will become awx.yourdomain.com")
-		WAZUH_VARIABLE_3=("DOMAIN" "$DOMAIN" "This is the domain that your services will be available on e.g. 'yourdomain.com'")
+		WAZUH_VARIABLE_2=("WAZUH_STORAGE_CLASS" "$WAZUH_STORAGE_CLASS" "This is the Storage Class that will be used to assign a persistent volumes claim.")
+		WAZUH_VARIABLE_3=("WAZUH_SUBDOMAIN" "$WAZUH_SUBDOMAIN" "This is the subdomain that will be used to serve your AWX Dashboard. e.g. 'awx' will become awx.yourdomain.com")
+		WAZUH_VARIABLE_4=("DOMAIN" "$DOMAIN" "This is the domain that your services will be available on e.g. 'yourdomain.com'")
+		WAZUH_VARIABLE_5=("KUBE_CONFIG_DIR" "$KUBE_CONFIG_DIR" "This is the directory that your configuration files will be put in for future reference. e.g. '/kubeconfigs'")
 
-	 # Combine WAZUH_VARIABLE arrays int the WAZUH_VARIABLES array
-	 WAZUH_VARIABLES=(
-		 WAZUH_VARIABLE_1[@]
-		 WAZUH_VARIABLE_2[@]
-		 WAZUH_VARIABLE_3[@]
-		 WAZUH_VARIABLE_4[@]
-	 )
+		# Combine WAZUH_VARIABLE arrays int the WAZUH_VARIABLES array
+		WAZUH_VARIABLES=(
+			 WAZUH_VARIABLE_1[@]
+			 WAZUH_VARIABLE_2[@]
+			 WAZUH_VARIABLE_3[@]
+			 WAZUH_VARIABLE_4[@]
+			 WAZUH_VARIABLE_5[@]
+		)
 	}
 
 	print_title () {
@@ -33,6 +36,12 @@
 		printf "$TITLE \n"
 		printf "#%.0s"	$(seq 1 ${BREAK})
 		printf "\n"${COLOUR_OFF}
+
+	}
+
+	replace_variable () {
+
+		sed -i -E "/${FIELD}/s/${FIELD}: .*/${FIELD}: ${NEW_VALUE}/" $FILE
 
 	}
 
@@ -152,6 +161,16 @@
 		exit
 	fi
 
+# Download Wazuh file from Github
+
+	TITLE="Downloading Wazuh files from Github"
+	print_title
+
+	# Clone Stable Github Branch
+	git clone --single-branch --branch stable https://github.com/wazuh/wazuh-kubernetes.git
+
+	printf "${GREEN}Done\n${COLOUR_OFF}"
+
 # Update Wazuh Config Files with Storage Class from WAZUH_STORAGE_CLASS
 
 	TITLE="Update Storage Class in Wazuh Config Files"
@@ -159,9 +178,9 @@
 
 	# List of config files to update
     WAZUH_STORAGE_CLASS_CONFIG_FILES=(
-        "wazuh/indexer_stack/wazuh-indexer/cluster/indexer-sts.yaml"
-        "wazuh/wazuh_managers/wazuh-master-sts.yaml"
-        "wazuh/wazuh_managers/wazuh-worker-sts.yaml"
+        "wazuh-kubernetes/wazuh/indexer_stack/wazuh-indexer/cluster/indexer-sts.yaml"
+        "wazuh-kubernetes/wazuh/wazuh_managers/wazuh-master-sts.yaml"
+        "wazuh-kubernetes/wazuh/wazuh_managers/wazuh-worker-sts.yaml"
         )
         
     # Update the storageClassName field in each of the files stored in the WAZUH_STORAGE_CLASS_CONFIG_FILES array.
@@ -179,3 +198,77 @@
     printf "Commenting out 'storage-class.yaml' in config file: ${WAZUH_DEPLOY_PATH}/${i}\n${COLOUR_OFF}"
 
 	printf "${GREEN}Done\n${COLOUR_OFF}"
+
+# Update Hardcoded Credentials in Wazuh Config Files
+
+	TITLE="Updating Wazuh Credentials in Wazuh Files"
+	print_title
+
+	# This will make sure a clean GPG output is generated (it will produce a more verbose output on the first run)
+	gpg --gen-random --armor 1 10
+
+	# Passwords to be generate (Field to Update, Character Count, File)
+	WAZUH_CRED_VARIABLE_1=("password" "12" "/wazuh-kubernetes/wazuh/secrets/dashboard-cred-secret.yaml")
+	WAZUH_CRED_VARIABLE_2=("password" "12" "/wazuh-kubernetes/wazuh/secrets/indexer-cred-secret.yaml")
+	WAZUH_CRED_VARIABLE_3=("password" "16" "/wazuh-kubernetes/wazuh/secrets/wazuh-api-cred-secret.yaml")
+	WAZUH_CRED_VARIABLE_4=("authd.pass" "12" "/wazuh-kubernetes/wazuh/secrets/wazuh-authd-pass-secret.yaml")
+	WAZUH_CRED_VARIABLE_5=("key" "32" "/wazuh-kubernetes/wazuh/secrets/wazuh-cluster-key-secret.yaml")
+
+	# Combine WAZUH_VARIABLE arrays int the WAZUH_CREDENTIAL_CONFIG_FILES array
+	WAZUH_CREDENTIAL_CONFIG_FILES=(
+		WAZUH_CRED_VARIABLE_1[@]
+		WAZUH_CRED_VARIABLE_2[@]
+		WAZUH_CRED_VARIABLE_3[@]
+		WAZUH_CRED_VARIABLE_4[@]
+		WAZUH_CRED_VARIABLE_5[@]
+	)
+
+	# Loop through WAZUH_CREDENTIAL_CONFIG_FILES array and update password
+	COUNT=${#WAZUH_CREDENTIAL_CONFIG_FILES[@]}
+	for ((i=0; i<$COUNT; i++)); do
+		FIELD=${!WAZUH_CREDENTIAL_CONFIG_FILES[i]:0:1}
+		NEW_VALUE_LENGTH=${!WAZUH_CREDENTIAL_CONFIG_FILES[i]:1:1}
+		FILE=${!WAZUH_CREDENTIAL_CONFIG_FILES[i]:2:1}
+		NEW_VALUE=$(gpg --gen-random --armor 1 ${NUMBER})
+
+		# This generates a new password if the current base64 encoded on contains a '/'
+		while [[ $NEW_VALUE == *"/"* ]]
+		do
+			NEW_VALUE=$(gpg --gen-random --armor 1 ${NUMBER})
+			echo "replacing"
+		done
+
+		# Call function to replace passwords in files
+		replace_password
+	done
+
+# Update Namespace
+
+# Generate Certs
+
+# Build Wazuh
+
+# Generate Ingress
+
+# Wait for Certs
+
+# Deployment of Wazuh complete
+
+	TITLE="Wazuh Deployment Complete"
+	print_title
+
+	# Get Wazuh username and password from secrets
+	WAZUH_USERNAME=$(kubectl get secret indexer-cred -n ${WAZUH_NAMESPACE} -o jsonpath="{.data.username}" | base64 --decode)
+	WAZUH_PASSWORD=$(kubectl get secret indexer-cred -n ${WAZUH_NAMESPACE} -o jsonpath="{.data.password}" | base64 --decode)
+	WAZUH_ENROLL=$(kubectl get secret wazuh-authd-pass -n ${WAZUH_NAMESPACE} -o jsonpath="{.data.authd\.pass}" | base64 --decode)
+
+	# Print Wazuh Details to screen for user
+	printf "${GREEN}You can now access your Wazuh Dashboard at ${CYAN}https://${WAZUH_SUBDOMAIN}.${DOMAIN}\n${COLOUR_OFF}"
+	printf "${GREEN}Username: ${CYAN}${WAZUH_USERNAME}\n${COLOUR_OFF}"
+	printf "${GREEN}Password: ${CYAN}${WAZUH_PASSWORD}\n${COLOUR_OFF}"
+
+	printf "${GREEN}You can also now enroll endpoints with Wazuh using the password: ${CYAN}${WAZUH_PASSWORD}\n${COLOUR_OFF}"
+
+	# Empty Password Variable
+	WAZUH_PASSWORD=
+	WAZUH_ENROLL=
