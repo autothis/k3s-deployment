@@ -190,12 +190,12 @@
 	done
 
     # Comment out the line containing 'storage-class.yaml' in 'kustomization.yaml' file.
-    sed -i "s/- storage-class.yaml/#- storage-class.yaml/g" ${WAZUH_DEPLOY_PATH}/envs/local-env/kustomization.yml
-    printf "Commenting out 'storage-class.yaml' in config file: ${WAZUH_DEPLOY_PATH}/${i}\n${COLOUR_OFF}"
+    sed -i "s/- storage-class.yaml/#- storage-class.yaml/g" ${WAZUH_DEPLOY_PATH}/wazuh-kubernetes/envs/local-env/kustomization.yml
+    printf "Commenting out 'storage-class.yaml' in config file: ${WAZUH_DEPLOY_PATH}/wazuh-kubernetes/envs/local-env/kustomization.yml\n${COLOUR_OFF}"
 
     # Comment out the line containing 'storage-class.yaml' in 'kustomization.yaml' file.
-    sed -i "s/- base\/storage-class.yaml/#- base\/storage-class.yaml/g" ${WAZUH_DEPLOY_PATH}/$i
-    printf "Commenting out 'storage-class.yaml' in config file: ${WAZUH_DEPLOY_PATH}/${i}\n${COLOUR_OFF}"
+    sed -i "s/- base\/storage-class.yaml/#- base\/storage-class.yaml/g" ${WAZUH_DEPLOY_PATH}/wazuh-kubernetes/wazuh/kustomization.yml
+    printf "Commenting out 'storage-class.yaml' in config file: ${WAZUH_DEPLOY_PATH}/wazuh-kubernetes/wazuh/kustomization.yml\n${COLOUR_OFF}"
 
 	printf "${GREEN}Done\n${COLOUR_OFF}"
 
@@ -205,7 +205,7 @@
 	print_title
 
 	# This will make sure a clean GPG output is generated (it will produce a more verbose output on the first run)
-	gpg --gen-random --armor 1 10
+	gpg --gen-random --armor 1 10 > /dev/null 2>&1
 
 	# Passwords to be generate (Field to Update, Character Count, File)
 	WAZUH_CRED_VARIABLE_1=("password" "12" "wazuh-kubernetes/wazuh/secrets/dashboard-cred-secret.yaml")
