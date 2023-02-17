@@ -242,7 +242,42 @@
 		replace_password
 	done
 
-# Update Namespace
+# Update Wazuh Namespace in Configuration Files
+
+	TITLE="Updating Wazuh Namespace in Wazuh Files"
+	print_title
+	
+	WAZUH_NAMESPACE_CONFIG_FILES=(
+		"/wazuh-kubernetes/envs/local-envwazuh-resources.yaml"
+		"/wazuh-kubernetes/envs/local-envindexer-resources.yaml"
+		"/wazuh-kubernetes/wazuh/secrets/wazuh-api-cred-secret.yaml"
+		"/wazuh-kubernetes/wazuh/secrets/wazuh-authd-pass-secret.yaml"
+		"/wazuh-kubernetes/wazuh/secrets/wazuh-cluster-key-secret.yaml"
+		"/wazuh-kubernetes/wazuh/wazuh_managers/wazuh-cluster-svc.yaml"
+		"/wazuh-kubernetes/wazuh/wazuh_managers/wazuh-master-sts.yaml"
+		"/wazuh-kubernetes/wazuh/wazuh_managers/wazuh-master-svc.yaml"
+		"/wazuh-kubernetes/wazuh/wazuh_managers/wazuh-workers-svc.yaml"
+		"/wazuh-kubernetes/wazuh/wazuh_managers/wazuh-worker-sts.yaml"
+		"/wazuh-kubernetes/wazuh/indexer_stack/wazuh-dashboard/dashboard-deploy.yaml"
+		"/wazuh-kubernetes/wazuh/indexer_stack/wazuh-dashboard/dashboard-svc.yaml"
+		"/wazuh-kubernetes/wazuh/indexer_stack/wazuh-indexer/indexer-svc.yaml"
+		"/wazuh-kubernetes/wazuh/indexer_stack/wazuh-indexer/cluster/indexer-api-svc.yaml"
+		"/wazuh-kubernetes/wazuh/indexer_stack/wazuh-indexer/cluster/indexer-sts.yaml"
+		"/wazuh-kubernetes/wazuh/base/wazuh-ns.yaml"
+	)
+
+	# Loop through WAZUH_CREDENTIAL_CONFIG_FILES array and update password
+	COUNT=${#WAZUH_NAMESPACE_CONFIG_FILES[@]}
+	for ((i=0; i<$COUNT; i++)); do
+		FIELD="namespace"
+		FILE=${i}
+		NEW_VALUE=${WAZUH_NAMESPACE}
+
+		# Call function to replace passwords in files
+		replace_password
+	done
+
+	printf "${GREEN}Done\n${COLOUR_OFF}"
 
 # Generate Certs
 

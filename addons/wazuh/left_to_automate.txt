@@ -1,21 +1,3 @@
-Namespace: 'name: wazuh'
-	/wazuh-kubernetes/envs/local-envwazuh-resources.yaml
-	/wazuh-kubernetes/envs/local-envindexer-resources.yaml
-	/wazuh-kubernetes/wazuh/secrets/wazuh-api-cred-secret.yaml
-	/wazuh-kubernetes/wazuh/secrets/wazuh-authd-pass-secret.yaml
-	/wazuh-kubernetes/wazuh/secrets/wazuh-cluster-key-secret.yaml
-	/wazuh-kubernetes/wazuh/wazuh_managers/wazuh-cluster-svc.yaml
-	/wazuh-kubernetes/wazuh/wazuh_managers/wazuh-master-sts.yaml
-	/wazuh-kubernetes/wazuh/wazuh_managers/wazuh-master-svc.yaml
-	/wazuh-kubernetes/wazuh/wazuh_managers/wazuh-workers-svc.yaml
-	/wazuh-kubernetes/wazuh/wazuh_managers/wazuh-worker-sts.yaml
-	/wazuh-kubernetes/wazuh/indexer_stack/wazuh-dashboard/dashboard-deploy.yaml
-	/wazuh-kubernetes/wazuh/indexer_stack/wazuh-dashboard/dashboard-svc.yaml
-	/wazuh-kubernetes/wazuh/indexer_stack/wazuh-indexer/indexer-svc.yaml
-	/wazuh-kubernetes/wazuh/indexer_stack/wazuh-indexer/cluster/indexer-api-svc.yaml
-	/wazuh-kubernetes/wazuh/indexer_stack/wazuh-indexer/cluster/indexer-sts.yaml
-	/wazuh-kubernetes/wazuh/base/wazuh-ns.yaml
-	
 Generate Certs:
 	/wazuh-kubernetes/wazuh/certs/dashboard_http/generate_certs.sh
 	/wazuh-kubernetes/wazuh/certs/indexer_cluster/generate_certs.sh
