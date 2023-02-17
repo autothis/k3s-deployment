@@ -238,7 +238,7 @@
 		done
 
 		# Call function to replace passwords in files
-		replace_password
+		replace_variable
 	done
 
 # Update Wazuh Namespace in Configuration Files
@@ -273,7 +273,7 @@
 		NEW_VALUE=${WAZUH_NAMESPACE}
 
 		# Call function to replace passwords in files
-		replace_password
+		replace_variable
 	done
 
 	printf "${GREEN}Done\n${COLOUR_OFF}"
