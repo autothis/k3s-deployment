@@ -204,9 +204,6 @@
 	TITLE="Updating Wazuh Credentials in Wazuh Files"
 	print_title
 
-	# This will make sure a clean GPG output is generated (it will produce a more verbose output on the first run)
-	gpg --gen-random --armor 1 10 > /dev/null 2>&1
-
 	# Passwords to be generate (Field to Update, Character Count, File)
 	WAZUH_CRED_VARIABLE_1=("password" "12" "wazuh-kubernetes/wazuh/secrets/dashboard-cred-secret.yaml")
 	WAZUH_CRED_VARIABLE_2=("password" "12" "wazuh-kubernetes/wazuh/secrets/indexer-cred-secret.yaml")
@@ -229,7 +226,7 @@
 		FIELD=${!WAZUH_CREDENTIAL_CONFIG_FILES[i]:0:1}
 		NEW_VALUE_LENGTH=${!WAZUH_CREDENTIAL_CONFIG_FILES[i]:1:1}
 		FILE=${!WAZUH_CREDENTIAL_CONFIG_FILES[i]:2:1}
-		NEW_VALUE=$(gpg --gen-random --armor 1 ${NUMBER})
+		NEW_VALUE=$(openssl rand -base64 ${NEW_VALUE_LENGTH} | base64)
 
 		echo $FILE
 		echo $NEW_VALUE
@@ -237,8 +234,7 @@
 		# This generates a new password if the current base64 encoded on contains a '/'
 		while [[ $NEW_VALUE == *"/"* ]]
 		do
-			NEW_VALUE=$(gpg --gen-random --armor 1 ${NUMBER})
-			echo "replacing"
+			NEW_VALUE=$(openssl rand -base64 ${NEW_VALUE_LENGTH} | base64)
 		done
 
 		# Call function to replace passwords in files
