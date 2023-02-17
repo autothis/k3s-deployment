@@ -485,6 +485,10 @@
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
 
+# remove default storage class annotation from local-path
+
+  kubectl annotate --overwrite storageClass local-path storageclass.kubernetes.io/is-default-class=false
+
 # Wait for Certificate to be assigned
 
 	TITLE="Waiting for K3s Dashboard Certificate to be Ready"
