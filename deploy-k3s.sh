@@ -487,6 +487,9 @@
 
 # remove default storage class annotation from local-path
 
+  TITLE="Removing the annotation from the default storageClass local-path"
+  print_title
+
   kubectl annotate --overwrite storageClass local-path storageclass.kubernetes.io/is-default-class=false
 
 # Wait for Certificate to be assigned
