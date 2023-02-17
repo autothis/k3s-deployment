@@ -228,8 +228,8 @@
 		FILE=${!WAZUH_CREDENTIAL_CONFIG_FILES[i]:2:1}
 		NEW_VALUE=$(openssl rand -base64 ${NEW_VALUE_LENGTH} | base64)
 
-		echo $FILE
-		echo $NEW_VALUE
+		# Sleep for 5 seconds to make sure openssl generates non-similar passwords
+		sleep 5
 
 		# This generates a new password if the current base64 encoded on contains a '/'
 		while [[ $NEW_VALUE == *"/"* ]]
@@ -247,8 +247,8 @@
 	print_title
 	
 	WAZUH_NAMESPACE_CONFIG_FILES=(
-		"wazuh-kubernetes/envs/local-envwazuh-resources.yaml"
-		"wazuh-kubernetes/envs/local-envindexer-resources.yaml"
+		"wazuh-kubernetes/envs/local-env/wazuh-resources.yaml"
+		"wazuh-kubernetes/envs/local-env/indexer-resources.yaml"
 		"wazuh-kubernetes/wazuh/secrets/wazuh-api-cred-secret.yaml"
 		"wazuh-kubernetes/wazuh/secrets/wazuh-authd-pass-secret.yaml"
 		"wazuh-kubernetes/wazuh/secrets/wazuh-cluster-key-secret.yaml"
@@ -268,7 +268,8 @@
 	# Loop through WAZUH_CREDENTIAL_CONFIG_FILES array and update password
 	#COUNT=${#WAZUH_NAMESPACE_CONFIG_FILES[@]}
 	#for ((i=0; i<$COUNT; i++)); do
-	for i in "${WAZUH_NAMESPACE_CONFIG_FILES}";
+	for i in "${WAZUH_NAMESPACE_CONFIG_FILES}"
+	do
 		FIELD=namespace
 		FILE=${i}
 		NEW_VALUE=${WAZUH_NAMESPACE}
