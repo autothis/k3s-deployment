@@ -167,10 +167,10 @@
 	title="Creating 'nautobot.yaml' file"
 	print_title
 
-	sed -i "s/nautosubd/$NAUTO_SUBDOMAIN/g" nautobot.yaml
-	sed -i "s/domain/$DOMAIN/g" nautobot.yaml
-    sed -i "s/nautosqlpw/$NAUTO_SQL_PW/g" nautobot.yaml
-	sed -i "s/nautoredispw/$NAUTO_REDIS_PW/g" nautobot.yaml
+	sed -i "s/NAUTO_SUBDOMAIN/$NAUTO_SUBDOMAIN/g" nautobot.yaml
+	sed -i "s/DOMAIN/$DOMAIN/g" nautobot.yaml
+    sed -i "s/NAUTO_SQL_PW/$NAUTO_SQL_PW/g" nautobot.yaml
+	sed -i "s/NAUTO_REDIS_PW/$NAUTO_REDIS_PW/g" nautobot.yaml
 
 	printf "${GREEN}Done\n${Color_Off}"
 

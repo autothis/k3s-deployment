@@ -1,3 +1,4 @@
+---
 nautobot:
   replicaCount: 1  # In production this should be >= 2
   metrics: true
@@ -11,19 +12,19 @@ nautobot:
 
   # ingress
   ingress_type: ingress
-  hostname: nauto.autothis.org
+  hostname: NAUTO_SUBDOMAIN.DOMAIN
   ingress_annotations: |
     kubernetes.io/ingress.class: nginx
     cert-manager.io/cluster-issuer: prod-issuer
   ingress_path: /
-  ingress_tls_secret: tls-autothis.org-nauto
+  ingress_tls_secret: tls-DOMAIN-nauto
 
 postgresql:
   enabled: true
   storageClass: local-storage
-  postgresqlPassword: "thistime"
+  postgresqlPassword: "NAUTO_SQL_PW"
 
 redis:
   enabled: true  # Consider utilizing an external HA redis rather than the built-in redis
   auth:
-    password: "thistime"
+    password: "NAUTO_REDIS_PW"
