@@ -266,9 +266,10 @@
 	)
 
 	# Loop through WAZUH_CREDENTIAL_CONFIG_FILES array and update password
-	COUNT=${#WAZUH_NAMESPACE_CONFIG_FILES[@]}
-	for ((i=0; i<$COUNT; i++)); do
-		FIELD="namespace"
+	#COUNT=${#WAZUH_NAMESPACE_CONFIG_FILES[@]}
+	#for ((i=0; i<$COUNT; i++)); do
+	for i in "${WAZUH_NAMESPACE_CONFIG_FILES}";
+		FIELD=namespace
 		FILE=${i}
 		NEW_VALUE=${WAZUH_NAMESPACE}
 
@@ -309,7 +310,7 @@
 	TITLE="Deploying Wazuh with Kustomize"
 	print_title
 	
-	kubectl apply -k envs/local-env/
+	kubectl apply -k ${WAZUH_DEPLOY_PATH}/wazuh-kubernetes/envs/local-env/
 
 	printf "${GREEN}Done\n${COLOUR_OFF}"
 
