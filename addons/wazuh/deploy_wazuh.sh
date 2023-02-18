@@ -74,9 +74,9 @@
 
 # Set Wazuh Variables
 
+	WAZUH_STORAGE_CLASS='local\-storage'
 	set_wazuhvariables
 	WAZUH_MISSING_VARIABLES=()
-    WAZUH_STORAGE_CLASS=local-storage
 
 # Missing Variables
 
@@ -185,7 +185,7 @@
         
     # Update the storageClassName field in each of the files stored in the WAZUH_STORAGE_CLASS_CONFIG_FILES array.
 	for i in "${WAZUH_STORAGE_CLASS_CONFIG_FILES[@]}"; do
-		sed -i -E "/storageClassName/s/storageClassName: .*/storageClassName: ${WAZUH_STORAGE_CLASS}" ${WAZUH_DEPLOY_PATH}/$i
+		sed -i -E "/storageClassName/s/storageClassName: .*/storageClassName: ${WAZUH_STORAGE_CLASS}/" ${WAZUH_DEPLOY_PATH}/$i
         printf "Updating storageClassName in config file: ${WAZUH_DEPLOY_PATH}/${i}\n${COLOUR_OFF}"
 	done
 
