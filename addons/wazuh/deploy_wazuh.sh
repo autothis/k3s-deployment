@@ -226,7 +226,7 @@
 		FIELD=${!WAZUH_CREDENTIAL_CONFIG_FILES[i]:0:1}
 		NEW_VALUE_LENGTH=${!WAZUH_CREDENTIAL_CONFIG_FILES[i]:1:1}
 		FILE=${!WAZUH_CREDENTIAL_CONFIG_FILES[i]:2:1}
-		NEW_VALUE=$(openssl rand -base64 ${NEW_VALUE_LENGTH} | base64)
+		NEW_VALUE=$(cat /dev/random | tr -dc '[:alnum:]' | head -c ${NEW_VALUE_LENGTH} | base64)
 
 		# Sleep for 5 seconds to make sure openssl generates non-similar passwords
 		sleep 5
@@ -234,7 +234,7 @@
 		# This generates a new password if the current base64 encoded on contains a '/'
 		while [[ $NEW_VALUE == *"/"* ]]
 		do
-			NEW_VALUE=$(openssl rand -base64 ${NEW_VALUE_LENGTH} | base64)
+			NEW_VALUE=$(cat /dev/random | tr -dc '[:alnum:]' | head -c ${NEW_VALUE_LENGTH} | base64)
 		done
 
 		# Call function to replace passwords in files
@@ -323,6 +323,8 @@
 	sed -i "s/WAZUH_NAMESPACE/$WAZUH_NAMESPACE/g" ${WAZUH_DEPLOY_PATH}/wazuh-ingress.yaml
 	sed -i "s/WAZUH_SUBDOMAIN/$WAZUH_SUBDOMAIN/g" ${WAZUH_DEPLOY_PATH}/wazuh-ingress.yaml
 	sed -i "s/DOMAIN/$DOMAIN/g" ${WAZUH_DEPLOY_PATH}/wazuh-ingress.yaml
+
+	kubectl apply -f ${WAZUH_DEPLOY_PATH}/wazuh-ingress.yaml
 
 	printf "${GREEN}Done\n${COLOUR_OFF}"
 
