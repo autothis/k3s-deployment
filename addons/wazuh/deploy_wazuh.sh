@@ -5,7 +5,7 @@
 	#WAZUH_NAMESPACE='' #This is the namespace that Wazuh will be deployed to.
 	#WAZUH_SUBDOMAIN='' #This is the subdomain that will be used to serve your Wazuh dashboard.
 	#DOMAIN='' #This is the domain that your services will be available on e.g. 'yourdomain.com'.
-    #WAZUH_STORAGE_CLASS='' #This is the Storage Class that will be used to assign a persistent volumes claim.
+	#WAZUH_STORAGE_CLASS='' #This is the Storage Class that will be used to assign a persistent volumes claim.
 	#KUBE_CONFIG_DIR='' #This is the directory that your configuration files will be put in for future reference. e.g. '/kubeconfigs'
 
 #Create Functions
@@ -13,7 +13,7 @@
 	set_wazuhvariables () {
 
 		# Define WAZUH_VARIABLE array containing required variables for K3s deployment
-        WAZUH_VARIABLE_1=("WAZUH_NAMESPACE" "$WAZUH_NAMESPACE" "This is the namespace that Wazuh will be deployed to.")
+		WAZUH_VARIABLE_1=("WAZUH_NAMESPACE" "$WAZUH_NAMESPACE" "This is the namespace that Wazuh will be deployed to.")
 		WAZUH_VARIABLE_2=("WAZUH_STORAGE_CLASS" "$WAZUH_STORAGE_CLASS" "This is the Storage Class that will be used to assign a persistent volumes claim.")
 		WAZUH_VARIABLE_3=("WAZUH_SUBDOMAIN" "$WAZUH_SUBDOMAIN" "This is the subdomain that will be used to serve your Wazuh Dashboard. e.g. 'wazuh' will become wazuh.yourdomain.com")
 		WAZUH_VARIABLE_4=("DOMAIN" "$DOMAIN" "This is the domain that your services will be available on e.g. 'yourdomain.com'")
@@ -21,11 +21,11 @@
 
 		# Combine WAZUH_VARIABLE arrays int the WAZUH_VARIABLES array
 		WAZUH_VARIABLES=(
-			 WAZUH_VARIABLE_1[@]
-			 WAZUH_VARIABLE_2[@]
-			 WAZUH_VARIABLE_3[@]
-			 WAZUH_VARIABLE_4[@]
-			 WAZUH_VARIABLE_5[@]
+			WAZUH_VARIABLE_1[@]
+			WAZUH_VARIABLE_2[@]
+			WAZUH_VARIABLE_3[@]
+			WAZUH_VARIABLE_4[@]
+			WAZUH_VARIABLE_5[@]
 		)
 	}
 
@@ -177,25 +177,25 @@
 	print_title
 
 	# List of config files to update
-    WAZUH_STORAGE_CLASS_CONFIG_FILES=(
-        "wazuh-kubernetes/wazuh/indexer_stack/wazuh-indexer/cluster/indexer-sts.yaml"
-        "wazuh-kubernetes/wazuh/wazuh_managers/wazuh-master-sts.yaml"
-        "wazuh-kubernetes/wazuh/wazuh_managers/wazuh-worker-sts.yaml"
-        )
-        
-    # Update the storageClassName field in each of the files stored in the WAZUH_STORAGE_CLASS_CONFIG_FILES array.
+	WAZUH_STORAGE_CLASS_CONFIG_FILES=(
+    	"wazuh-kubernetes/wazuh/indexer_stack/wazuh-indexer/cluster/indexer-sts.yaml"
+	    "wazuh-kubernetes/wazuh/wazuh_managers/wazuh-master-sts.yaml"
+    	"wazuh-kubernetes/wazuh/wazuh_managers/wazuh-worker-sts.yaml"
+    )
+
+	# Update the storageClassName field in each of the files stored in the WAZUH_STORAGE_CLASS_CONFIG_FILES array.
 	for i in "${WAZUH_STORAGE_CLASS_CONFIG_FILES[@]}"; do
 		sed -i -E "/storageClassName/s/storageClassName: .*/storageClassName: ${WAZUH_STORAGE_CLASS}/" ${WAZUH_DEPLOY_PATH}/$i
         printf "Updating storageClassName in config file: ${WAZUH_DEPLOY_PATH}/${i}\n${COLOUR_OFF}"
 	done
 
-    # Comment out the line containing 'storage-class.yaml' in 'kustomization.yaml' file.
-    sed -i "s/- storage-class.yaml/#- storage-class.yaml/g" ${WAZUH_DEPLOY_PATH}/wazuh-kubernetes/envs/local-env/kustomization.yml
-    printf "Commenting out 'storage-class.yaml' in config file: ${WAZUH_DEPLOY_PATH}/wazuh-kubernetes/envs/local-env/kustomization.yml\n${COLOUR_OFF}"
+	# Comment out the line containing 'storage-class.yaml' in 'kustomization.yaml' file.
+	sed -i "s/- storage-class.yaml/#- storage-class.yaml/g" ${WAZUH_DEPLOY_PATH}/wazuh-kubernetes/envs/local-env/kustomization.yml
+	printf "Commenting out 'storage-class.yaml' in config file: ${WAZUH_DEPLOY_PATH}/wazuh-kubernetes/envs/local-env/kustomization.yml\n${COLOUR_OFF}"
 
-    # Comment out the line containing 'storage-class.yaml' in 'kustomization.yaml' file.
-    sed -i "s/- base\/storage-class.yaml/#- base\/storage-class.yaml/g" ${WAZUH_DEPLOY_PATH}/wazuh-kubernetes/wazuh/kustomization.yml
-    printf "Commenting out 'storage-class.yaml' in config file: ${WAZUH_DEPLOY_PATH}/wazuh-kubernetes/wazuh/kustomization.yml\n${COLOUR_OFF}"
+	# Comment out the line containing 'storage-class.yaml' in 'kustomization.yaml' file.
+	sed -i "s/- base\/storage-class.yaml/#- base\/storage-class.yaml/g" ${WAZUH_DEPLOY_PATH}/wazuh-kubernetes/wazuh/kustomization.yml
+	printf "Commenting out 'storage-class.yaml' in config file: ${WAZUH_DEPLOY_PATH}/wazuh-kubernetes/wazuh/kustomization.yml\n${COLOUR_OFF}"
 
 	printf "${GREEN}Done\n${COLOUR_OFF}"
 
@@ -205,7 +205,7 @@
 	print_title
 
 	# Passwords to be generate (Field to Update, Character Count, File)
-	WAZUH_CRED_VARIABLE_1=("password" "12" "wazuh-kubernetes/wazuh/secrets/dashboard-cred-secret.yaml")
+	WAZUH_CRED_VARIABLE_1=("password" "12" "wazuh-kubernetes/wazuh/secrets/dashboard-cred-secret.yamll")
 	WAZUH_CRED_VARIABLE_2=("password" "12" "wazuh-kubernetes/wazuh/secrets/indexer-cred-secret.yaml")
 	WAZUH_CRED_VARIABLE_3=("password" "16" "wazuh-kubernetes/wazuh/secrets/wazuh-api-cred-secret.yaml")
 	WAZUH_CRED_VARIABLE_4=("authd.pass" "12" "wazuh-kubernetes/wazuh/secrets/wazuh-authd-pass-secret.yaml")
@@ -245,7 +245,7 @@
 
 	TITLE="Updating Wazuh Namespace in Wazuh Files"
 	print_title
-	
+
 	WAZUH_NAMESPACE_CONFIG_FILES=(
 		"wazuh-kubernetes/envs/local-env/wazuh-resources.yaml"
 		"wazuh-kubernetes/envs/local-env/indexer-resources.yaml"
@@ -284,7 +284,7 @@
 
 	TITLE="Generating Wazuh Internal Certificates with Cert-Manager"
 	print_title
-	
+
 	# Execute certificate generation scripts provided by Wazuh
 	${WAZUH_DEPLOY_PATH}/wazuh-kubernetes/wazuh/certs/dashboard_http/generate_certs.sh
 	${WAZUH_DEPLOY_PATH}/wazuh-kubernetes/wazuh/certs/indexer_cluster/generate_certs.sh
@@ -310,7 +310,7 @@
 
 	TITLE="Deploying Wazuh with Kustomize"
 	print_title
-	
+
 	kubectl apply -k ${WAZUH_DEPLOY_PATH}/wazuh-kubernetes/envs/local-env/
 
 	printf "${GREEN}Done\n${COLOUR_OFF}"
