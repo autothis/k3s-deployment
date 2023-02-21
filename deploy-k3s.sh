@@ -24,6 +24,7 @@
     K3S_VARIABLE_6=("CLOUDFLARE_API_TOKEN" "$CLOUDFLARE_API_TOKEN" "This is the cloudflare token to be used by cert-manager e.g. 'ZN0tr3AL9sEHl19yqjHzpy_fAkET0keNn_ddqg_y'")
     K3S_VARIABLE_7=("CLOUDFLARE_EMAIL_ADDRESS" "$CLOUDFLARE_EMAIL_ADDRESS" "This is the email address that will be associated with your LetsEncrypt certificates e.g. 'youremailaddress@here.com'")
     K3S_VARIABLE_8=("DOMAIN" "$DOMAIN" "This is the domain that your services will be available on e.g. 'yourdomain.com'")
+    K3S_VARIABLE_9=("CERT_ISSUER" "$CERT_ISSUER" "This is the certificate issuer that will be used to issue a certificate for the Kubernetes Dashboard e.g. 'prod-issuer' or 'internal-issuer'")
 
    # Combine K3S_VARIABLE arrays int the K3S_VARIABLES array
    K3S_VARIABLES=(
@@ -35,6 +36,7 @@
      K3S_VARIABLE_6[@]
      K3S_VARIABLE_7[@]
      K3S_VARIABLE_8[@]
+     K3S_VARIABLE_9[@]
    )
   }
 
@@ -382,13 +384,14 @@
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
 
-# Create Cloudflare Secret and DNS Challenge
+# Create Cert-Manager Issuers
 
-  TITLE="Creating Cloudflare Secret and DNS Challenge"
+  TITLE="Creating Cert-Manager Issuers"
   print_title
 
   kubectl create -f cert-manager/cloudflare-secret.yaml
   kubectl create -f cert-manager/cloudflare-dns-challenge.yaml
+  kubectl create -f cert-manager/internal-issuer.yaml
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
 
@@ -410,6 +413,7 @@
 
   sed -i "s/DASHBOARD_SUBDOMAIN/$DASHBOARD_SUBDOMAIN/g" kubernetes-dashboard/dashboard-ingress.yaml
   sed -i "s/DOMAIN/$DOMAIN/g" kubernetes-dashboard/dashboard-ingress.yaml
+  sed -i "s/CERT_ISSUER/$CERT_ISSUER/g" kubernetes-dashboard/dashboard-ingress.yaml
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
 
