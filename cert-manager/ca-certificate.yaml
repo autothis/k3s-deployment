@@ -11,3 +11,4 @@ spec:
     name: selfsigned-ca-issuer
     kind: ClusterIssuer
     group: cert-manager.io
+  duration: 43800h

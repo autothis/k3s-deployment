@@ -384,16 +384,72 @@
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
 
-# Create Cert-Manager Issuers
+# Create Cert-Manager Self Signed CA Issuer
 
-  TITLE="Creating Cert-Manager Issuers"
+  TITLE="Creating Cert-Manager Self Signed CA Issuer"
+  print_title
+  
+  kubectl create -f cert-manager/selfsigned-ca-issuer.yaml
+  kubectl create -f cert-manager/ca-certificate.yaml
+
+# Wait for Cert-Manager Self Signed CA Issuer and Certificate
+
+  TITLE="Waiting for Cert-Manager Self Signed CA Issuer and Certificate"
+  print_title
+  
+  kubectl wait --for=condition=Ready clusterissuers.cert-manager.io selfsigned-ca-issuer --timeout=${TIMEOUT}s
+  kubectl --namespace cert-manager wait --for=condition=Ready certificates.cert-manager.io tls-selfsigned-ca --timeout=${TIMEOUT}s
+
+# Create Cert-Manager Production (Cloudflare) Issuer
+
+  TITLE="Creating Cert-Manager prod-issuer"
   print_title
 
   kubectl create -f cert-manager/cloudflare-secret.yaml
-  kubectl create -f cert-manager/cloudflare-dns-challenge.yaml
-  kubectl create -f cert-manager/internal-issuer.yaml
+  kubectl create -f cert-manager/prod-issuer.yaml
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
+
+# Wait for Cert-Manager prod-issuer
+
+  TITLE="Waiting for Cert-Manager prod-issuer to be ready"
+  print_title
+  
+  kubectl wait --for=condition=Ready clusterissuers.cert-manager.io prod-issuer --timeout=${TIMEOUT}s
+
+# Create Cert-Manager Self Signed Issuer
+
+  TITLE="Creating Cert-Manager selfsigned-issuer"
+  print_title
+
+  kubectl create -f cert-manager/selfsigned-issuer.yaml
+
+  printf "${GREEN}Done\n${COLOUR_OFF}"
+
+# Wait for Cert-Manager selfsigned-issuer
+
+  TITLE="Waiting for Cert-Manager selfsigned-issuer to be ready"
+  print_title
+  
+  kubectl wait --for=condition=Ready clusterissuers.cert-manager.io selfsigned-issuer --timeout=${TIMEOUT}s
+
+# Get CA Certificate and Install into K3s Host
+
+  TITLE="Installing CA on K3s Host"
+  print_title
+
+  # Create Custom CA Location
+  CUSTOM_CA_LOCATION="/usr/local/share/ca-certificates/k3s"
+  mkdir $CUSTOM_CA_LOCATION
+
+  # Retrieve Self Signed CA Certificate
+  SELFSIGNED_CA_CERTIFICATE=$(kubectl get secrets/tls-selfsigned-ca --namespace cert-manager -o 'jsonpath={..data.tls\.crt}' | base64 -d)
+
+  # Install Self Signed CA Certificate  
+  printf '%s\n' "$SELFSIGNED_CA_CERTIFICATE" > $CUSTOM_CA_LOCATION/k3s-custom-ca.crt
+
+  # Update K3s Host CA Certificate Store
+  update-ca-certificates
 
 # Create File 'kubernetes-dashboard.yaml'
 
@@ -524,3 +580,8 @@
   K3S_TOKEN=$(kubectl -n kubernetes-dashboard create token admin-user)
 
   printf "${PURPLE}${K3S_TOKEN}\n${COLOUR_OFF}"
+
+  printf "${YELLOW}You will need to install the Self Signed CA Certificate on any machines you dont want to get TLS warnings on.\n${COLOUR_OFF}"
+  printf "${GREEN}The Self Signed CA Certificate has been automatically added to your K3 Hosts CA Store.\n${COLOUR_OFF}"
+  printf "${RED}Your Self Signed CA Certificate is:\n${COLOUR_OFF}"
+  printf '%s\n' "${SELFSIGNED_CA_CERTIFICATE}"
