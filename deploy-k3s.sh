@@ -375,12 +375,12 @@
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
 
-# Create File 'cloudflare-dns-challenge.yaml'
+# Create File 'prod-issuer.yaml'
 
   TITLE="Updating file cloudflare-dns-challenge.yaml with K3s Deployment Variables"
   print_title
 
-  sed -i "s/CLOUDFLARE_EMAIL_ADDRESS/$CLOUDFLARE_EMAIL_ADDRESS/g" cert-manager/cloudflare-dns-challenge.yaml
+  sed -i "s/CLOUDFLARE_EMAIL_ADDRESS/$CLOUDFLARE_EMAIL_ADDRESS/g" cert-manager/prod-issuer.yaml
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
 
