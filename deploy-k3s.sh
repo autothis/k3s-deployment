@@ -377,7 +377,7 @@
 
 # Create File 'prod-issuer.yaml'
 
-  TITLE="Updating file cloudflare-dns-challenge.yaml with K3s Deployment Variables"
+  TITLE="Updating file prod-issuer.yaml with K3s Deployment Variables"
   print_title
 
   sed -i "s/CLOUDFLARE_EMAIL_ADDRESS/$CLOUDFLARE_EMAIL_ADDRESS/g" cert-manager/prod-issuer.yaml
