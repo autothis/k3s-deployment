@@ -24,6 +24,7 @@
     K3S_VARIABLE_6=("CLOUDFLARE_API_TOKEN" "$CLOUDFLARE_API_TOKEN" "This is the cloudflare token to be used by cert-manager e.g. 'ZN0tr3AL9sEHl19yqjHzpy_fAkET0keNn_ddqg_y'")
     K3S_VARIABLE_7=("CLOUDFLARE_EMAIL_ADDRESS" "$CLOUDFLARE_EMAIL_ADDRESS" "This is the email address that will be associated with your LetsEncrypt certificates e.g. 'youremailaddress@here.com'")
     K3S_VARIABLE_8=("DOMAIN" "$DOMAIN" "This is the domain that your services will be available on e.g. 'yourdomain.com'")
+    K3S_VARIABLE_9=("CERT_ISSUER" "$CERT_ISSUER" "This is the certificate issuer that will be used to issue a certificate for the Kubernetes Dashboard e.g. 'prod-issuer' or 'selfsigned-issuer'")
 
    # Combine K3S_VARIABLE arrays int the K3S_VARIABLES array
    K3S_VARIABLES=(
@@ -35,6 +36,7 @@
      K3S_VARIABLE_6[@]
      K3S_VARIABLE_7[@]
      K3S_VARIABLE_8[@]
+     K3S_VARIABLE_9[@]
    )
   }
 
@@ -373,24 +375,81 @@
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
 
-# Create File 'cloudflare-dns-challenge.yaml'
+# Create File 'prod-issuer.yaml'
 
-  TITLE="Updating file cloudflare-dns-challenge.yaml with K3s Deployment Variables"
+  TITLE="Updating file prod-issuer.yaml with K3s Deployment Variables"
   print_title
 
-  sed -i "s/CLOUDFLARE_EMAIL_ADDRESS/$CLOUDFLARE_EMAIL_ADDRESS/g" cert-manager/cloudflare-dns-challenge.yaml
+  sed -i "s/CLOUDFLARE_EMAIL_ADDRESS/$CLOUDFLARE_EMAIL_ADDRESS/g" cert-manager/prod-issuer.yaml
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
 
-# Create Cloudflare Secret and DNS Challenge
+# Create Cert-Manager Self Signed CA Issuer
 
-  TITLE="Creating Cloudflare Secret and DNS Challenge"
+  TITLE="Creating Cert-Manager Self Signed CA Issuer"
+  print_title
+  
+  kubectl create -f cert-manager/selfsigned-ca-issuer.yaml
+  kubectl create -f cert-manager/ca-certificate.yaml
+
+# Wait for Cert-Manager Self Signed CA Issuer and Certificate
+
+  TITLE="Waiting for Cert-Manager Self Signed CA Issuer and Certificate"
+  print_title
+  
+  kubectl wait --for=condition=Ready clusterissuers.cert-manager.io selfsigned-ca-issuer --timeout=${TIMEOUT}s
+  kubectl --namespace cert-manager wait --for=condition=Ready certificates.cert-manager.io tls-selfsigned-ca --timeout=${TIMEOUT}s
+
+# Create Cert-Manager Production (Cloudflare) Issuer
+
+  TITLE="Creating Cert-Manager prod-issuer"
   print_title
 
   kubectl create -f cert-manager/cloudflare-secret.yaml
-  kubectl create -f cert-manager/cloudflare-dns-challenge.yaml
+  kubectl create -f cert-manager/prod-issuer.yaml
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
+
+# Wait for Cert-Manager prod-issuer
+
+  TITLE="Waiting for Cert-Manager prod-issuer to be ready"
+  print_title
+  
+  kubectl wait --for=condition=Ready clusterissuers.cert-manager.io prod-issuer --timeout=${TIMEOUT}s
+
+# Create Cert-Manager Self Signed Issuer
+
+  TITLE="Creating Cert-Manager selfsigned-issuer"
+  print_title
+
+  kubectl create -f cert-manager/selfsigned-issuer.yaml
+
+  printf "${GREEN}Done\n${COLOUR_OFF}"
+
+# Wait for Cert-Manager selfsigned-issuer
+
+  TITLE="Waiting for Cert-Manager selfsigned-issuer to be ready"
+  print_title
+  
+  kubectl wait --for=condition=Ready clusterissuers.cert-manager.io selfsigned-issuer --timeout=${TIMEOUT}s
+
+# Get CA Certificate and Install into K3s Host
+
+  TITLE="Installing CA on K3s Host"
+  print_title
+
+  # Create Custom CA Location
+  CUSTOM_CA_LOCATION="/usr/local/share/ca-certificates/k3s"
+  mkdir $CUSTOM_CA_LOCATION
+
+  # Retrieve Self Signed CA Certificate
+  SELFSIGNED_CA_CERTIFICATE=$(kubectl get secrets/tls-selfsigned-ca --namespace cert-manager -o 'jsonpath={..data.tls\.crt}' | base64 -d)
+
+  # Install Self Signed CA Certificate  
+  printf '%s\n' "$SELFSIGNED_CA_CERTIFICATE" > $CUSTOM_CA_LOCATION/k3s-custom-ca.crt
+
+  # Update K3s Host CA Certificate Store
+  update-ca-certificates
 
 # Create File 'kubernetes-dashboard.yaml'
 
@@ -410,6 +469,7 @@
 
   sed -i "s/DASHBOARD_SUBDOMAIN/$DASHBOARD_SUBDOMAIN/g" kubernetes-dashboard/dashboard-ingress.yaml
   sed -i "s/DOMAIN/$DOMAIN/g" kubernetes-dashboard/dashboard-ingress.yaml
+  sed -i "s/CERT_ISSUER/$CERT_ISSUER/g" kubernetes-dashboard/dashboard-ingress.yaml
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
 
@@ -520,3 +580,8 @@
   K3S_TOKEN=$(kubectl -n kubernetes-dashboard create token admin-user)
 
   printf "${PURPLE}${K3S_TOKEN}\n${COLOUR_OFF}"
+
+  printf "${YELLOW}You will need to install the Self Signed CA Certificate on any machines you dont want to get TLS warnings on.\n${COLOUR_OFF}"
+  printf "${GREEN}The Self Signed CA Certificate has been automatically added to your K3 Hosts CA Store.\n${COLOUR_OFF}"
+  printf "${RED}Your Self Signed CA Certificate is:\n${COLOUR_OFF}"
+  printf '%s\n' "${SELFSIGNED_CA_CERTIFICATE}"

@@ -4,7 +4,7 @@ metadata:
   name: dashboard-ingress
   namespace: kubernetes-dashboard
   annotations:
-    cert-manager.io/cluster-issuer: prod-issuer
+    cert-manager.io/cluster-issuer: CERT_ISSUER
     nginx.org/redirect-to-https: "true"
     nginx.org/ssl-services: kubernetes-dashboard
 spec:
