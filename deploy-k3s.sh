@@ -10,6 +10,7 @@
 #CLOUDFLARE_API_TOKEN='' #This is the cloudflare token to be used by cert-manager.
 #CLOUDFLARE_EMAIL_ADDRESS='' #This is the email address that will be associated with your LetsEncrypt certificates e.g. 'youremailaddress@here.com'.
 #DOMAIN='' #This is the domain that your services will be available on e.g. 'yourdomain.com'.
+CERT_ISSUER='prod-issuer' #This is the certificate issuer that will be used to issue a certificate for the Kubernetes Dashboard e.g. 'prod-issuer' or 'selfsigned-issuer'.
 
 # Create Functions
 
