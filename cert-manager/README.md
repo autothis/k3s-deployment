@@ -22,6 +22,23 @@ Cert-Manager Deployment Instructions:
 
   Deployment instructions are provided as part of the 'deploy-k3s.sh' script included in the top level directory of this repository - See the [README.md](https://k3s.autothis.org/) file for more information.
 
+Cert-Manager 'prod-issuer' Notes:
+---------------------------------------
+
+  ### Creating a Cloudflare API Token
+  
+  In order for Cert-Manager to generate SSL certificates, you need to provide an API Token for Cloudflare, to allow it to manage DNS entries for the domain you are assigning an SSL certificate for.
+
+  Cloudflare API Token will need the following permissions:
+  - Zone - DNS - Edit
+  - Zone - Zone - Read
+
+  From the Cloudflare dashboard, go to 'My Profile' > 'API Tokens' and select 'Create Token'.  Pick the template 'Edit Zone DNS' and make sure the under permissions section, that you configure the permissions listed above.  Under 'Zone Resources' select either the specific domain you want to grant these permissions for, or 'All Zones'.
+  
+  Click 'Continue to Summary', and then 'Create Token'.
+
+  See the [Cert-Manager Documentation](https://cert-manager.io/docs/configuration/acme/dns01/cloudflare/) for more information.
+
 Cert-Manager 'selfsigned-issuer' Notes:
 ---------------------------------------
 
