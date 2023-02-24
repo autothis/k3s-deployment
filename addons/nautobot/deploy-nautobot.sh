@@ -32,6 +32,7 @@
 		 NAUTO_VARIABLE_4[@]
 		 NAUTO_VARIABLE_5[@]
 		 NAUTO_VARIABLE_6[@]
+		 NAUTO_VARIABLE_7[@]
 	 )
 	}
 
