@@ -10,16 +10,16 @@ nautobot:
       value: "Production"
   allowedHosts: "*"
 
-  # ingress
+# ingress
 ingress:
-  enable: true
+  enabled: true
   tls: true
   hostname: NAUTO_SUBDOMAIN.DOMAIN
-  ingress_annotations: |
+  annotations:
     kubernetes.io/ingress.class: nginx
-    cert-manager.io/cluster-issuer: prod-issuer
+    cert-manager.io/cluster-issuer: CERT_ISSUER
   pathType: "Prefix"
-  ingress_path: /
+  path: "/"
   backendProtocol: "http"
   secretName: tls-DOMAIN-nauto
 
