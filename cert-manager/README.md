@@ -2,6 +2,7 @@ Cert-Manager Deployment
 =======================
 
 Collection of files to deploy Cert-Manager on a single K3s linux node (tested on Debian).
+
 This will deploy Cert-Manager on K3s with:
   - 'prod-issuer' Which will create and manager Lets Encrypt certificates, using Cloudflare DNS verification.
   - 'selfsigned-issuer' Which will create and manage self signed certificates, using a custom Root Certificate Authority certificate.
@@ -65,7 +66,7 @@ Cert-Manager 'selfsigned-issuer' Notes:
 ```
 
   #### Debian:
-  Using the command below, and replacing with your own certificate, you can create a file called 'k3s-custom-ca.crt'
+  Using the commands below, and replacing with your own certificate, you can create a file called 'k3s-custom-ca.crt'
 
 ```bash
 # Create Custom CA Directory for K3s
