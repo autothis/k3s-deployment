@@ -1,8 +1,6 @@
 [k3s-deployment](https://github.com/autothis/k3s-deployment)
 ===========================
 
-
-
 Collection of files to deploy K3s on a single linux node (tested on Debian).
 This will deploy K3s with:
   - Traefik disabled

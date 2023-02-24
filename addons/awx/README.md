@@ -1,7 +1,8 @@
-awx-deployment
+AWX Deployment
 ===========================
 
 Collection of files to deploy AWX on a single K3s linux node (tested on Debian).
+
 This will deploy AWX on K3s with:
   - Persitent Storage (you will need an available Persistent Volume of 8GB or more otherwise AWX deployment will fail).
   - AWX Ingress on the subdomain of your choice.
@@ -11,15 +12,15 @@ AWX Deployment Variables:
 ------------------------
 
 ```yml
-  #awxns='awx'  #This is the namespace that AWX will be deployed to.
-  #awxvers='1.1.4'  #This is the version of AWX to be deployed, this variable will automatically populated.
-  #awxsubd='awx'  #This is the subdomain that will be used to serve your AWX dashboard.
-  #domain='example.com' #This is the domain that your services will be available on e.g. 'yourdomain.com'.
+#AWX_NAMESPACE='' #This is the namespace that AWX will be deployed to.
+#AWX_VERSION='' #This is the version of AWX to be deployed, this variable will automatically populated.
+#AWX_SUBDOMAIN='' #This is the subdomain that will be used to serve your AWX dashboard.
+#DOMAIN='' #This is the domain that your services will be available on e.g. 'yourdomain.com'.
 ```
 
   Variables can be provided 3 ways:
 
-    1. Exporting the variable by executing a command similar to this: export domain='example.com'
+    1. Exporting the variable by executing a command similar to this: export DOMAIN='example.com'
     2. Running the deploy-k3s.sh script, and providing variables as prompted.
     3. Editing the deploy-k3s.sh script, uncommenting and populating the variables at the very top of the script.
 

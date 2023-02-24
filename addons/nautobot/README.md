@@ -1,7 +1,8 @@
-nautobot-deployment
+Nautobot Deployment
 ===========================
 
 Collection of files to deploy Nautobot on a single K3s linux node (tested on Debian).
+
 This will deploy Nautobot on K3s with:
   - Persitent Storage (you will need an available Persistent Volume of 8GB or more otherwise AWX deployment will fail).
   - Nautobot Ingress on the subdomain of your choice.
@@ -11,12 +12,12 @@ Nautobot Deployment Variables:
 ------------------------
 
 ```yml
-    #NAUTO_NAMESPACE='' #This is the namespace that Nautobot will be deployed to.
-    #NAUTO_SUBDOMAIN='' #This is the subdomain that will be used to serve your Nautobot dashboard.
-	  #NAUTO_SQL_PW='' #this is the paasword that the Nautobot postgres user will have.
-    #NAUTO_REDIS_PW='' #this is the paasword that the Nautobot redis will have.
-	  #NAUTO_RELEASE_NAME='' #this is the release name Nautobot will have. Commonly just 'nautobot'.
-    #DOMAIN='' #This is the domain that your services will be available on e.g. 'yourdomain.com'.
+#NAUTO_NAMESPACE='' #This is the namespace that Nautobot will be deployed to.
+#NAUTO_SUBDOMAIN='' #This is the subdomain that will be used to serve your Nautobot dashboard.
+#NAUTO_SQL_PW='' #this is the paasword that the Nautobot postgres user will have.
+#NAUTO_REDIS_PW='' #this is the paasword that the Nautobot redis will have.
+#NAUTO_RELEASE_NAME='' #this is the release name Nautobot will have. Commonly just 'nautobot'.
+#DOMAIN='' #This is the domain that your services will be available on e.g. 'yourdomain.com'.
 ```
 
   Variables can be provided 3 ways:
