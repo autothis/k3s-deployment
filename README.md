@@ -2,6 +2,7 @@
 ===========================
 
 Collection of files to deploy K3s on a single linux node (tested on Debian).
+
 This will deploy K3s with:
   - Traefik disabled
   - NGINX Ingress installed and configured (the one provided by NGINX not Kubernetes)
