@@ -105,12 +105,12 @@ sudo update-ca-certificates
 
   Depending on how you want to manage custom Root Certificate Authority certificates, you can either:
   
-    ##### Method 1:
-    Allow all custom Root Certificiate Authority certificates installed on the device by configuring Firefox to accept all certificates in the 'Trusted Root Certificate Authorities' location.
+  ##### Method 1:
+  Allow all custom Root Certificiate Authority certificates installed on the device by configuring Firefox to accept all certificates in the 'Trusted Root Certificate Authorities' location.
     
-    This is done by putting 'about:config' in the address bar of Firefox, and search for 'security.enterprise_roots.enabled'.  You can then toggle the value between 'true' and 'false' (you want to set it to 'true' in this case).
+  This is done by putting 'about:config' in the address bar of Firefox, and search for 'security.enterprise_roots.enabled'.  You can then toggle the value between 'true' and 'false' (you want to set it to 'true' in this case).
 
-    ##### Method 2:
-    Allow a specific custom Root Certificiate Authority certificate by adding your specific Root Certificate Authority certificate to the list of Root Certificate Authorities trusted by Firefox on your device.
+  ##### Method 2:
+  Allow a specific custom Root Certificiate Authority certificate by adding your specific Root Certificate Authority certificate to the list of Root Certificate Authorities trusted by Firefox on your device.
     
-    In Firefox go to 'Settings' > 'Privacy & Security' > 'Security' > 'Certificates' and click the 'View Certificates' button.  In the 'Authorities' tab, click the 'Import' button and select your '.crt' file and click 'open', then select the 'Trust this CA to identiy websites' tickbox and click 'ok'.
+  In Firefox go to 'Settings' > 'Privacy & Security' > 'Security' > 'Certificates' and click the 'View Certificates' button.  In the 'Authorities' tab, click the 'Import' button and select your '.crt' file and click 'open', then select the 'Trust this CA to identiy websites' tickbox and click 'ok'.
