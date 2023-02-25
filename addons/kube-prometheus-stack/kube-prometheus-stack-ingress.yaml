@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kube-prometheus-stack-grafana-ingress
+  namespace: KUBE_PROMETHEUS_STACK_NAMESPACE
+  annotations:
+    cert-manager.io/cluster-issuer: CERT_ISSUER
+    nginx.org/redirect-to-https: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - KUBE_PROMETHEUS_STACK_SUBDOMAIN.DOMAIN
+    secretName: tls-DOMAIN-kube-prometheus-stack
+  rules:
+  - host: KUBE_PROMETHEUS_STACK_SUBDOMAIN.DOMAIN
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: kube-prometheus-stack-grafana
+            port:
+              number: 80
