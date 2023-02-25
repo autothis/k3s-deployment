@@ -12,10 +12,10 @@
 	set_kube-prometheus-stack-variables () {
 
 		# Define KUBE_PROMETHEUS_STACK_VARIABLE array containing required variables for K3s deployment
-		KUBE_PROMETHEUS_STACK_VARIABLE_1=("KUBE_PROMETHEUS_STACK_NAMESPACE" "$KUBE_PROMETHEUS_STACK_NAMESPACE" "This is the namespace that Kube Prometheus Stack will be deployed to e.g. 'monitoring'..")
-		KUBE_PROMETHEUS_STACK_VARIABLE_2=("KUBE_PROMETHEUS_STACK_SUBDOMAIN" "$KUBE_PROMETHEUS_STACK_SUBDOMAIN" "This is the subdomain that will be used to serve your Kube Prometheus Stack Dashboard. e.g. 'kubemonitor' will become kubemonitor.yourdomain.com")
-		KUBE_PROMETHEUS_STACK_VARIABLE_3=("DOMAIN" "$DOMAIN" "This is the domain that your services will be available on e.g. 'yourdomain.com'")
-		KUBE_PROMETHEUS_STACK_VARIABLE_4=("CERT_ISSUER" "$CERT_ISSUER" "This is the certificate issuer that will be used to issue a certificate for the Kube Prometheus Stack e.g. 'prod-issuer' or 'selfsigned-issuer'")
+		KUBE_PROMETHEUS_STACK_VARIABLE_1=("KUBE_PROMETHEUS_STACK_NAMESPACE" "$KUBE_PROMETHEUS_STACK_NAMESPACE" "This is the namespace that Kube Prometheus Stack will be deployed to e.g. 'monitoring'.")
+		KUBE_PROMETHEUS_STACK_VARIABLE_2=("KUBE_PROMETHEUS_STACK_SUBDOMAIN" "$KUBE_PROMETHEUS_STACK_SUBDOMAIN" "This is the subdomain that will be used to serve your Kube Prometheus Stack Dashboard. e.g. 'kubemonitor' will become 'kubemonitor.yourdomain.com'.")
+		KUBE_PROMETHEUS_STACK_VARIABLE_3=("DOMAIN" "$DOMAIN" "This is the domain that your services will be available on e.g. 'yourdomain.com'.")
+		KUBE_PROMETHEUS_STACK_VARIABLE_4=("CERT_ISSUER" "$CERT_ISSUER" "This is the certificate issuer that will be used to issue a certificate for the Kube Prometheus Stack e.g. 'prod-issuer' or 'selfsigned-issuer'.")
 
 	 # Combine KUBE_PROMETHEUS_STACK_VARIABLE arrays int the KUBE_PROMETHEUS_STACK_VARIABLES array
 	 KUBE_PROMETHEUS_STACK_VARIABLES=(
@@ -182,6 +182,43 @@
 	for i in "${KUBE_PROMETHEUS_STACK_PODS[@]}"; do
 		kubectl wait -n ${KUBE_PROMETHEUS_STACK_NAMESPACE} --for=condition=Ready pod/${i} --timeout=${TIMEOUT}s
 	done
+
+	printf "${GREEN}Done\n${COLOUR_OFF}"
+
+# Update File 'kube-prometheus-stack-ingress.yaml'
+
+	TITLE="Updating file kube-prometheus-stack-ingress.yaml with Kube Prometheus Stack Deployment Variables"
+	print_title
+
+	sed -i "s/KUBE_PROMETHEUS_STACK_NAMESPACE/$KUBE_PROMETHEUS_STACK_NAMESPACE/g" kube-prometheus-stack-ingress.yaml
+	sed -i "s/KUBE_PROMETHEUS_STACK_SUBDOMAIN/$KUBE_PROMETHEUS_STACK_SUBDOMAIN/g" kube-prometheus-stack-ingress.yaml
+	sed -i "s/DOMAIN/$DOMAIN/g" kube-prometheus-stack-ingress.yaml
+	sed -i "s/CERT_ISSUER/$CERT_ISSUER/g" kube-prometheus-stack-ingress.yaml
+
+	printf "${GREEN}Done\n${COLOUR_OFF}"
+
+# Update Grafana Password in 'kube-prometheus-stack-grafana' Secret
+
+	# Generate Password for Grafana
+	PASSWORD=$(cat /dev/random | tr -dc '[:alnum:]' | head -c 20 | base64)
+	# This generates a new password if the current base64 encoded on contains a '/'
+	while [[ $PASSWORD == *"/"* ]]
+	do
+		PASSWORD=$(cat /dev/random | tr -dc '[:alnum:]' | head -c 20 | base64)
+	done
+
+	# Update the 'kube-prometheus-stack-grafana' Secret with the New Password
+	kubectl get secret kube-prometheus-stack-grafana -n ${KUBE_PROMETHEUS_STACK_NAMESPACE} -o json | jq ".data[\"admin-password\"]=\"${PASSWORD}\"" | kubectl apply -f -
+
+	# Restart Grafana Container so that it uses the new Password (done up updating the evnironment variable 'DEPLOY_DATE' with the current date)
+	kubectl set env deployment kube-prometheus-stack-grafana -n ${KUBE_PROMETHEUS_STACK_NAMESPACE} DEPLOY_DATE="$(date)"
+
+# Create Kube Prometheus Stack Grafana Ingress
+
+	TITLE="Creating and configuring Kube Prometheus Stack Grafana Ingress "
+	print_title
+
+	kubectl create -f kube-prometheus-stack-ingress.yaml
 
 	printf "${GREEN}Done\n${COLOUR_OFF}"
 
