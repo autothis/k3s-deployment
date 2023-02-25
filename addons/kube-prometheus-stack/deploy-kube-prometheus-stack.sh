@@ -85,7 +85,7 @@
 			echo "Description: ${DESC}"
 			printf ${WHITE}"=%.0s"	$(seq 1 ${BREAK})${COLOUR_OFF}
 			printf "\n${COLOUR_OFF}"
-			KUBE_PROMETHEUS_STACK_MISSING_VARIABLES+=( "AWX_VARIABLE_$(expr $i + 1)[@]" )
+			KUBE_PROMETHEUS_STACK_MISSING_VARIABLES+=( "KUBE_PROMETHEUS_STACK_MISSING_VARIABLES_$(expr $i + 1)[@]" )
 		fi
 	done
 
