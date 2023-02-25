@@ -2,8 +2,8 @@
 
 # Define variables for Kube Prometheus Stack deployment on K3s (uncomment lines, and populate variables - not required if using other methods of variable population).
 
-	#KUBE_PROMETHEUS_STACK_NAMESPACE='' #This is the namespace that Kube Prometheus Stack will be deployed to.
-	#KUBE_PROMETHEUS_STACK_SUBDOMAIN='' #This is the subdomain that will be used to serve your Kube Prometheus Stack dashboard.
+	#KUBE_PROMETHEUS_STACK_NAMESPACE='' #This is the namespace that Kube Prometheus Stack will be deployed to e.g. 'monitoring'.
+	#KUBE_PROMETHEUS_STACK_SUBDOMAIN='' #This is the subdomain that will be used to serve your Kube Prometheus Stack dashboard e.g. 'kubemonitor'.
 	#DOMAIN='' #This is the domain that your services will be available on e.g. 'yourdomain.com'.
 	#CERT_ISSUER='prod-issuer' #This is the certificate issuer that will be used to issue a certificate for the Kube Prometheus Stack e.g. 'prod-issuer' or 'selfsigned-issuer'.
 
@@ -12,17 +12,17 @@
 	set_kube-prometheus-stack-variables () {
 
 		# Define KUBE_PROMETHEUS_STACK_VARIABLE array containing required variables for K3s deployment
-		KUBE_PROMETHEUS_STACK_VARIABLE_1=("KUBE_PROMETHEUS_STACK_NAMESPACE" "$KUBE_PROMETHEUS_STACK_NAMESPACE" "This is the namespace that Kube Prometheus Stack will be deployed to.")
+		KUBE_PROMETHEUS_STACK_VARIABLE_1=("KUBE_PROMETHEUS_STACK_NAMESPACE" "$KUBE_PROMETHEUS_STACK_NAMESPACE" "This is the namespace that Kube Prometheus Stack will be deployed to e.g. 'monitoring'..")
 		KUBE_PROMETHEUS_STACK_VARIABLE_2=("KUBE_PROMETHEUS_STACK_SUBDOMAIN" "$KUBE_PROMETHEUS_STACK_SUBDOMAIN" "This is the subdomain that will be used to serve your Kube Prometheus Stack Dashboard. e.g. 'kubemonitor' will become kubemonitor.yourdomain.com")
 		KUBE_PROMETHEUS_STACK_VARIABLE_3=("DOMAIN" "$DOMAIN" "This is the domain that your services will be available on e.g. 'yourdomain.com'")
 		KUBE_PROMETHEUS_STACK_VARIABLE_4=("CERT_ISSUER" "$CERT_ISSUER" "This is the certificate issuer that will be used to issue a certificate for the Kube Prometheus Stack e.g. 'prod-issuer' or 'selfsigned-issuer'")
 
 	 # Combine KUBE_PROMETHEUS_STACK_VARIABLE arrays int the KUBE_PROMETHEUS_STACK_VARIABLES array
 	 KUBE_PROMETHEUS_STACK_VARIABLES=(
-		 KUBE_PROMETHEUS_STACK_VARIABLE_1[@]
-		 KUBE_PROMETHEUS_STACK_VARIABLE_2[@]
-		 KUBE_PROMETHEUS_STACK_VARIABLE_3[@]
-		 KUBE_PROMETHEUS_STACK_VARIABLE_4[@]
+		KUBE_PROMETHEUS_STACK_VARIABLE_1[@]
+		KUBE_PROMETHEUS_STACK_VARIABLE_2[@]
+		KUBE_PROMETHEUS_STACK_VARIABLE_3[@]
+		KUBE_PROMETHEUS_STACK_VARIABLE_4[@]
 	 )
 	}
 
@@ -85,7 +85,7 @@
 			echo "Description: ${DESC}"
 			printf ${WHITE}"=%.0s"	$(seq 1 ${BREAK})${COLOUR_OFF}
 			printf "\n${COLOUR_OFF}"
-			KUBE_PROMETHEUS_STACK_MISSING_VARIABLES+=( "KUBE_PROMETHEUS_STACK_MISSING_VARIABLES_$(expr $i + 1)[@]" )
+			KUBE_PROMETHEUS_STACK_MISSING_VARIABLES+=( "KUBE_PROMETHEUS_STACK_VARIABLE_$(expr $i + 1)[@]" )
 		fi
 	done
 
@@ -96,9 +96,9 @@
 		VALUE=${!KUBE_PROMETHEUS_STACK_MISSING_VARIABLES[i]:1:1}
 		DESC=${!KUBE_PROMETHEUS_STACK_MISSING_VARIABLES[i]:2:1}
 		printf "${YELLOW}No value provided for '${NAME}'\n${COLOUR_OFF}"
-           printf "$DESC\n"
-           read -p "$(printf "${CYAN}Provide a value for '${NAME}': ${GREEN}")" $NAME
-           printf "${COLOUR_OFF}"
+		printf "$DESC\n"
+		read -p "$(printf "${CYAN}Provide a value for '${NAME}': ${GREEN}")" $NAME
+		printf "${COLOUR_OFF}"
 	done
 
 	printf "${GREEN}Done\n${COLOUR_OFF}"
@@ -170,7 +170,7 @@
 
 	KUBE_PROMETHEUS_STACK_PODS=$(kubectl get pods -n ${KUBE_PROMETHEUS_STACK_NAMESPACE} -o 'jsonpath={..metadata.name}')
 	IFS='/ ' read -r -a KUBE_PROMETHEUS_STACK_PODS <<< "$KUBE_PROMETHEUS_STACK_PODS"
-	
+
 	# wait for there to be 6 pods in the Kube Prometheus Stack namespace
 	while [ ${#KUBE_PROMETHEUS_STACK_PODS[@]} -ne 6 ]
 	do
@@ -193,14 +193,14 @@
 	# Query Certificates status in the Kube Prometheus Stack Namespace
 	KUBE_PROMETHEUS_STACK_CERTIFICATE=$(kubectl get certificate -n ${KUBE_PROMETHEUS_STACK_NAMESPACE} -o 'jsonpath={..metadata.name}')
 	IFS='/ ' read -r -a KUBE_PROMETHEUS_STACK_CERTIFICATE <<< "$KUBE_PROMETHEUS_STACK_CERTIFICATE"
-	
+
 	# wait for there to be at least 1 certificate in the Kube Prometheus Stack namespace
 	while [ ${#KUBE_PROMETHEUS_STACK_CERTIFICATE[@]} -ne 1 ]
 	do
 		KUBE_PROMETHEUS_STACK_CERTIFICATE=$(kubectl get certificate -n ${KUBE_PROMETHEUS_STACK_NAMESPACE} -o 'jsonpath={..metadata.name}')
 		IFS='/ ' read -r -a KUBE_PROMETHEUS_STACK_CERTIFICATE <<< "$KUBE_PROMETHEUS_STACK_CERTIFICATE"
 	done
-	
+
 	# watit for certificates in the Kube Prometheus Stack namespace to be Ready
 	for i in "${KUBE_PROMETHEUS_STACK_CERTIFICATE[@]}"; do
 		kubectl wait -n ${KUBE_PROMETHEUS_STACK_NAMESPACE} --for=condition=Ready certificate/${i} --timeout=${TIMEOUT}s
@@ -216,7 +216,7 @@
 	# Get Kube Prometheus Stack Grafana password from secrets
 	KUBE_PROMETHEUS_STACK_USERNAME=$(kubectl get secret kube-prometheus-stack-grafana -n ${KUBE_PROMETHEUS_STACK_NAMESPACE} -o jsonpath="{.data.admin-user}" | base64 --decode)
 	KUBE_PROMETHEUS_STACK_PASSWORD=$(kubectl get secret kube-prometheus-stack-grafana -n ${KUBE_PROMETHEUS_STACK_NAMESPACE} -o jsonpath="{.data.admin-password}" | base64 --decode)
-	
+
 	# Print Kube Prometheus Stack Details to screen for user
 	printf "${GREEN}You can now access your Kube Prometheus Stack Grafana Dashboard at ${CYAN}https://${KUBE_PROMETHEUS_STACK_SUBDOMAIN}.${DOMAIN}\n${COLOUR_OFF}"
 	printf "${GREEN}Username: ${CYAN}${KUBE_PROMETHEUS_STACK_USERNAME}\n${COLOUR_OFF}"
