@@ -7,6 +7,11 @@ This will deploy SIG-Storage on K3s with:
   - A disk dedicated to Persistent Volumes
   - As many persistent volumes as you define.
 
+SIG Storage Project:
+------------------------
+
+The Kubernetes SIGS project is referenced from the [kubernetes-sigs/sig-storage-local-static-provisioner](https://github.com/kubernetes-sigs/sig-storage-local-static-provisioner) helm examples github repository.
+
 SIG Storage Deployment Variables:
 ----------------------------------
 
