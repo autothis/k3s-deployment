@@ -13,7 +13,7 @@ Kube Prometheus Stack Project:
 
 The Kube Prometheus Stack is pulled from the [kube-prometheus](https://github.com/prometheus-operator/kube-prometheus) github repository.
 
-You can find more information on their website https://prometheus-operator.dev or in the github repository linked above.
+You can find more information on their website [https://prometheus-operator.dev](https://prometheus-operator.dev) or in the github repository linked above.
 
 Kube Prometheus Stack Deployment Variables:
 ------------------------
