@@ -57,3 +57,4 @@ Available Addons:
   
    - [Ansible AWX](https://k3s.autothis.org/addons/awx/): Open source web UI and API to manage Ansible Playbooks, Inventories, Ansible Vault, and Credentials.
    - [Nautobot](https://k3s.autothis.org/addons/nautobot): Nautobot is an extensible and flexible Network Source of Truth and Network Automation Platform that is the cornerstone of any network automation architecture.
+   - [Kube-Prometheus-Stack](https://k3s.autothis.org/addons/kube-prometheus-stack): Collection of Kubernetes manifests, Grafana dashboards, and Prometheus rules combined with documentation and scripts to provide easy to operate end-to-end Kubernetes cluster monitoring with Prometheus using the Prometheus Operator.
