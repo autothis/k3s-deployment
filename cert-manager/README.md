@@ -7,6 +7,13 @@ This will deploy Cert-Manager on K3s with:
   - 'prod-issuer' Which will create and manager Lets Encrypt certificates, using Cloudflare DNS verification.
   - 'selfsigned-issuer' Which will create and manage self signed certificates, using a custom Root Certificate Authority certificate.
 
+Cert-Manager Project:
+------------------------
+
+The Cert-Manager project is pulled from the [jetstack/cert-manager](https://cert-manager.io/docs/installation/helm/) helm repository.
+
+You can find more information on their website [https://cert-manager.io](https://cert-manager.io) or in the repository linked above.
+
 Cert-Manager Deployment Variables:
 ----------------------------------
 

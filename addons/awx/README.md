@@ -8,6 +8,13 @@ This will deploy AWX on K3s with:
   - AWX Ingress on the subdomain of your choice.
   - Auto assigned SSL certificate (via Cert-Manager).
 
+AWX Project:
+------------------------
+
+The AWX project is pulled from the [awx-operator](https://github.com/ansible/awx-operator) github repository, which is part of the Ansible Project.
+
+You can find more information on their website [https://www.ansible.com](https://www.ansible.com) or in the github repository linked above.
+
 AWX Deployment Variables:
 ------------------------
 
