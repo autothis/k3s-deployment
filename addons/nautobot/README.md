@@ -8,6 +8,13 @@ This will deploy Nautobot on K3s with:
   - Nautobot Ingress on the subdomain of your choice.
   - Auto assigned SSL certificate (via Cert-Manager).
 
+Nautobot Project:
+------------------------
+
+The Nautobot project is pulled from the [nautobot/helm-charts](https://github.com/nautobot/helm-charts) github helm repository.
+
+You can find more information on their website [https://www.networktocode.com/nautobot](https://www.networktocode.com/nautobot) or in the repository linked above.
+
 Nautobot Deployment Variables:
 ------------------------
 

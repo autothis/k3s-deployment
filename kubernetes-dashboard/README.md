@@ -1,4 +1,4 @@
-Kubernetes-Dashboard Deployment
+Kubernetes Dashboard Deployment
 =======================
 
 Collection of files to deploy Kubernetes-Dashboard on a single K3s linux node (tested on Debian).
@@ -8,7 +8,14 @@ This will deploy Kubernetes-Dashboard on K3s with:
   - Admin user configured.
   - Kubernetes-Dashboard Ingress via HTTPS with an automatically created and managed SSL certificate (either a self signed certificate, or one signed by Lets Encrypt, depnding on which issuer variable you define).
 
-Kubernetes-Dashboard Deployment Variables:
+Kubernetes Dashboard Project:
+------------------------
+
+The Kubernetes Dashboard project is pulled from the [kubernetes/dashboard](https://github.com/kubernetes/dashboard) github repository.
+
+You can find more information on their website [https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard](https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard) or in the repository linked above.
+
+Kubernetes Dashboard Deployment Variables:
 ----------------------------------
 
 ```yml
@@ -19,7 +26,7 @@ Kubernetes-Dashboard Deployment Variables:
 
   Variables are provided as part of the 'deploy-k3s.sh' script included in the top level directory of this repository - See the [README.md](https://k3s.autothis.org/) file for more information.
 
-Kubernetes-Dashboard Deployment Instructions:
+Kubernetes Dashboard Deployment Instructions:
 -------------------------------------
 
   Deployment instructions are provided as part of the 'deploy-k3s.sh' script included in the top level directory of this repository - See the [README.md](https://k3s.autothis.org/) file for more information.
