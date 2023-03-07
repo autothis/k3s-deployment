@@ -9,6 +9,7 @@
     #NAUTO_REDIS_PW='' #this is the paasword that the Nautobot redis will have.
 	#NAUTO_RELEASE_NAME='' #this is the release name Nautobot will have. Commonly just 'nautobot'.
     #DOMAIN='' #This is the domain that your services will be available on e.g. 'yourdomain.com'.
+	#CERT_ISSUER='prod-issuer' #This is the certificate issuer that will be used to issue a certificate for the Kubernetes Dashboard e.g. 'prod-issuer' or 'selfsigned-issuer'.
 
 #Create Functions
 
@@ -21,6 +22,7 @@
         NAUTO_VARIABLE_4=("NAUTO_REDIS_PW" "$NAUTO_REDIS_PW" "This is the paasword that the Nautobot redis will have.")
 		NAUTO_VARIABLE_5=("NAUTO_RELEASE_NAME" "$NAUTO_RELEASE_NAME" "This is the release name Nautobot will have. Commonly just 'nautobot'.")
         NAUTO_VARIABLE_6=("DOMAIN" "$DOMAIN" "This is the domain that your services will be available on e.g. 'yourdomain.com'")
+		NAUTO_VARIABLE_7=("CERT_ISSUER" "$CERT_ISSUER" "This is the certificate issuer that will be used to issue a certificate for the Kubernetes Dashboard e.g. 'prod-issuer' or 'selfsigned-issuer'")
 
 	 # Combine NAUTO_VARIABLE arrays int the NAUTO_VARIABLES array
 	 NAUTO_VARIABLES=(
@@ -30,6 +32,7 @@
 		 NAUTO_VARIABLE_4[@]
 		 NAUTO_VARIABLE_5[@]
 		 NAUTO_VARIABLE_6[@]
+		 NAUTO_VARIABLE_7[@]
 	 )
 	}
 
@@ -171,18 +174,19 @@
 	sed -i "s/DOMAIN/$DOMAIN/g" nautobot.yaml
     sed -i "s/NAUTO_SQL_PW/$NAUTO_SQL_PW/g" nautobot.yaml
 	sed -i "s/NAUTO_REDIS_PW/$NAUTO_REDIS_PW/g" nautobot.yaml
+	sed -i "s/CERT_ISSUER/$CERT_ISSUER/g" nautobot.yaml
 
 	printf "${GREEN}Done\n${Color_Off}"
 
-## Add the below after './nautobot.yaml' in hte deployment command to customise
+## Add the below after './nautobot.yaml' in the deployment command to customise
    # --set-file nautobot.config=./nautobot_config.py
 
 #Deploy nautobot with helm
 
-  #https://github.com/nautobot/helm-charts
-  helm repo add nautobot https://nautobot.github.io/helm-charts/
-  helm repo update
-  helm install "$NAUTO_RELEASE_NAME" nautobot/nautobot -f ./nautobot.yaml --namespace "$NAUTO_NAMESPACE" --create-namespace
+	#https://github.com/nautobot/helm-charts
+	helm repo add nautobot https://nautobot.github.io/helm-charts/
+	helm repo update
+	helm install "$NAUTO_RELEASE_NAME" nautobot/nautobot -f ./nautobot.yaml --namespace "$NAUTO_NAMESPACE" --create-namespace
 
 #Wait for Nautobot to be Ready
 
