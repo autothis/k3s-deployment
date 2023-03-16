@@ -399,7 +399,7 @@
   print_title
   
   kubectl wait --for=condition=Ready clusterissuers.cert-manager.io selfsigned-ca-issuer --timeout=${TIMEOUT}s
-  kubectl --namespace cert-manager wait --for=condition=Ready certificates.cert-manager.io tls-selfsigned-ca --timeout=${TIMEOUT}s
+  kubectl --namespace cert-manager wait --for=condition=Ready certificates.cert-manager.io selfsigned-ca --timeout=${TIMEOUT}s
 
 # Create Cert-Manager Production (Cloudflare) Issuer
 
