@@ -1,0 +1,85 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: smtp-tcp-services
+  namespace: smtp
+data:
+  25: "smtp/smtp-service:25"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: smtp-volume-claim
+  namespace: smtp
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-storage
+  resources:
+    requests:
+      storage: 500M
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: smtp-service
+  namespace: smtp
+  labels:
+    app: smtp
+spec:
+  type: LoadBalancer
+  externalTrafficPolicy: Local
+  ports:
+  - name: smtp-port
+    port: 25
+    targetPort: 25
+    protocol: TCP
+  selector:
+    app: smtp
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: smtp-deployment
+  namespace: smtp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: smtp
+  template:
+    metadata:
+      labels:
+        app: smtp
+    spec:
+      containers:
+        - env:
+          image: YOURDOCKERIMAGEREPOHERE/smtp-postfix:latest
+          name: smtp
+          ports:
+            - containerPort: 25
+          volumeMounts:
+            - name: smtp-config-volume
+              mountPath: /etc/postfix/main.cf
+              subPath: main.cf
+            - mountPath: /var/spool/postfix
+              name: smtp-data
+      initContainers:
+        - env:
+          image: YOURDOCKERIMAGEREPOHERE/smtp-postfix:latest
+          name: smtp-init
+          command: ["/bin/sh", "-c", "cp -r /var/spool/postfix/* /var/spool/postfix2/"]
+          volumeMounts:
+            - mountPath: /var/spool/postfix2
+              name: smtp-data
+      volumes:
+        - name: smtp-config-volume
+          configMap:
+            name: postfix-main-config
+            items:
+            - key: smtp
+              path: main.cf
+        - name: smtp-data
+          persistentVolumeClaim:
+            claimName: smtp-volume-claim
