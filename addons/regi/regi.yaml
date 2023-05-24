@@ -1,0 +1,59 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: regi-volume-claim
+  namespace: regi
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-storage
+  resources:
+    requests:
+      storage: 500M
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: regi-service
+  namespace: regi
+  labels:
+    app: regi
+spec:
+  ports:
+  - name: squid-port
+    port: 5000
+    targetPort: 5000
+    protocol: TCP
+  selector:
+    app: regi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: regi-deployment
+  namespace: regi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: regi
+  template:
+    metadata:
+      labels:
+        app: regi
+    spec:
+      containers:
+      - name: regi
+        image: registry:latest
+        ports:
+        - containerPort: 5000
+          name: regi
+          protocol: TCP
+        volumeMounts:
+        - name: regi-images
+          mountPath: /var/lib/registry
+      volumes:
+        - name: regi-images
+          persistentVolumeClaim:
+            claimName: regi-volume-claim
