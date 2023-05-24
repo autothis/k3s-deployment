@@ -1,0 +1,27 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: regi-ingress
+  namespace: regi
+  annotations:
+    cert-manager.io/cluster-issuer: selfsigned-issuer
+    nginx.org/redirect-to-https: "true"
+#    nginx.org/ssl-services: dns-server
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - nsw-eqs3-regi.casper.local
+    secretName: tls-casper.local-regi
+  rules:
+  - host: nsw-eqs3-regi.casper.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: regi-service
+            port:
+              number: 5000
