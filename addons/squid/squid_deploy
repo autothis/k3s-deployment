@@ -1,0 +1,3 @@
+# https://hub.docker.com/r/ubuntu/squid
+kubectl create configmap squid-config --from-file=squid=squid.conf --namespace squid
+kubectl apply -f squid-deployment.yml
