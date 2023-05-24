@@ -1,0 +1,3 @@
+kubectl apply -f regi_namespace.yaml
+kubectl apply -f regi.yaml
+kubectl apply -f regi_ingress.yaml
