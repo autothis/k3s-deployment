@@ -1,0 +1,22 @@
+ARG SMTP-POSTFIX_VERSION=1.0.0 # replace version number
+
+# Use a base image with the desired OS and Postfix pre-installed
+FROM debian:latest
+
+# Configure APT for Non-Interactive
+RUN DEBIAN_FRONTEND=noninteractive
+RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
+
+# Set Postfix Variables
+RUN echo "postfix postfix/main_mailer_type select Internet Site"      | debconf-set-selections
+RUN echo "postfix postfix/mailname         string casper.local" | debconf-set-selections
+
+# Install Postfix and other necessary packages
+RUN apt-get update && apt-get install -y postfix
+RUN apt-get install -y curl telnet
+
+# Expose the SMTP port (default: 25)
+EXPOSE 25
+
+# Set the default command to start Postfix
+CMD ["postfix", "start-fg"]
