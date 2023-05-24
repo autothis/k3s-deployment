@@ -1,0 +1,3 @@
+kubectl create namespace smtp
+kubectl create configmap postfix-main-config --from-file=smtp=main.cf --namespace smtp
+kubectl apply -f smtp-postfix.yaml
