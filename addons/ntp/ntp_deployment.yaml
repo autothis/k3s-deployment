@@ -1,0 +1,43 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ntp-server
+  namespace: ntp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: ntp-server
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        service: ntp-server
+    spec:
+      containers:
+        - env:
+          image: YOURDOCKERIMAGEREPOHERE/ntp:1.0.0
+          name: ntp-server
+          imagePullPolicy: Always
+          securityContext:
+            capabilities:
+              add: ["SYS_NICE", "SYS_TIME"]
+          ports:
+            - containerPort: 123
+              protocol: UDP
+          resources: {}
+          volumeMounts:
+            - name: ntp-config-volume
+              mountPath: /etc/openntpd/ntpd.conf
+              subPath: ntpd.conf
+      hostname: ntp-server
+      restartPolicy: Always
+      volumes:
+        - name: ntp-config-volume
+          configMap:
+            name: ntp-config
+            items:
+            - key: ntp
+              path: ntpd.conf
