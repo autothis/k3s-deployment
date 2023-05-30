@@ -1,0 +1,1 @@
+kubectl create configmap ntp-config --from-file=ntp=ntpd.conf --namespace ntp
