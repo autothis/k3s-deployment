@@ -69,7 +69,27 @@ spec:
         - env:
           image: YOURDOCKERIMAGEREPOHERE/smtp-postfix:latest
           name: smtp-init
-          command: ["/bin/sh", "-c", "cp -r /var/spool/postfix/* /var/spool/postfix2/"]
+          command:
+            - /bin/sh
+            - -c
+            - |
+              cp -r /var/spool/postfix/* /var/spool/postfix2/;
+              chown -R postfix:root /var/spool/postfix2/active;
+              chown -R postfix:root /var/spool/postfix2/bounce;
+              chown -R postfix:root /var/spool/postfix2/corrupt;
+              chown -R postfix:root /var/spool/postfix2/defer;
+              chown -R postfix:root /var/spool/postfix2/deferred;
+              chown -R postfix:root /var/spool/postfix2/flush;
+              chown -R postfix:root /var/spool/postfix2/hold;
+              chown -R postfix:root /var/spool/postfix2/incoming;
+              chown -R postfix:root /var/spool/postfix2/private;
+              chown -R postfix:root /var/spool/postfix2/saved;
+              chown -R postfix:root /var/spool/postfix2/trace;
+              chown -R postfix:postdrop /var/spool/postfix2/maildrop;
+              chown -R postfix:postdrop /var/spool/postfix2/public;
+          volumeMounts:
+            - mountPath: /var/spool/postfix2
+              name: smtp-data
           volumeMounts:
             - mountPath: /var/spool/postfix2
               name: smtp-data
