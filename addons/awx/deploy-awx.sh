@@ -6,6 +6,7 @@
 	#AWX_VERSION='' #This is the version of AWX to be deployed, this variable will automatically populated.
 	#AWX_SUBDOMAIN='' #This is the subdomain that will be used to serve your AWX dashboard.
 	#DOMAIN='' #This is the domain that your services will be available on e.g. 'yourdomain.com'.
+	#CERT_ISSUER='prod-issuer' #This is the certificate issuer that will be used to issue a certificate for the Kubernetes Dashboard e.g. 'prod-issuer' or 'selfsigned-issuer'.
 
 #Create Functions
 
@@ -16,6 +17,7 @@
 		AWX_VARIABLE_2=("AWX_VERSION" "$AWX_VERSION" "This is the version of AWX to be deployed, this variable will automatically populated.")
 		AWX_VARIABLE_3=("AWX_SUBDOMAIN" "$AWX_SUBDOMAIN" "This is the subdomain that will be used to serve your AWX Dashboard. e.g. 'awx' will become awx.yourdomain.com")
 		AWX_VARIABLE_4=("DOMAIN" "$DOMAIN" "This is the domain that your services will be available on e.g. 'yourdomain.com'")
+		AWX_VARIABLE_5=("CERT_ISSUER" "$CERT_ISSUER" "This is the certificate issuer that will be used to issue a certificate for the AWX Dashboard e.g. 'prod-issuer' or 'selfsigned-issuer'")
 
 	 # Combine AWX_VARIABLE arrays int the AWX_VARIABLES array
 	 AWX_VARIABLES=(
@@ -23,6 +25,7 @@
 		 AWX_VARIABLE_2[@]
 		 AWX_VARIABLE_3[@]
 		 AWX_VARIABLE_4[@]
+		 AWX_VARIABLE_5[@]
 	 )
 	}
 
@@ -186,6 +189,7 @@
 	sed -i "s/AWX_NAMESPACE/$AWX_NAMESPACE/g" awx.yaml
 	sed -i "s/AWX_SUBDOMAIN/$AWX_SUBDOMAIN/g" awx.yaml
 	sed -i "s/DOMAIN/$DOMAIN/g" awx.yaml
+	sed -i "s/CERT_ISSUER/$CERT_ISSUER/g" awx.yaml
 
 	printf "${GREEN}Done\n${COLOUR_OFF}"
 
