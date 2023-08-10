@@ -15,6 +15,7 @@ spec:
   hostname: AWX_SUBDOMAIN.DOMAIN
   ingress_annotations: |
     kubernetes.io/ingress.class: nginx
+    nginx.org/websocket-services: awx-service
     cert-manager.io/cluster-issuer: CERT_ISSUER
   ingress_path: /
   ingress_tls_secret: tls-DOMAIN-awx
