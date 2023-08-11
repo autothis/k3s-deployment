@@ -47,8 +47,22 @@ Deployment Instructions:
 Aliased Commands:
 -----------------
 
+  These Aliases are only applied to the host that the deploy script is run on.
+
   - Alias 'admin' command to easily create a token to authenticate with the Kubernetes Dashboard.
   - Alias 'k' command as an alternative to typing 'kubectl' all the time.
+  - Alias 'kn' command as an alternative to typing 'kubectl get nodes -o wide' all the time (Gets K3s Nodes).
+  - Alias 'kp' command as an alternative to typing 'kubectl get pods' all the time (Gets Pods in the current Namespace). 
+  - Alias 'kpa' command as an alternative to typing 'kubectl get pods -A' all the time (Gets Pods in all Namespaces). 
+  - Alias 'kl' command as an alternative to typing 'kubectl logs -f' all the time (Get logs and follow).
+  - Alias 'kc' command as an alternative to typing 'kubectl get certs' all the time (Get Certificates in the current Namespace).
+  - Alias 'kca' command as an alternative to typing 'kubectl get certs -A' all the time (Get Certificates in all Namespaces).
+  - Alias 'ki' command as an alternative to typing 'kubectl get ingress' all the time (Get Ingress in the current Namespace).
+  - Alias 'kia' command as an alternative to typing 'kubectl get ingress -A' all the time (Get Ingress in all Namespaces).
+  - Alias 'ks' command as an alternative to typing 'kubectl get service' all the time (Get Services in the current Namespacec).
+  - Alias 'ksa' command as an alternative to typing 'kubectl get service -A' all the time (Get Services in all Namespaces).
+  - Alias 'kd' command as an alternative to typing 'kubectl get deployments' all the time (Get Deployments in the current Namespace).
+  - Alias 'kda' command as an alternative to typing 'kubectl get deployments -A' all the time (Get Deployments in all Namespaces).
 
 Available Addons:
 -----------------

@@ -50,6 +50,42 @@
     printf "\n"${COLOUR_OFF}
   }
 
+# Define Custom Command Aliases
+
+  # Define K3S_ALIAS arrays containing custom command aliases for kubernetes
+  K3S_ALIAS_1=("k" "kubectl" "complete -o default -F __start_kubectl k")
+  K3S_ALIAS_2=("admin" "'kubectl -n kubernetes-dashboard create token admin-user'" "")
+  K3S_ALIAS_3=("kp" "'kubectl get pods'" "")
+  K3S_ALIAS_4=("kp" "'kubectl get pods -A'" "")
+  K3S_ALIAS_5=("kn" "'kubectl get nodes -o wide'" "")
+  K3S_ALIAS_6=("kl" "'kubectl logs -f'" "")
+  K3S_ALIAS_7=("kc" "'kubectl get certs'" "")
+  K3S_ALIAS_8=("kca" "'kubectl get certs -A'" "")
+  K3S_ALIAS_9=("ki" "'kubectl get ingress'" "")
+  K3S_ALIAS_10=("kia" "'kubectl get ingress -A'" "")
+  K3S_ALIAS_11=("ks" "'kubectl get service'" "")
+  K3S_ALIAS_12=("ksa" "'kubectl get service -A'" "")
+  K3S_ALIAS_13=("kd" "'kubectl get deployment'" "")
+  K3S_ALIAS_14=("kda" "'kubectl get deployment -A'" "")
+
+  # Combine K3S_ALIAS arrays int the K3S_ALIASES array
+  K3S_ALIASES=(
+    K3S_ALIAS_1[@]
+    K3S_ALIAS_2[@]
+    K3S_ALIAS_3[@]
+    K3S_ALIAS_4[@]
+    K3S_ALIAS_5[@]
+    K3S_ALIAS_6[@]
+    K3S_ALIAS_7[@]
+    K3S_ALIAS_8[@]
+    K3S_ALIAS_9[@]
+	  K3S_ALIAS_10[@]
+	  K3S_ALIAS_11[@]
+	  K3S_ALIAS_12[@]
+	  K3S_ALIAS_13[@]
+    K3S_ALIAS_14[@]
+  )
+
 # Define Output Colours
 
   # Reset
@@ -197,16 +233,30 @@
 
 # Update Profiles
 
-  TITLE="Updating User Profile"
+  TITLE="Updating User Profile with custom kubectl aliases"
   print_title
 
   cd $K3S_DEPLOY_PATH
-  echo "alias k=kubectl" >> /etc/profile
-  echo "complete -o default -F __start_kubectl k" >> /etc/profile
-  echo "alias admin='kubectl -n kubernetes-dashboard create token admin-user'" >> /etc/profile
-  echo "alias kp='kubectl get pods'" >> /etc/profile
-  echo "alias kn='kubectl get nodes -o wide'" >> /etc/profile
-  echo "alias kl='kubectl logs -f'" >> /etc/profile
+
+  # Iterate over the K3S_ALIASES array, adding each command alias to '/etc/profile'
+  COUNT=${#K3S_ALIASES[@]}
+  for ((i=0; i<$COUNT; i++))
+  do
+    ALIAS=${!K3S_ALIASES[i]:0:1}
+    COMMAND=${!K3S_ALIASES[i]:1:1}
+    EXTRA=${!K3S_ALIASES[i]:2:1}
+
+    if [[ -z "${EXTRA}" ]]; then
+      printf "Configuring alias for \'$ALIAS\' -> $COMMAND\n"
+      echo "alias $ALIAS=$COMMAND" >> /etc/profile
+    else
+      printf "Configuring alias for \'$ALIAS\' -> \'$COMMAND'\\n"
+      echo "alias $ALIAS=$COMMAND" >> /etc/profile
+	  echo "$EXTRA" >> /etc/profile
+    fi
+  done
+  
+  # Update current user session with new command aliases
   source /etc/profile
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
