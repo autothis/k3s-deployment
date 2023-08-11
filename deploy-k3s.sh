@@ -204,6 +204,9 @@
   echo "alias k=kubectl" >> /etc/profile
   echo "complete -o default -F __start_kubectl k" >> /etc/profile
   echo "alias admin='kubectl -n kubernetes-dashboard create token admin-user'" >> /etc/profile
+  echo "alias kp='kubectl get pods'" >> /etc/profile
+  echo "alias kn='kubectl get nodes -o wide'" >> /etc/profile
+  echo "alias kl='kubectl logs -f'" >> /etc/profile
   source /etc/profile
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
@@ -586,3 +589,4 @@
   printf "${GREEN}The Self Signed CA Certificate has been automatically added to your K3 Hosts CA Store.\n${COLOUR_OFF}"
   printf "${RED}Your Self Signed CA Certificate is:\n${COLOUR_OFF}"
   printf '%s\n' "${SELFSIGNED_CA_CERTIFICATE}"
+  
