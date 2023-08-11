@@ -459,7 +459,7 @@
 
   GITHUB_URL=https://github.com/kubernetes/dashboard/releases
   VERSION_KUBE_DASHBOARD=$(curl -w '%{url_effective}' -I -L -s -S ${GITHUB_URL}/latest -o /dev/null | sed -e 's|.*/||')
-  curl https://raw.githubusercontent.com/kubernetes/dashboard/${VERSION_KUBE_DASHBOARD}/aio/deploy/recommended.yaml > kubernetes-dashboard/kubernetes-dashboard.yaml
+  curl https://raw.githubusercontent.com/kubernetes/dashboard/${VERSION_KUBE_DASHBOARD}/charts/kubernetes-dashboard.yaml > kubernetes-dashboard/kubernetes-dashboard.yaml
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
 
