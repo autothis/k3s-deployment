@@ -494,13 +494,13 @@
   IFS='/ ' read -r -a K3S_DASHBOARD_PODS <<< "$K3S_DASHBOARD_PODS"
 
   # wait for there to be 3 pods in the kubernetes-dashboard namespace
-  while [ ${#K3S_DASHBOARD_PODS[@]} -ne 2 ]
+  while [ ${#K3S_DASHBOARD_PODS[@]} -ne 3 ]
   do
     K3S_DASHBOARD_PODS=$(kubectl get pods -n kubernetes-dashboard -o 'jsonpath={..metadata.name}')
     IFS='/ ' read -r -a K3S_DASHBOARD_PODS <<< "$K3S_DASHBOARD_PODS"
   done
 
-  # wait for those 2 pods to be in a ready state
+  # wait for those 3 pods to be in a ready state
   for i in "${K3S_DASHBOARD_PODS[@]}"; do
     kubectl wait -n kubernetes-dashboard --for=condition=Ready pod/${i} --timeout=${TIMEOUT}s
   done
