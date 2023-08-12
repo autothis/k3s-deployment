@@ -52,6 +52,8 @@ Aliased Commands:
   - Alias 'admin' command to easily create a token to authenticate with the Kubernetes Dashboard.
   - Alias 'k' command as an alternative to typing 'kubectl' all the time.
   - Alias 'kn' command as an alternative to typing 'kubectl get nodes -o wide' all the time (Gets K3s Nodes).
+  - Alias 'kns' command as an alternative to typing 'kubectl get namespace' all the time (Gets list of Kubernetes Namespaces).
+  - Alias 'kga' command as a shortcut to get all resources in a namespace.
   - Alias 'kp' command as an alternative to typing 'kubectl get pods' all the time (Gets Pods in the current Namespace). 
   - Alias 'kpa' command as an alternative to typing 'kubectl get pods -A' all the time (Gets Pods in all Namespaces). 
   - Alias 'kl' command as an alternative to typing 'kubectl logs -f' all the time (Get logs and follow).

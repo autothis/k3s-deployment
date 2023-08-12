@@ -27,18 +27,16 @@
     K3S_VARIABLE_8=("DOMAIN" "$DOMAIN" "This is the domain that your services will be available on e.g. 'yourdomain.com'")
     K3S_VARIABLE_9=("CERT_ISSUER" "$CERT_ISSUER" "This is the certificate issuer that will be used to issue a certificate for the Kubernetes Dashboard e.g. 'prod-issuer' or 'selfsigned-issuer'")
 
-   # Combine K3S_VARIABLE arrays int the K3S_VARIABLES array
-   K3S_VARIABLES=(
-     K3S_VARIABLE_1[@]
-     K3S_VARIABLE_2[@]
-     K3S_VARIABLE_3[@]
-     K3S_VARIABLE_4[@]
-     K3S_VARIABLE_5[@]
-     K3S_VARIABLE_6[@]
-     K3S_VARIABLE_7[@]
-     K3S_VARIABLE_8[@]
-     K3S_VARIABLE_9[@]
-   )
+    # Combine K3S_VARIABLE arrays int the K3S_VARIABLES array
+    COUNT=0
+    K3S_VARIABLES=()
+    for VARIABLE in "${!K3S_VARIABLE_@}"
+    do
+      if [[ "$VARIABLE" == K3S_VARIABLE_* ]]; then
+	      ((COUNT++))
+        K3S_VARIABLES+=('K3S_VARIABLE_'$COUNT[@])
+      fi
+    done
   }
 
   print_title () {
@@ -52,54 +50,78 @@
 
 # Define Custom Command Aliases
 
-  # Define K3S_ALIAS arrays containing custom command aliases for kubernetes
-  K3S_ALIAS_1=("k" "kubectl" "complete -o default -F __start_kubectl k")
-  K3S_ALIAS_2=("admin" "'kubectl -n kubernetes-dashboard create token admin-user'" "")
-  K3S_ALIAS_3=("kp" "'kubectl get pods'" "")
-  K3S_ALIAS_4=("kp" "'kubectl get pods -A'" "")
-  K3S_ALIAS_5=("kn" "'kubectl get nodes -o wide'" "")
-  K3S_ALIAS_6=("kl" "'kubectl logs -f'" "")
-  K3S_ALIAS_7=("kc" "'kubectl get certs'" "")
-  K3S_ALIAS_8=("kca" "'kubectl get certs -A'" "")
-  K3S_ALIAS_9=("ki" "'kubectl get ingress'" "")
-  K3S_ALIAS_10=("kia" "'kubectl get ingress -A'" "")
-  K3S_ALIAS_11=("ks" "'kubectl get service'" "")
-  K3S_ALIAS_12=("ksa" "'kubectl get service -A'" "")
-  K3S_ALIAS_13=("kd" "'kubectl get deployment'" "")
-  K3S_ALIAS_14=("kda" "'kubectl get deployment -A'" "")
+  # Define K3S_ALIAS arrays containing custom command aliases for kubernetes (ALIAS, COMMAND, EXTRA)
+  K3S_ALIAS_1=('kga' '' 'function kga {')
+  K3S_ALIAS_2=('kga' '' '  if [[ -z "${1}" ]]')
+  K3S_ALIAS_3=('kga' '' '    then')
+  K3S_ALIAS_4=('kga' '' '      printf ${RED}"No namespace has been provided\n"')
+  K3S_ALIAS_5=('kga' '' '      printf ${GREEN}"Example: "${YELLOW}"'\''kga kube-system'\''\n"${COLOUR_OFF}')
+  K3S_ALIAS_6=('kga' '' '    else')
+  K3S_ALIAS_7=('kga' '' '      for i in $(kubectl api-resources --verbs=list --namespaced -o name | grep -v "events.events.k8s.io" | grep -v "events" | sort | uniq); do')
+  K3S_ALIAS_8=('kga' '' '        printf ${YELLOW}"Resource: "${GREEN}$i${COLOUR_OFF}"\n"')
+  K3S_ALIAS_9=('kga' '' '        kubectl -n ${1} get ${i}')
+  K3S_ALIAS_10=('kga' '' '      done')
+  K3S_ALIAS_11=('kga' '' '  fi')
+  K3S_ALIAS_12=('kga' '' '}')
+  K3S_ALIAS_13=('k' 'kubectl' 'complete -o default -F __start_kubectl k')
+  K3S_ALIAS_14=('admin' '"kubectl -n kubernetes-dashboard create token admin-user"' '')
+  K3S_ALIAS_15=('kp' '"kubectl get pods"' '')
+  K3S_ALIAS_16=("kp" '"kubectl get pods -A"' "")
+  K3S_ALIAS_17=("kn" '"kubectl get nodes -o wide"' "")
+  K3S_ALIAS_18=("kl" '"kubectl logs -f"' "")
+  K3S_ALIAS_19=("kc" '"kubectl get certs"' "")
+  K3S_ALIAS_20=("kca" '"kubectl get certs -A"' "")
+  K3S_ALIAS_21=("ki" '"kubectl get ingress"' "")
+  K3S_ALIAS_22=("kia" '"kubectl get ingress -A"' "")
+  K3S_ALIAS_23=("ks" '"kubectl get service"' "")
+  K3S_ALIAS_24=("ksa" '"kubectl get service -A"' "")
+  K3S_ALIAS_25=("kd" '"kubectl get deployment"' "")
+  K3S_ALIAS_26=("kda" '"kubectl get deployment -A"' "")
+  K3S_ALIAS_26=("kns" '"kubectl get namespace"' "")
 
-  # Combine K3S_ALIAS arrays int the K3S_ALIASES array
-  K3S_ALIASES=(
-    K3S_ALIAS_1[@]
-    K3S_ALIAS_2[@]
-    K3S_ALIAS_3[@]
-    K3S_ALIAS_4[@]
-    K3S_ALIAS_5[@]
-    K3S_ALIAS_6[@]
-    K3S_ALIAS_7[@]
-    K3S_ALIAS_8[@]
-    K3S_ALIAS_9[@]
-	  K3S_ALIAS_10[@]
-	  K3S_ALIAS_11[@]
-	  K3S_ALIAS_12[@]
-	  K3S_ALIAS_13[@]
-    K3S_ALIAS_14[@]
-  )
+  # Combine K3S_ALIAS arrays into the K3S_ALIASES array
+  COUNT=0
+  K3S_ALIASES=()
+  for ALIAS in "${!K3S_ALIAS_@}"
+  do
+    if [[ "$ALIAS" == K3S_ALIAS_* ]]; then
+	  ((COUNT++))
+      K3S_ALIASES+=('K3S_ALIAS_'$COUNT[@])
+    fi
+  done
 
 # Define Output Colours
+  
+  # Define K3S_COLOUR arrays
+  K3S_COLOUR_1=("COLOUR_OFF" "'\033[0m'")
+  K3S_COLOUR_2=("BLACK" "'\033[0;30m'")
+  K3S_COLOUR_3=("RED" "'\033[0;31m'")
+  K3S_COLOUR_4=("GREEN" "'\033[0;32m'")
+  K3S_COLOUR_5=("YELLOW" "'\033[0;33m'")
+  K3S_COLOUR_6=("BLUE" "'\033[0;34m'")
+  K3S_COLOUR_7=("PURPLE" "'\033[0;35m'")
+  K3S_COLOUR_8=("CYAN" "'\033[0;36m'")
+  K3S_COLOUR_9=("WHITE" "'\033[0;37m'")
 
-  # Reset
-  COLOUR_OFF='\033[0m'       # Text Reset
+  # Combine K3S_COLOUR arrays into the K3S_COLOURS array
+  COUNT=0
+  K3S_COLOURS=()
+  for COLOUR in "${!K3S_COLOUR_@}"
+  do
+    if [[ "$COLOUR" == K3S_COLOUR_* ]]; then
+	  ((COUNT++))
+      K3S_COLOURS+=('K3S_COLOUR_'$COUNT[@])
+    fi
+  done  
 
-  # Regular Colors
-  BLACK='\033[0;30m'        # Black
-  RED='\033[0;31m'          # Red
-  GREEN='\033[0;32m'        # Green
-  YELLOW='\033[0;33m'       # Yellow
-  BLUE='\033[0;34m'         # Blue
-  PURPLE='\033[0;35m'       # Purple
-  CYAN='\033[0;36m'         # Cyan
-  WHITE='\033[0;37m'        # White
+  # Active K3S_COLOURS in current user session
+  COUNT=${#K3S_COLOURS[@]}
+  for ((i=0; i<$COUNT; i++))
+  do
+    NAME=${!K3S_COLOURS[i]:0:1}
+    COLOUR=${!K3S_COLOURS[i]:1:1}
+	  eval "$NAME=$COLOUR"
+  done
 
 # Get current working directory
 
@@ -233,11 +255,21 @@
 
 # Update Profiles
 
-  TITLE="Updating User Profile with custom kubectl aliases"
+  TITLE="Updating User Profile with custom kubectl aliases, functions and colours"
   print_title
 
   cd $K3S_DEPLOY_PATH
 
+  # Iterate over the K3S_COLOURS array, adding each colour to '/etc/profile'
+  COUNT=${#K3S_COLOURS[@]}
+  for ((i=0; i<$COUNT; i++))
+  do
+    NAME=${!K3S_COLOURS[i]:0:1}
+    COLOUR=${!K3S_COLOURS[i]:1:1}
+    printf "Adding colour \'$NAME\' to profile\n"
+    echo "$NAME=$COLOUR" >> /etc/profile
+  done
+  
   # Iterate over the K3S_ALIASES array, adding each command alias to '/etc/profile'
   COUNT=${#K3S_ALIASES[@]}
   for ((i=0; i<$COUNT; i++))
@@ -250,9 +282,14 @@
       printf "Configuring alias for \'$ALIAS\' -> $COMMAND\n"
       echo "alias $ALIAS=$COMMAND" >> /etc/profile
     else
-      printf "Configuring alias for \'$ALIAS\' -> \'$COMMAND'\\n"
-      echo "alias $ALIAS=$COMMAND" >> /etc/profile
-	  echo "$EXTRA" >> /etc/profile
+	  if [[ -z "${COMMAND}" ]]; then
+        printf "Configuring function for \'$ALIAS\': \'$EXTRA\'\n"
+		echo "$EXTRA" >> /etc/profile
+	  else
+	    printf "Configuring alias for \'$ALIAS\' -> \'$COMMAND\'\n"
+        echo "alias $ALIAS=$COMMAND" >> /etc/profile
+	    echo "$EXTRA" >> /etc/profile
+	  fi
     fi
   done
   
