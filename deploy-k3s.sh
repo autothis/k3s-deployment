@@ -66,7 +66,7 @@
   K3S_ALIAS_13=('k' 'kubectl' 'complete -o default -F __start_kubectl k')
   K3S_ALIAS_14=('admin' '"kubectl -n kubernetes-dashboard create token admin-user"' '')
   K3S_ALIAS_15=('kp' '"kubectl get pods"' '')
-  K3S_ALIAS_16=("kp" '"kubectl get pods -A"' "")
+  K3S_ALIAS_16=("kpa" '"kubectl get pods -A"' "")
   K3S_ALIAS_17=("kn" '"kubectl get nodes -o wide"' "")
   K3S_ALIAS_18=("kl" '"kubectl logs -f"' "")
   K3S_ALIAS_19=("kc" '"kubectl get certs"' "")
@@ -77,7 +77,7 @@
   K3S_ALIAS_24=("ksa" '"kubectl get service -A"' "")
   K3S_ALIAS_25=("kd" '"kubectl get deployment"' "")
   K3S_ALIAS_26=("kda" '"kubectl get deployment -A"' "")
-  K3S_ALIAS_26=("kns" '"kubectl get namespace"' "")
+  K3S_ALIAS_27=("kns" '"kubectl get namespace"' "")
 
   # Combine K3S_ALIAS arrays into the K3S_ALIASES array
   COUNT=0
