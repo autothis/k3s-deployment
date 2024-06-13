@@ -18,7 +18,7 @@ smtp_sasl_security_options =
 smtp_host_lookup = native
 
 smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated reject
-myhostname = nsw-eqs3-k3-01.casper.local
+myhostname = smtp.mydomain.local
 myorigin = casper.local
 
 relayhost = [1.2.3.4]:25, [5.6.7.8]:25
