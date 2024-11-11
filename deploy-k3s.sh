@@ -457,90 +457,100 @@
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
 
-# Update File 'cloudflare-secret.yaml'
+# Configure prod-issuer if selected
 
-  TITLE="Updating file cloudflare-secret.yaml with K3s Deployment Variables"
-  print_title
+  if [[ ${CERT_ISSUER} = "prod-issuer" ]]
+  then
+  # Update File 'cloudflare-secret.yaml'
 
-  sed -i "s/CLOUDFLARE_API_TOKEN/$CLOUDFLARE_API_TOKEN/g" cert-manager/cloudflare-secret.yaml
+    TITLE="Updating file cloudflare-secret.yaml with K3s Deployment Variables"
+    print_title
 
-  printf "${GREEN}Done\n${COLOUR_OFF}"
+    sed -i "s/CLOUDFLARE_API_TOKEN/$CLOUDFLARE_API_TOKEN/g" cert-manager/cloudflare-secret.yaml
 
-# Create File 'prod-issuer.yaml'
+    printf "${GREEN}Done\n${COLOUR_OFF}"
 
-  TITLE="Updating file prod-issuer.yaml with K3s Deployment Variables"
-  print_title
+  # Create File 'prod-issuer.yaml'
 
-  sed -i "s/CLOUDFLARE_EMAIL_ADDRESS/$CLOUDFLARE_EMAIL_ADDRESS/g" cert-manager/prod-issuer.yaml
+    TITLE="Updating file prod-issuer.yaml with K3s Deployment Variables"
+    print_title
 
-  printf "${GREEN}Done\n${COLOUR_OFF}"
+    sed -i "s/CLOUDFLARE_EMAIL_ADDRESS/$CLOUDFLARE_EMAIL_ADDRESS/g" cert-manager/prod-issuer.yaml
 
-# Create Cert-Manager Self Signed CA Issuer
+    printf "${GREEN}Done\n${COLOUR_OFF}"
 
-  TITLE="Creating Cert-Manager Self Signed CA Issuer"
-  print_title
+  # Create Cert-Manager Production (Cloudflare) Issuer
+
+    TITLE="Creating Cert-Manager prod-issuer"
+    print_title
+
+    kubectl create -f cert-manager/cloudflare-secret.yaml
+    kubectl create -f cert-manager/prod-issuer.yaml
+
+    printf "${GREEN}Done\n${COLOUR_OFF}"
+
+  # Wait for Cert-Manager prod-issuer
+
+    TITLE="Waiting for Cert-Manager prod-issuer to be ready"
+    print_title
   
-  kubectl create -f cert-manager/selfsigned-ca-issuer.yaml
-  kubectl create -f cert-manager/ca-certificate.yaml
+    kubectl wait --for=condition=Ready clusterissuers.cert-manager.io prod-issuer --timeout=${TIMEOUT}s
+  fi
 
-# Wait for Cert-Manager Self Signed CA Issuer and Certificate
+# Configure selfsigned-issuer if selected
 
-  TITLE="Waiting for Cert-Manager Self Signed CA Issuer and Certificate"
-  print_title
+  if [[ ${CERT_ISSUER} = "selfsigned-issuer" ]]
+  then
+  # Create Cert-Manager Self Signed CA Issuer
+
+    TITLE="Creating Cert-Manager Self Signed CA Issuer"
+    print_title
   
-  kubectl wait --for=condition=Ready clusterissuers.cert-manager.io selfsigned-ca-issuer --timeout=${TIMEOUT}s
-  kubectl --namespace cert-manager wait --for=condition=Ready certificates.cert-manager.io selfsigned-ca --timeout=${TIMEOUT}s
+    kubectl create -f cert-manager/selfsigned-ca-issuer.yaml
+    kubectl create -f cert-manager/ca-certificate.yaml
 
-# Create Cert-Manager Production (Cloudflare) Issuer
+  # Wait for Cert-Manager Self Signed CA Issuer and Certificate
 
-  TITLE="Creating Cert-Manager prod-issuer"
-  print_title
-
-  kubectl create -f cert-manager/cloudflare-secret.yaml
-  kubectl create -f cert-manager/prod-issuer.yaml
-
-  printf "${GREEN}Done\n${COLOUR_OFF}"
-
-# Wait for Cert-Manager prod-issuer
-
-  TITLE="Waiting for Cert-Manager prod-issuer to be ready"
-  print_title
+    TITLE="Waiting for Cert-Manager Self Signed CA Issuer and Certificate"
+    print_title
   
-  kubectl wait --for=condition=Ready clusterissuers.cert-manager.io prod-issuer --timeout=${TIMEOUT}s
+    kubectl wait --for=condition=Ready clusterissuers.cert-manager.io selfsigned-ca-issuer --timeout=${TIMEOUT}s
+    kubectl --namespace cert-manager wait --for=condition=Ready certificates.cert-manager.io selfsigned-ca --timeout=${TIMEOUT}s
 
-# Create Cert-Manager Self Signed Issuer
+  # Create Cert-Manager Self Signed Issuer
 
-  TITLE="Creating Cert-Manager selfsigned-issuer"
-  print_title
+    TITLE="Creating Cert-Manager selfsigned-issuer"
+    print_title
 
-  kubectl create -f cert-manager/selfsigned-issuer.yaml
+    kubectl create -f cert-manager/selfsigned-issuer.yaml
 
-  printf "${GREEN}Done\n${COLOUR_OFF}"
+    printf "${GREEN}Done\n${COLOUR_OFF}"
 
-# Wait for Cert-Manager selfsigned-issuer
+  # Wait for Cert-Manager selfsigned-issuer
 
-  TITLE="Waiting for Cert-Manager selfsigned-issuer to be ready"
-  print_title
+    TITLE="Waiting for Cert-Manager selfsigned-issuer to be ready"
+    print_title
   
-  kubectl wait --for=condition=Ready clusterissuers.cert-manager.io selfsigned-issuer --timeout=${TIMEOUT}s
+    kubectl wait --for=condition=Ready clusterissuers.cert-manager.io selfsigned-issuer --timeout=${TIMEOUT}s
 
-# Get CA Certificate and Install into K3s Host
+  # Get CA Certificate and Install into K3s Host
 
-  TITLE="Installing CA on K3s Host"
-  print_title
+    TITLE="Installing CA on K3s Host"
+    print_title
 
-  # Create Custom CA Location
-  CUSTOM_CA_LOCATION="/usr/local/share/ca-certificates/k3s"
-  mkdir $CUSTOM_CA_LOCATION
+    # Create Custom CA Location
+    CUSTOM_CA_LOCATION="/usr/local/share/ca-certificates/k3s"
+    mkdir $CUSTOM_CA_LOCATION
 
-  # Retrieve Self Signed CA Certificate
-  SELFSIGNED_CA_CERTIFICATE=$(kubectl get secrets/tls-selfsigned-ca --namespace cert-manager -o 'jsonpath={..data.tls\.crt}' | base64 -d)
+    # Retrieve Self Signed CA Certificate
+    SELFSIGNED_CA_CERTIFICATE=$(kubectl get secrets/tls-selfsigned-ca --namespace cert-manager -o 'jsonpath={..data.tls\.crt}' | base64 -d)
 
-  # Install Self Signed CA Certificate  
-  printf '%s\n' "$SELFSIGNED_CA_CERTIFICATE" > $CUSTOM_CA_LOCATION/k3s-custom-ca.crt
+    # Install Self Signed CA Certificate  
+    printf '%s\n' "$SELFSIGNED_CA_CERTIFICATE" > $CUSTOM_CA_LOCATION/k3s-custom-ca.crt
 
-  # Update K3s Host CA Certificate Store
-  update-ca-certificates
+    # Update K3s Host CA Certificate Store
+    update-ca-certificates
+  fi
 
 # Create File 'values.yaml' for Kubernetes Dashboard Helm Deployment
 
@@ -675,8 +685,11 @@
 
   printf "${PURPLE}${K3S_TOKEN}\n${COLOUR_OFF}"
 
-  printf "${YELLOW}You will need to install the Self Signed CA Certificate on any machines you dont want to get TLS warnings on.\n${COLOUR_OFF}"
-  printf "${GREEN}The Self Signed CA Certificate has been automatically added to your K3 Hosts CA Store.\n${COLOUR_OFF}"
-  printf "${RED}Your Self Signed CA Certificate is:\n${COLOUR_OFF}"
-  printf '%s\n' "${SELFSIGNED_CA_CERTIFICATE}"
+  if [[ ${CERT_ISSUER} = "selfsigned-issuer" ]]
+  then
+    printf "${YELLOW}You will need to install the Self Signed CA Certificate on any machines you dont want to get TLS warnings on.\n${COLOUR_OFF}"
+    printf "${GREEN}The Self Signed CA Certificate has been automatically added to your K3 Hosts CA Store.\n${COLOUR_OFF}"
+    printf "${RED}Your Self Signed CA Certificate is:\n${COLOUR_OFF}"
+    printf '%s\n' "${SELFSIGNED_CA_CERTIFICATE}"
+  fi
   
