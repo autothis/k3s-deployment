@@ -241,16 +241,20 @@
 	AWX_PODS=$(kubectl get pods -n ${AWX_NAMESPACE} -o 'jsonpath={..metadata.name}')
 	IFS='/ ' read -r -a AWX_PODS <<< "$AWX_PODS"
 
-	# Wait for there to be 3 pods in the AWX namespace
-	while [ ${#AWX_PODS[@]} -ne 3 ]
+	# Wait for there to be 5 pods in the AWX namespace
+	while [ ${#AWX_PODS[@]} -ne 5 ]
 	do
 		AWX_PODS=$(kubectl get pods -n ${AWX_NAMESPACE} -o 'jsonpath={..metadata.name}')
 		IFS='/ ' read -r -a AWX_PODS <<< "$AWX_PODS"
 	done
 	
-	# Wait for those 3 pods to be in a ready state
+	# Wait for those 5 pods to be in a ready (or initialized) state
 	for i in "${AWX_PODS[@]}"; do
-		kubectl wait -n ${AWX_NAMESPACE} --for=condition=Ready pod/${i} --timeout=${TIMEOUT}s
+	  if [[ $i == *"migration"* ]]; then
+		kubectl wait -n ${AWX_NAMESPACE} --for=condition=Initialized pod/${i} --timeout=${TIMEOUT}s
+	  else
+	    kubectl wait -n ${AWX_NAMESPACE} --for=condition=Ready pod/${i} --timeout=${TIMEOUT}s
+	  fi
 	done
 
 	printf "${GREEN}Done\n${COLOUR_OFF}"
