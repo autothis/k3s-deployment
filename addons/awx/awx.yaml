@@ -23,6 +23,10 @@ spec:
   # postgres
   postgres_storage_class: local-storage
   #postgres_configuration_secret: awx-prod-postgres-configuration
+  postgres_data_volume_init: true
+  postgres_init_container_commands: |
+    chown 26:0 /var/lib/pgsql/data
+    chmod 700 /var/lib/pgsql/data
 
   # projects
   projects_persistence: true
