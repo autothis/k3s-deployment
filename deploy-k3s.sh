@@ -542,36 +542,29 @@
   # Update K3s Host CA Certificate Store
   update-ca-certificates
 
-# Create File 'kubernetes-dashboard.yaml'
+# Create File 'values.yaml' for Kubernetes Dashboard Helm Deployment
 
-  TITLE="Downloading file kubernetes-dashboard.yaml"
+  TITLE="Updating file values.yaml with K3s Deployment Variables"
   print_title
 
-  GITHUB_URL=https://github.com/kubernetes/dashboard/releases
-  VERSION_KUBE_DASHBOARD=$(curl -w '%{url_effective}' -I -L -s -S ${GITHUB_URL}/latest -o /dev/null | sed -e 's|.*/||')
-  curl https://raw.githubusercontent.com/kubernetes/dashboard/${VERSION_KUBE_DASHBOARD}/charts/kubernetes-dashboard.yaml > kubernetes-dashboard/kubernetes-dashboard.yaml
+  sed -i "s/DASHBOARD_SUBDOMAIN/$DASHBOARD_SUBDOMAIN/g" kubernetes-dashboard/values.yaml
+  sed -i "s/DOMAIN/$DOMAIN/g" kubernetes-dashboard/values.yaml
+  sed -i "s/CERT_ISSUER/$CERT_ISSUER/g" kubernetes-dashboard/values.yaml
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
 
-# Create File 'dashboard-ingress.yaml'
+# Install Kubernetes Dashboard
 
-  TITLE="Updating file dashboard-ingress.yaml with K3s Deployment Variables"
+  TITLE="Installing Kubernetes Dashboard in Namespace ${INGRESS_CONTROLLER_NAMESPACE}"
   print_title
 
-  sed -i "s/DASHBOARD_SUBDOMAIN/$DASHBOARD_SUBDOMAIN/g" kubernetes-dashboard/dashboard-ingress.yaml
-  sed -i "s/DOMAIN/$DOMAIN/g" kubernetes-dashboard/dashboard-ingress.yaml
-  sed -i "s/CERT_ISSUER/$CERT_ISSUER/g" kubernetes-dashboard/dashboard-ingress.yaml
+  # Set Kubernetes Dashboard Namespace, default is "kubernetes-dashboard"
+  KUBERNETES_DASHBOARD_NAMESPACE="kubernetes-dashboard"
 
-  printf "${GREEN}Done\n${COLOUR_OFF}"
-
-# Create Dashboard, Dashboard User Admin, Admin Role, and Dashboard Ingress
-
-  TITLE="Creating and configuring K3s Dashboard and associated roles, users and ingress"
-  print_title
-
-  kubectl create -f kubernetes-dashboard/kubernetes-dashboard.yaml
-  kubectl create -f kubernetes-dashboard/dashboard-admin-user.yaml -f kubernetes-dashboard/dashboard-admin-user-role.yaml
-  kubectl create -f kubernetes-dashboard/dashboard-ingress.yaml
+  # Add kubernetes-dashboard repository
+  helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
+  # Deploy a Helm Release named "kubernetes-dashboard" using the kubernetes-dashboard chart
+  helm upgrade --install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard --create-namespace --namespace $KUBERNETES_DASHBOARD_NAMESPACE -f kubernetes-dashboard/values.yaml
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
 
@@ -580,20 +573,30 @@
   TITLE="Waiting for Kubernetes Dashboard to be Ready"
   print_title
 
-  K3S_DASHBOARD_PODS=$(kubectl get pods -n kubernetes-dashboard -o 'jsonpath={..metadata.name}')
-  IFS='/ ' read -r -a K3S_DASHBOARD_PODS <<< "$K3S_DASHBOARD_PODS"
+  KUBERNETES_DASHBOARD_PODS=$(kubectl get pods -n ${KUBERNETES_DASHBOARD_NAMESPACE} -o 'jsonpath={..metadata.name}')
+  IFS='/ ' read -r -a KUBERNETES_DASHBOARD_PODS <<< "$KUBERNETES_DASHBOARD_PODS"
 
-  # wait for there to be 3 pods in the kubernetes-dashboard namespace
-  while [ ${#K3S_DASHBOARD_PODS[@]} -ne 3 ]
+  # wait for there to be 5 pods in the $KUBERNETES_DASHBOARD_NAMESPACE namespace
+  while [ ${#KUBERNETES_DASHBOARD_PODS[@]} -ne 5 ]
   do
-    K3S_DASHBOARD_PODS=$(kubectl get pods -n kubernetes-dashboard -o 'jsonpath={..metadata.name}')
-    IFS='/ ' read -r -a K3S_DASHBOARD_PODS <<< "$K3S_DASHBOARD_PODS"
+    KUBERNETES_DASHBOARD_PODS=$(kubectl get pods -n ${KUBERNETES_DASHBOARD_NAMESPACE} -o 'jsonpath={..metadata.name}')
+    IFS='/ ' read -r -a KUBERNETES_DASHBOARD_PODS <<< "$KUBERNETES_DASHBOARD_PODS"
   done
 
-  # wait for those 3 pods to be in a ready state
-  for i in "${K3S_DASHBOARD_PODS[@]}"; do
-    kubectl wait -n kubernetes-dashboard --for=condition=Ready pod/${i} --timeout=${TIMEOUT}s
+  # wait for those 5 pods to be in a ready state
+  for i in "${KUBERNETES_DASHBOARD_PODS[@]}"; do
+    kubectl wait -n ${KUBERNETES_DASHBOARD_NAMESPACE} --for=condition=Ready pod/${i} --timeout=${TIMEOUT}s
   done
+
+  printf "${GREEN}Done\n${COLOUR_OFF}"
+
+# Create Dashboard, Dashboard User Admin, Admin Role, and Dashboard Ingress
+
+  TITLE="Creating and configuring K3s Dashboard Roles and Users"
+  print_title
+
+  kubectl create -f kubernetes-dashboard/kubernetes-dashboard.yaml
+  kubectl create -f kubernetes-dashboard/dashboard-admin-user.yaml -f kubernetes-dashboard/dashboard-admin-user-role.yaml
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
 

@@ -1,0 +1,15 @@
+app:
+  ingress:
+    enabled: true
+    hosts:
+      - localhost
+      - DASHBOARD_SUBDOMAIN.DOMAIN
+    ingressClassName: nginx
+    issuer:
+      name: CERT_ISSUER
+      scope: cluster
+    tls:
+      enabled: true
+      secretName: tls-DOMAIN-dashboard
+    annotations:
+      nginx.org/ssl-services: "kubernetes-dashboard-kong-proxy"
