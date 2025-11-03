@@ -34,7 +34,12 @@ K3s Deployment Variables:
 
   Important Notes:
   
-    When configuring the Certificate Provider, the selfsigned provider is deployed no matter which option you pick.  The cloudflare certificate provider is only deployed, if you select 'prod-issuer'.
+    You have two options for Certificate Provisioning:
+      'selfsigned-issuer' - This will deploy a root CA, and a Certificate Provisioner that uses it.
+      'prod-issuer' - This will deploy a Certificate Provisioner that uses LetsEncrypt for certificates, and Cloudflare DNS for domain verification.
+    
+    When configuring the Certificate Provider, the selfsigned provider is deployed no matter which option you pick.
+    The cloudflare certificate provider is only deployed, if you select 'prod-issuer'.
 
     If you select 'selfsigned-issuer', you do NOT need to provide any of the Cloudflare variables.
 
@@ -46,7 +51,8 @@ Deployment Instructions:
     1. apt install git --yes
     2. git clone https://github.com/autothis/k3s-deployment.git
     3. cd k3s-deployment
-    4. apply your specific K3s deployment variables as per the instructions above (or you can just enter the variables when prompted by the script).
+    4. apply your specific K3s deployment variables as per the instructions above
+       (or you can just enter the variables when prompted by the script)
     5. chmod +x deploy-k3s.sh
     6. ./deploy-k3s.sh
     7. source /etc/profile
