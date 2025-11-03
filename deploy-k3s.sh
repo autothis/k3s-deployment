@@ -320,6 +320,7 @@
   sudo mkdir /mnt/$DISK_UUID
   sudo mount -t ext4 ${K3S_PERSISTENT_VOLUME_DISK}1 /mnt/$DISK_UUID
   echo UUID=`sudo blkid -s UUID -o value ${K3S_PERSISTENT_VOLUME_DISK}1` /mnt/$DISK_UUID ext4 defaults 0 2 | sudo tee -a /etc/fstab
+  sudo systemctl daemon-reload
 
   for i in $(seq 1 $NUMBER_PERSISTENT_VOLUMES); do
     sudo mkdir -p /mnt/${DISK_UUID}/vol${i} /mnt/disks/${DISK_UUID}_vol${i}
@@ -328,6 +329,7 @@
 
   for i in $(seq 1 $NUMBER_PERSISTENT_VOLUMES); do
     echo /mnt/${DISK_UUID}/vol${i} /mnt/disks/${DISK_UUID}_vol${i} none bind 0 0 | sudo tee -a /etc/fstab
+    sudo systemctl daemon-reload
   done
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
@@ -382,10 +384,11 @@
   TITLE="Installing Helm"
   print_title
 
-  curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | tee /usr/share/keyrings/helm.gpg > /dev/null
-  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list
-  apt update
-  apt install helm --yes
+  sudo apt-get install curl gpg apt-transport-https --yes
+  curl -fsSL https://packages.buildkite.com/helm-linux/helm-debian/gpgkey | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+  echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+  sudo apt-get update
+  sudo apt-get install helm --yes
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
 
