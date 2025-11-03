@@ -36,7 +36,9 @@ K3s Deployment Variables:
   
     You have two options for Certificate Provisioning:
       'selfsigned-issuer' - This will deploy a root CA, and a Certificate Provisioner that uses it.
-      'prod-issuer' - This will deploy a Certificate Provisioner that uses LetsEncrypt for certificates, and Cloudflare DNS for domain verification.
+      'prod-issuer' - This will deploy a root CA, and a Certificate Provisioner that uses it.
+                      This method will also deploy a Certificate Provisioner that uses LetsEncrypt for certificates,
+                      and Cloudflare DNS for domain verification.
     
     When configuring the Certificate Provider, the selfsigned provider is deployed no matter which option you pick.
     The cloudflare certificate provider is only deployed, if you select 'prod-issuer'.
