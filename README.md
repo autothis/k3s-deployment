@@ -19,10 +19,11 @@ K3s Deployment Variables:
   DASHBOARD_SUBDOMAIN='k3s'      #This is the subdomain that will be used to serve your Kubernetes Dashboard.
   INGRESS_CONTROLLER_NAMESPACE='kubernetes-ingress'      #This is the namespace that the NGINX ingress will be deployed to.
   INGRESS_CONTROLLER_NAME='primary'     #This is the name prepended to the nginx-ingress pod name.
-  CLOUDFLARE_API_TOKEN='ZN0tr3AL9sEHl19yqjHzpy_fAkET0keNn_ddqg_y'      #This is the cloudflare token to be used by cert-manager.
-  CLOUDFLARE_EMAIL_ADDRESS='example@example.com'     #This is the email address that will be associated with your LetsEncrypt certificates.
   DOMAIN='example.com'      #This is the domain that your services will be available on.
   CERT_ISSUER='prod-issuer' #This is the certificate issuer that will be used to issue a certificate for the Kubernetes Dashboard e.g. 'prod-issuer' or 'selfsigned-issuer'"
+  CLOUDFLARE_API_TOKEN='ZN0tr3AL9sEHl19yqjHzpy_fAkET0keNn_ddqg_y'      #This is the cloudflare token to be used by cert-manager (only required for 'prod-issuer')
+  CLOUDFLARE_EMAIL_ADDRESS='example@example.com'     #This is the email address that will be associated with your LetsEncrypt certificates  (only required for 'prod-issuer')
+  
 ```
 
   Variables can be provided 3 ways:
@@ -30,6 +31,12 @@ K3s Deployment Variables:
     1. Exporting the variable by executing a command similar to this: export K3S_PERSISTENT_VOLUME_DISK='/dev/sdb'
     2. Running the deploy-k3s.sh script, and providing variables as prompted.
     3. Editing the deploy-k3s.sh script, uncommenting and populating the variables at the very top of the script.
+
+  Important Notes:
+  
+    When configuring the Certificate Provider, the selfsigned provider is deployed no matter which option you pick.  The cloudflare certificate provider is only deployed, if you select 'prod-issuer'.
+
+    If you select 'selfsigned-issuer', you do NOT need to provide any of the Cloudflare variables.
 
 Deployment Instructions:
 ------------------------
@@ -39,7 +46,7 @@ Deployment Instructions:
     1. apt install git --yes
     2. git clone https://github.com/autothis/k3s-deployment.git
     3. cd k3s-deployment
-    4. apply your specific K3s deployment variables as per the instructions above.
+    4. apply your specific K3s deployment variables as per the instructions above (or you can just enter the variables when prompted by the script).
     5. chmod +x deploy-k3s.sh
     6. ./deploy-k3s.sh
     7. source /etc/profile

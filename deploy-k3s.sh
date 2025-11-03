@@ -7,10 +7,10 @@
 #DASHBOARD_SUBDOMAIN='' #This is the subdomain that will be used to serve your Kubernetes Dashboard.
 #INGRESS_CONTROLLER_NAMESPACE='' #This is the namespace that the NGINX ingress will be deployed to.
 #INGRESS_CONTROLLER_NAME='' #This is the name prepended to the nginx-ingress pod name.
-#CLOUDFLARE_API_TOKEN='' #This is the cloudflare token to be used by cert-manager.
-#CLOUDFLARE_EMAIL_ADDRESS='' #This is the email address that will be associated with your LetsEncrypt certificates e.g. 'youremailaddress@here.com'.
 #DOMAIN='' #This is the domain that your services will be available on e.g. 'yourdomain.com'.
 #CERT_ISSUER='prod-issuer' #This is the certificate issuer that will be used to issue a certificate for the Kubernetes Dashboard e.g. 'prod-issuer' or 'selfsigned-issuer'.
+#CLOUDFLARE_API_TOKEN='' #This is the cloudflare token to be used by cert-manager. You only need to provide this if you have selected 'prod-issuer'.
+#CLOUDFLARE_EMAIL_ADDRESS='' #This is the email address that will be associated with your LetsEncrypt certificates e.g. 'youremailaddress@here.com'. You only need to provide this if you have selected 'prod-issuer'.
 
 # Create Functions
 
@@ -22,10 +22,11 @@
     K3S_VARIABLE_3=("DASHBOARD_SUBDOMAIN" "$DASHBOARD_SUBDOMAIN" "This is the subdomain that will be used to serve your Kubernetes Dashboard. e.g. 'k3s' will become k3s.yourdomain.com")
     K3S_VARIABLE_4=("INGRESS_CONTROLLER_NAMESPACE" "$INGRESS_CONTROLLER_NAMESPACE" "This is the namespace that the NGINX ingress will be deployed to e.g. 'kubernetes-ingress'")
     K3S_VARIABLE_5=("INGRESS_CONTROLLER_NAME" "$INGRESS_CONTROLLER_NAME" "This is the name prepended to the nginx-ingress pod name e.g. 'primary'")
-    K3S_VARIABLE_6=("CLOUDFLARE_API_TOKEN" "$CLOUDFLARE_API_TOKEN" "This is the cloudflare token to be used by cert-manager e.g. 'ZN0tr3AL9sEHl19yqjHzpy_fAkET0keNn_ddqg_y'")
-    K3S_VARIABLE_7=("CLOUDFLARE_EMAIL_ADDRESS" "$CLOUDFLARE_EMAIL_ADDRESS" "This is the email address that will be associated with your LetsEncrypt certificates e.g. 'youremailaddress@here.com'")
-    K3S_VARIABLE_8=("DOMAIN" "$DOMAIN" "This is the domain that your services will be available on e.g. 'yourdomain.com'")
-    K3S_VARIABLE_9=("CERT_ISSUER" "$CERT_ISSUER" "This is the certificate issuer that will be used to issue a certificate for the Kubernetes Dashboard e.g. 'prod-issuer' or 'selfsigned-issuer'")
+    K3S_VARIABLE_6=("DOMAIN" "$DOMAIN" "This is the domain that your services will be available on e.g. 'yourdomain.com'")
+    K3S_VARIABLE_7=("CERT_ISSUER" "$CERT_ISSUER" "This is the certificate issuer that will be used to issue a certificate for the Kubernetes Dashboard e.g. 'prod-issuer' or 'selfsigned-issuer'")
+    K3S_VARIABLE_8=("CLOUDFLARE_API_TOKEN" "$CLOUDFLARE_API_TOKEN" "This is the cloudflare token to be used by cert-manager e.g. 'ZN0tr3AL9sEHl19yqjHzpy_fAkET0keNn_ddqg_y'. You only need to provide this if you have selected 'prod-issuer'.")
+    K3S_VARIABLE_9=("CLOUDFLARE_EMAIL_ADDRESS" "$CLOUDFLARE_EMAIL_ADDRESS" "This is the email address that will be associated with your LetsEncrypt certificates e.g. 'youremailaddress@here.com'. You only need to provide this if you have selected 'prod-issuer'.")
+    
 
     # Combine K3S_VARIABLE arrays int the K3S_VARIABLES array
     COUNT=0
