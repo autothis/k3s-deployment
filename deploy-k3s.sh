@@ -609,7 +609,6 @@
   TITLE="Creating and configuring K3s Dashboard Roles and Users"
   print_title
 
-  kubectl create -f kubernetes-dashboard/kubernetes-dashboard.yaml
   kubectl create -f kubernetes-dashboard/dashboard-admin-user.yaml -f kubernetes-dashboard/dashboard-admin-user-role.yaml
 
   printf "${GREEN}Done\n${COLOUR_OFF}"
